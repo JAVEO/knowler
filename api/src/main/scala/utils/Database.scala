@@ -10,7 +10,7 @@ object Database {
   def connect(): BSONCollection = {
     val driver = new MongoDriver
     val connection = driver.connection(List("localhost"))
-    val db = connection("knowler")
+    val db = connection("local")
 
     db.collection("lectures")
   }
