@@ -25,7 +25,7 @@ git push origin master(so you are pushing it to your github)
 then you have to create pull request:
 https://help.github.com/articles/creating-a-pull-request/
 6. Say to somebody (probably only Daniel has got permission to merge in github/javeo) that you did pull request
-
+https://help.github.com/articles/fork-a-repo/
 
 Useful links for akka http:
 docs:
@@ -35,5 +35,5 @@ https://github.com/JAVEO/play-reactivemongo-polymer/blob/master/app/backend/Post
 https://github.com/theiterators/akka-http-microservice/blob/master/src/main/scala/AkkaHttpMicroservice.scala
 reactive mongo site
 http://reactivemongo.org/
-Błąd akka-http:
+Error akka-http (required marshaller):
 https://github.com/akka/akka/issues/17754
