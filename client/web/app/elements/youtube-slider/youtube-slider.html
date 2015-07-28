@@ -1,0 +1,45 @@
+<dom-module id="youtube-slider">
+
+    <style>
+        .tempSecondsPicker{
+            padding: 10px;
+        }
+    </style>
+
+    <template>
+        <div class="tempSecondsPicker">Wpisz sekundę filmu do której chcesz skoczyć: <input class="FORyt" value="{{time::input}}"></div>
+        <google-youtube
+                id="googleYoutube"
+                video-id="{{videoId}}"
+                height="270px"
+                width="480px"
+                rel="0"
+                start="0"
+                autoplay="1">
+        </google-youtube>
+    </template>
+
+    <script>
+        Polymer({
+            is: "youtube-slider",
+            googleYoutube: document.getElementById("googleYoutube"),
+            properties: {
+                videoId: {
+                    type: String,
+                    notify: true,
+                    reflectToAttribute: true
+                },
+                time: {
+                    type: String,
+                    notify: true,
+                    observer: '_timeChanged'
+                }
+            },
+            _timeChanged: function(newValue, oldValue) {
+                console.log(newValue + " time changed " + oldValue);
+                googleYoutube.seekTo(newValue)
+            }
+        });
+    </script>
+
+</dom-module>
