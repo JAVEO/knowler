@@ -27,7 +27,7 @@
 		</LinearLayout>
 	</FrameLayout>
 
-	<LinearLayout
+	<RelativeLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -40,12 +40,16 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"/>
 
-		<ImageView
+		<fragment
+				android:name="eu.javeo.knowler.client.mobile.knowler.SlidesFragment"
+				android:id="@+id/slides_fragment"
 				android:layout_width="match_parent"
-				android:layout_height="fill_parent"
-				android:id="@+id/imageView"
-				android:layout_weight="1"/>
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/youtube_fragment"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"/>
 
-	</LinearLayout>
+
+	</RelativeLayout>
 
 </FrameLayout>
