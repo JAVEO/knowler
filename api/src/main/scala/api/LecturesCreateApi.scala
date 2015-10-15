@@ -5,12 +5,15 @@ import akka.http.scaladsl.model.{ContentTypes, HttpRequest}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
 import model.Lecture
+import reactivemongo.api.commands.WriteResult
+import service.LecturesCreateService
 import upickle.default._
 import akka.stream.{ActorMaterializer, Materializer}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import akka.http.scaladsl.unmarshalling.Unmarshaller
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait LecturesCreateApi {
   implicit val upickleFromRequestUnmarshaller: FromRequestUnmarshaller[Lecture] = {
@@ -25,6 +28,6 @@ trait LecturesCreateApi {
   }
 
   val lectureCreateRoute = (path("lectures") & post & entity(as [Lecture])) { lecture =>
-    complete(write(lecture))
+    complete(LecturesCreateService.create(lecture).map((writeResult: WriteResult) => "ok"))
   }
 }
