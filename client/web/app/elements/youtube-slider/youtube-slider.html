@@ -4,19 +4,53 @@
         .tempSecondsPicker{
             padding: 10px;
         }
+        .show{
+
+        }
+        .row{
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            width: 100%;
+        }
+        .show-video{
+            text-align: center;
+        }
+        .slider{
+            padding: 20px;
+            width: 100%;
+        }
     </style>
 
     <template>
-        <div class="tempSecondsPicker">Wpisz sekundę filmu do której chcesz skoczyć: <input class="FORyt" value="{{time::input}}"></div>
-        <google-youtube
-                id="googleYoutube"
-                video-id="{{videoId}}"
-                height="270px"
-                width="480px"
-                rel="0"
-                start="0"
-                autoplay="1">
-        </google-youtube>
+        <div class="row">
+            <div class="col-md-6 text-center"><span>{{playerTime}}</span></div>
+            <div class="col-md-6 text-center"><span>{{imgUrl}}</span></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show show-video">
+                <google-youtube
+                        id="googleYoutube"
+                        video-id="{{videoId}}"
+                        height="400px"
+                        width="540px"
+                        rel="0"
+                        start="0"
+                        autoplay="0"
+                        currenttime="{{playerTime}}"
+                        style="width:540px; margin: auto auto;"
+                >
+                </google-youtube>
+            </div>
+            <div class="col-md-6 show show-slide" style="border: 1px solid black">
+                <slide-image id="imgDisplay" img="{{imgUrl}}"></slide-image>
+            </div>
+        </div>
+        <div class="row">
+            <div class="slider">
+                <time-grider mappings="[[slidesMappings]]" on-choose-slide="clickedSlide"></time-grider>
+            </div>
+        </div>
+
     </template>
 
     <script>
@@ -29,15 +63,98 @@
                     notify: true,
                     reflectToAttribute: true
                 },
-                time: {
+                imgUrl: {
                     type: String,
-                    notify: true,
-                    observer: '_timeChanged'
+                    value: "src/spring/output-0.png"
+                },
+                playerTime: {
+                    type: Number,
+                    observer: "playerChanged"
+                },
+                images: {
+                    type: Object,
+                    value:{
+                        0: "src/spring/output-0.png",
+                        1: "src/spring/output-1.png",
+                        3: "src/spring/output-2.png",
+                        5: "src/spring/output-3.png",
+                        2: "src/spring/output-4.png",
+                        6: "src/spring/output-5.png",
+                        7: "src/spring/output-6.png",
+                        8: "src/spring/output-7.png",
+                        9: "src/spring/output-8.png",
+                        10: "src/spring/output-9.png",
+                        11: "src/spring/output-7.png",
+                        12: "src/spring/output-0.png",
+                        13: "src/spring/output-1.png",
+                        14: "src/spring/output-2.png",
+                        15: "src/spring/output-3.png",
+                        16: "src/spring/output-4.png",
+                        17: "src/spring/output-5.png",
+                        18: "src/spring/output-6.png",
+                        19: "src/spring/output-7.png",
+                        20: "src/spring/output-8.png",
+                        21: "src/spring/output-9.png",
+                        22: "src/spring/output-10.png",
+                    }
+                },
+                slidesMappings: {
+                    type: Object,
+                    value:{
+                        duration: 3600,
+                        secondsToSlides: [
+                            [1, 0],
+                            [5, 1],
+                            [6, 3],
+                            [10, 5],
+                            [11, 2],
+                            [18, 6],
+                            [22, 7],
+                            [30, 8],
+                            [41, 9],
+                            [45, 10],
+                            [47, 11],
+                            [55, 12],
+                            [86, 13],
+                            [90, 14],
+                            [100, 15],
+                            [130, 16],
+                            [200, 17],
+                            [320, 18],
+                            [500, 19],
+                            [1500, 20],
+                            [2500, 21],
+                            [3000, 22]
+                        ]
+                    }
                 }
             },
-            _timeChanged: function(newValue, oldValue) {
-                console.log(newValue + " time changed " + oldValue);
-                googleYoutube.seekTo(newValue)
+            clickedSlide: function(e){
+                console.log("youtubeslider-choose time&slide");
+                console.log(e);
+                googleYoutube.seekTo(e.detail[0]);
+                this.$.imgDisplay.set("img", this.images[e.detail[1]]);
+            },
+            playerChanged: function(time){
+                console.log("playerChanged");
+                console.log(time);
+                var image = this.images[this.findCurrentImage(time)]
+                console.log(image);
+                if(this.imgUrl != image) this.set("imgUrl", image);
+            },
+            findCurrentImage: function(time){
+                var secToSlides = this.slidesMappings.secondsToSlides;
+                var id = 0;
+                for(var i = 0; i< secToSlides.length; i++){
+                    if(i>0 && secToSlides[i][0] > time){
+                        id = secToSlides[i-1][1];
+                        console.log(secToSlides[i-1][0], time)
+                        break;
+                    }
+                }
+                console.log("id: ", id)
+                this.images[id][1]
+                return id;
             }
         });
     </script>

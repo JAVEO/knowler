@@ -12,7 +12,8 @@
     "paper-header-panel": "PolymerElements/paper-header-panel#~1.0.3",
     "paper-input": "PolymerElements/paper-input#~1.0.6",
     "iron-icons": "PolymerElements/iron-icons#~1.0.3",
-    "google-youtube": "GoogleWebComponents/google-youtube#~1.1.2"
+    "google-youtube": "GoogleWebComponents/google-youtube#~1.1.2",
+    "bootstrap": "~3.3.5"
   },
   "devDependencies": {
     "web-component-tester": "*",
