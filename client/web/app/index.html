@@ -73,6 +73,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <iron-icon icon="home"></iron-icon>
               <span>Home</span>
             </a>
+            <a data-route="edit-presentation" href="/edit-presentation">
+              <iron-icon icon="create"></iron-icon>
+              <span>Edit presentation</span>
+            </a>
             <a data-route="users" href="/users">
               <iron-icon icon="info"></iron-icon>
               <span>Users</span>
@@ -169,6 +173,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <paper-material elevation="1">
                   <h2 class="paper-font-display2">Contact</h2>
                   <p>This is the contact section</p>
+                </paper-material>
+              </section>
+
+              <section data-route="edit-presentation">
+                <paper-material elevation="1">
+                  <slide-list></slide-list>
                 </paper-material>
               </section>
             </iron-pages>
