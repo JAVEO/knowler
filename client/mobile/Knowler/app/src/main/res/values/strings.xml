@@ -1,0 +1,13 @@
+<resources>
+	<string name="app_name">Knowler</string>
+	<string name="hello_world">Hello world!</string>
+	<string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="text_open_navigation">Open menu</string>
+	<string name="text_close_navigation">Close menu</string>
+
+	<string name="title_activity_fullscreen">FullscreenActivity</string>
+	<string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+</resources>

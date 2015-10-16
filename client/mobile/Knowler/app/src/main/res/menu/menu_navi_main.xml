@@ -1,0 +1,11 @@
+<menu
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		tools:context=".MainActivity">
+
+	<item
+			android:id="@+id/action_navi_select_profile"
+			android:checked="true"
+			android:title="Select profile"/>
+
+</menu>

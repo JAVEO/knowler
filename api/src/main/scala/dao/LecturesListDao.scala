@@ -1,20 +1,23 @@
 package dao
 
+import model.Lecture
 import utils.Database
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import reactivemongo.bson.BSONDocument
-import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.bson.{BSONDocumentReader, BSONDocument}
 
-case class LecturesListDao(){
-  def findAll: Future[List[BSONDocument]] = {
+object LecturesListDao {
+  implicit object LectureReader extends BSONDocumentReader[Lecture] {
+    def read(doc: BSONDocument): Lecture = {
+      val name = doc.getAs[String]("name").get
+      val description = doc.getAs[String]("description").get
+      Lecture(name, description)
+    }
+  }
+
+  def findAll: Future[List[Lecture]] = {
     val query = BSONDocument()
-    val filter = BSONDocument()
-
-    Database.collection
-      .find(query, filter)
-      .cursor[BSONDocument]
-      .collect[List]()
+    Database.collection.find(query).cursor[Lecture].collect[List]()
   }
 }

@@ -4,6 +4,8 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
+resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+
 libraryDependencies ++= {
   val akkaStreamVersion = "1.0"
   val akkaVersion = "2.3.12"
@@ -17,6 +19,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-testkit-experimental"       % akkaStreamVersion,
     "org.scalatest"     %% "scalatest"                            % "2.2.5" % "test",
     "com.typesafe.akka" %% "akka-testkit"                         % akkaVersion % "test",
-    "org.reactivemongo" %% "reactivemongo" % "0.11.3"
+    "org.reactivemongo" %% "reactivemongo" % "0.11.3",
+    "com.lihaoyi" %% "upickle" % "0.3.4"
   )
 }
