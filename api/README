@@ -1,0 +1,21 @@
+Currently implemented REST API:
+
+GET /v1/lectures
+returns json array:
+[
+  {
+    "videoUrl":"...",
+    "title":"...",
+    "createdAt":"...",
+    "fileName":"..."
+  },
+  ...
+]
+
+POST /v1/lectures
+with input json
+{
+  "videoUrl":"...",
+  "title":"...",
+  "fileName":"..."
+}
