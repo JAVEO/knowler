@@ -16,3 +16,7 @@ body {
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
+
+#main paper-header-panel .content {
+  overflow: auto;
+}
