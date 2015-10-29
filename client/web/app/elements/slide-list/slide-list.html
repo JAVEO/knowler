@@ -1,9 +1,9 @@
 <dom-module id="slide-list">
     <style>
-        :host {
+        :host > div {
             display: block;
             width: 275px;
-            max-height: 500px;
+            max-height: 800px;
             overflow: auto;
         }
 
@@ -13,14 +13,18 @@
     </style>
 
     <template>
-        <iron-selector selected="0">
-            <template is="dom-repeat" items="{{slides}}">
-                <figure>
-                    <img src="{{item.imageUrl}}">
-                    <figcaption>{{item.caption}}</figcaption>
-                </figure>
-            </template>
-        </iron-selector>
+        <h3>Wszystkie slajdy</h3>
+
+        <div>
+            <iron-selector selected="0">
+                <template is="dom-repeat" items="{{slides}}">
+                    <figure>
+                        <img src="{{item.imageUrl}}">
+                        <figcaption>{{item.caption}}</figcaption>
+                    </figure>
+                </template>
+            </iron-selector>
+        </div>
     </template>
 
     <script>
