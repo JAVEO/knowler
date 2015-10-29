@@ -4,6 +4,7 @@ GET /v1/lectures
 returns json array:
 [
   {
+    "id":"...",
     "videoUrl":"...",
     "title":"...",
     "createdAt":"...",
@@ -19,3 +20,14 @@ with input json
   "title":"...",
   "fileName":"..."
 }
+
+GET /v1/lectures/:lectureId
+returns json object:
+{
+  "id":"...",
+  "videoUrl":"...",
+  "title":"...",
+  "createdAt":"...",
+  "fileName":"..."
+}
+or "Not found"

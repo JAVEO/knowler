@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
 import model.LectureCreate
 import reactivemongo.api.commands.WriteResult
-import service.LecturesCreateService
+import service.LecturesService
 import upickle.default._
 import akka.stream.{ActorMaterializer, Materializer}
 import scala.concurrent.ExecutionContext
@@ -15,7 +15,7 @@ import scala.concurrent.duration._
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait LecturesCreateApi {
+trait LecturesApi {
   implicit val upickleFromRequestUnmarshaller: FromRequestUnmarshaller[LectureCreate] = {
     implicit val system = ActorSystem()
     implicit val materializer: Materializer = ActorMaterializer()
@@ -28,6 +28,35 @@ trait LecturesCreateApi {
   }
 
   val lectureCreateRoute = (path("lectures") & post & entity(as [LectureCreate])) { lecture =>
-    complete(LecturesCreateService.create(lecture).map((writeResult: WriteResult) => "ok"))
+    complete(LecturesService.create(lecture).map((writeResult: WriteResult) => "ok"))
+  }
+
+  val lecturesListRoute =
+    (path("lectures") & get ) {
+      onSuccess(LecturesService.findAll){ result =>
+        complete {
+          write(result)
+        }
+      }
+    }
+
+  val lectureUpdateRoute = (path("lectures"/ IntNumber ) & patch) { lectureId =>
+    complete("Trying to update lecture with id: " + lectureId)
+  }
+
+  val lectureDetailsRoute =
+    path("lectures"/Rest) { lectureId =>
+      get {
+        onSuccess(LecturesService.findById(lectureId)) {
+          case Some(result) =>
+            complete(write(result))
+          case _ =>
+            complete("Not found")
+        }
+      }
+    }
+
+  val lectureDeleteRoute = (path("lectures"/ IntNumber ) & delete) { lectureId =>
+    complete("Trying to delete lecture with id: " + lectureId)
   }
 }
