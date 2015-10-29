@@ -1,0 +1,18 @@
+Currently implemented REST API:
+
+GET /v1/lectures
+returns json array:
+[
+  {
+    "name":"...",
+    "description":"fakeDescription"
+  },
+  ...
+]
+
+POST /v1/lectures
+with input json
+{
+  "name":"...",
+  "description":"..."
+}
