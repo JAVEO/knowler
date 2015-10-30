@@ -1,19 +1,19 @@
 package dao
 
-import model.Lecture
+import model.LectureCreate
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.bson.{BSONDocumentWriter, BSONDocument}
-import utils.Database
-
+import reactivemongo.bson._
+import _root_.utils.Database
+import org.joda.time.DateTime
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object LecturesCreateDao {
-  implicit object LectureWriter extends BSONDocumentWriter[Lecture] {
-    def write(lecture: Lecture): BSONDocument = BSONDocument(
-      "name" -> lecture.name, "description" -> lecture.description)
+  implicit object LectureWriter extends BSONDocumentWriter[LectureCreate] {
+    def write(lecture: LectureCreate): BSONDocument = BSONDocument(
+      "videoUrl" -> lecture.videoUrl, "title" -> lecture.title, "createdAt" -> DateTime.now.toString, "fileName" -> lecture.fileName)
   }
 
-  def create(lecture: Lecture): Future[WriteResult] =
+  def create(lecture: LectureCreate): Future[WriteResult] =
     Database.collection.insert(lecture)
 }

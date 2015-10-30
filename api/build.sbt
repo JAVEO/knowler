@@ -20,6 +20,8 @@ libraryDependencies ++= {
     "org.scalatest"     %% "scalatest"                            % "2.2.5" % "test",
     "com.typesafe.akka" %% "akka-testkit"                         % akkaVersion % "test",
     "org.reactivemongo" %% "reactivemongo" % "0.11.3",
-    "com.lihaoyi" %% "upickle" % "0.3.4"
+    "com.lihaoyi" %% "upickle" % "0.3.4",
+    "joda-time" % "joda-time" % "2.4",
+    "org.joda" % "joda-convert" % "1.6"
   )
 }

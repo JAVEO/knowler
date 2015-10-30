@@ -1,12 +1,12 @@
 package service
 
 import dao.LecturesCreateDao
-import model.Lecture
+import model.LectureCreate
 import reactivemongo.api.commands.WriteResult
 
 import scala.concurrent.Future
 
 object LecturesCreateService {
-  def create(lecture: Lecture): Future[WriteResult] =
+  def create(lecture: LectureCreate): Future[WriteResult] =
     LecturesCreateDao.create(lecture)
 }
