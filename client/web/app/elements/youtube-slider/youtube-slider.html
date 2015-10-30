@@ -1,5 +1,6 @@
-<dom-module id="youtube-slider">
 
+<dom-module id="youtube-slider">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <style>
         .tempSecondsPicker{
             padding: 10px;
@@ -12,6 +13,13 @@
             @apply(--layout-center);
             width: 100%;
         }
+        @media screen and (max-width: 1280px) {
+            .row{
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                width: 100%;
+            }
+        }
         .show-video{
             text-align: center;
         }
@@ -23,26 +31,26 @@
 
     <template>
         <div class="row">
-            <div class="col-md-6 text-center"><span>{{playerTime}}</span></div>
-            <div class="col-md-6 text-center"><span>{{imgUrl}}</span></div>
+            <div class="text-center"><span>{{playerTime}}</span></div>
+            <div class="text-center"><span>{{imgUrl}}</span></div>
         </div>
         <div class="row">
-            <div class="col-md-6 show show-video">
+            <div class="col-md-6 col-sm-12 show show-video">
                 <google-youtube
                         id="googleYoutube"
                         video-id="{{videoId}}"
-                        height="400px"
-                        width="540px"
                         rel="0"
                         start="0"
                         autoplay="0"
                         currenttime="{{playerTime}}"
-                        style="width:540px; margin: auto auto;"
+                        width="100%"
+                        height="{{videoHeight}}"
+                        style="margin: auto auto;"
                 >
                 </google-youtube>
             </div>
-            <div class="col-md-6 show show-slide" style="border: 1px solid black">
-                <slide-image id="imgDisplay" img="{{imgUrl}}"></slide-image>
+            <div class="col-md-6 col-sm-12 show show-slide">
+                <slide-image class="" id="imgDisplay" img="{{imgUrl}}"></slide-image>
             </div>
         </div>
         <div class="row">
@@ -56,8 +64,11 @@
     <script>
         Polymer({
             is: "youtube-slider",
-            googleYoutube: document.getElementById("googleYoutube"),
             properties: {
+                videoHeight:{
+                    type: Number,
+                    value: "200px"
+                },
                 videoId: {
                     type: String,
                     notify: true,
@@ -132,7 +143,7 @@
             clickedSlide: function(e){
                 console.log("youtubeslider-choose time&slide");
                 console.log(e);
-                googleYoutube.seekTo(e.detail[0]);
+                this.$.googleYoutube.seekTo(e.detail[0]);
                 this.$.imgDisplay.set("img", this.images[e.detail[1]]);
             },
             playerChanged: function(time){
@@ -155,6 +166,13 @@
                 console.log("id: ", id)
                 this.images[id][1]
                 return id;
+            },
+            ready: function(){
+                console.log("width: ", window.innerWidth);
+                if(window.innerWidth > 1279) this.videoHeight = "480px";
+                else if(window.innerWidth > 799) this.videoHeight = "300px";
+                console.log("heigh: ", this.videoHeight);
+
             }
         });
     </script>

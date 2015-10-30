@@ -16,3 +16,13 @@ body {
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
 }
+
+paper-input.searchBox {
+  padding-left: 20px;
+}
+paper-input.searchBox #input{
+  color: white;
+}
+paper-input.searchBox .label-and-input-container label{
+  color: white !important;
+}
