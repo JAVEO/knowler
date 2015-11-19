@@ -54,12 +54,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // Scale middleContainer appName
     Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
   });
-
-  // Close drawer after menu item is selected if drawerPanel is narrow
-  app.onMenuSelect = function() {
-    var drawerPanel = document.querySelector('#paperDrawerPanel');
-    if (drawerPanel != null && drawerPanel.narrow) {
-      drawerPanel.closeDrawer();
+  app.goBack = function(){
+    window.history.back();
+  };
+  app.handleLectureSearch = function(e){
+    console.log(app.searchPhrase);
+    console.log(e);
+    if(e.keyCode == 13){
+      console.log("enter");
+      page('/movie-search')
+      e.preventDefault()
     }
   };
 
