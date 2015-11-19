@@ -1,5 +1,0 @@
-package service
-
-class LecturesDetailsService {
-
-}
