@@ -20,7 +20,6 @@ body {
 #main paper-header-panel .content {
   overflow: auto;
 }
-}
 
 paper-input.searchBox {
   padding-left: 20px;
