@@ -1,6 +1,4 @@
-
 <dom-module id="youtube-slider">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <style>
         .tempSecondsPicker{
             padding: 10px;
@@ -31,8 +29,8 @@
 
     <template>
         <div class="row">
-            <div class="text-center"><span>{{playerTime}}</span></div>
-            <div class="text-center"><span>{{imgUrl}}</span></div>
+            <div class="text-center col-md-6"><span>{{playerTime}}</span></div>
+            <div class="text-center col-md-6"><span>{{imgUrl}}</span></div>
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 show show-video">
@@ -142,8 +140,9 @@
             },
             clickedSlide: function(e){
                 console.log("youtubeslider-choose time&slide");
-                console.log(e);
-                this.$.googleYoutube.seekTo(e.detail[0]);
+                console.log("to time: ", e.detail[0]);
+
+                this.async(function(){this.$.googleYoutube.seekTo(e.detail[0])}, 10);
                 this.$.imgDisplay.set("img", this.images[e.detail[1]]);
             },
             playerChanged: function(time){

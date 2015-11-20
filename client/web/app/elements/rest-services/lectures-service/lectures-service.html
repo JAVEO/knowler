@@ -1,0 +1,26 @@
+<dom-module id="lectures-service">
+    <template>
+        <iron-ajax-bubbling
+                id="ajax"
+                last-response="{{lastResponse}}"
+                ></iron-ajax-bubbling>
+    </template>
+    <script>
+        Polymer({
+            is: "lectures-service",
+            properties:{
+                lastResponse: {
+                    type: Object,
+                    notify: true,
+                    readOnly: false
+                }
+            },
+            url: "http://localhost:9001/v1",
+            queryAll: "/lectures",
+            query: function(){
+                this.$.ajax.url = this.url + this.queryAll;
+                this.$.ajax.generateRequest();
+            }
+        });
+    </script>
+</dom-module>

@@ -13,6 +13,7 @@
     </style>
 
     <template>
+        <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
         <h3>Wszystkie slajdy</h3>
 
         <div>
@@ -31,12 +32,18 @@
         Polymer({
             is: "slide-list",
             properties: {
+                lectures: Object,
                 slides: {
                     type: Object,
                     notify: true
                 }
             },
+            lecturesResponse: function(a){
+                console.log(a);
+                console.log(this.lectures);
+            },
             ready: function () {
+                this.$.lectures.query();
                 this.slides = [
                     {
                         imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Czym%20jest%20Polymer&w=150&h=150&bg=3F51B5",

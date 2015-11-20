@@ -1,0 +1,13 @@
+[0m[[0minfo[0m] [0mSet current project to knowler (in build file:/home/tgalazka/projekty/knowler/api/)[0m
+[0m[[0minfo[0m] [0mCompiling 1 Scala source to /home/tgalazka/projekty/knowler/api/target/scala-2.11/classes...[0m
+[0m[[0minfo[0m] [0mRunning Main [0m
+[DEBUG] [11/20/2015 10:44:19.737] [run-main-0] [EventStream(akka://default)] logger log1-Logging$DefaultLogger started
+[DEBUG] [11/20/2015 10:44:19.738] [run-main-0] [EventStream(akka://default)] Default Loggers started
+[DEBUG] [11/20/2015 10:44:19.799] [run-main-0] [EventStream(akka://default)] logger log1-Logging$DefaultLogger started
+[DEBUG] [11/20/2015 10:44:19.799] [run-main-0] [EventStream(akka://default)] Default Loggers started
+[DEBUG] [11/20/2015 10:44:20.214] [default-akka.actor.default-dispatcher-4] [akka://default/system/IO-TCP/selectors/$a/0] Successfully bound to /0:0:0:0:0:0:0:0:9001
+[DEBUG] [11/20/2015 10:44:37.935] [default-akka.actor.default-dispatcher-4] [akka://default/system/IO-TCP/selectors/$a/0] New connection accepted
+[DEBUG] [11/20/2015 10:44:39.474] [default-akka.actor.default-dispatcher-3] [ActorSystem(default)] log: Response for
+  Request : HttpRequest(HttpMethod(GET),http://localhost:9001/v1/lectures,List(Host: localhost:9001, Connection: keep-alive, Pragma: no-cache, Cache-Control: no-cache, Accept: application/json, Origin: http://localhost:3000, User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36, Referer: http://localhost:3000/, Accept-Encoding: gzip, deflate, sdch, Accept-Language: pl, en-US;q=0.8, en;q=0.6, ru;q=0.4),HttpEntity.Strict(none/none,ByteString()),HttpProtocol(HTTP/1.1))
+  Response: Rejected(List(UnacceptedResponseContentTypeRejection(Set(text/plain)), TransformationRejection(<function1>), MethodRejection(HttpMethod(POST))))
+[DEBUG] [11/20/2015 10:44:43.215] [default-akka.actor.default-dispatcher-9] [akka://default/user/$a/flow-3-0-publisherSource-prefixAndTail] Cancelling akka.stream.impl.MultiStreamOutputProcessor$SubstreamOutput@3f378440 (after: 5000 ms)

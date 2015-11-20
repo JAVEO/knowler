@@ -9,6 +9,7 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 libraryDependencies ++= {
   val akkaStreamVersion = "1.0"
   val akkaVersion = "2.3.12"
+
   Seq(
     "com.typesafe.akka" %% "akka-actor"                           % akkaVersion,
     "com.typesafe.akka" %% "akka-stream-experimental"             % akkaStreamVersion,

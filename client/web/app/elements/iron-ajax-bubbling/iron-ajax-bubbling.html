@@ -1,0 +1,44 @@
+<dom-module id="iron-ajax-bubbling">
+    <template>
+        <iron-ajax
+                id="ajax"
+                url="{{url}}"
+                params="{{params}}"
+                handle-as="json"
+                method="{{method}}"
+                on-response="handleResponse"
+                last-response="{{lastResponse}}"
+                >
+        </iron-ajax>
+    </template>
+    <script>
+        Polymer({
+            is: "iron-ajax-bubbling",
+            properties:{
+                method:{
+                    type: String,
+                    value: "GET"
+                },
+                params: {
+                    type: Object,
+                    value: null
+                },
+                url: {
+                    type: String,
+                    value: ""
+                },
+                lastResponse: {
+                    type: Object,
+                    notify: true,
+                    readOnly: false
+                }
+            },
+            handleResponse: function(ev1, ev2){
+                this.fire("response", [ev1, ev2]);
+            },
+            generateRequest: function(){
+                this.$.ajax.generateRequest()
+            }
+        });
+    </script>
+</dom-module>
