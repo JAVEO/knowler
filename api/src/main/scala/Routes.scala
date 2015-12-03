@@ -4,12 +4,7 @@ import akka.http.scaladsl.server.Directives._
 import api._
 import utils.CorsSupport
 
-trait Routes extends LecturesListApi
-            with LecturesDetailsApi
-            with LecturesCreateApi
-            with LecturesDeleteApi
-            with LecturesUpdateApi
-            with CorsSupport{
+trait Routes extends LecturesApi with CorsSupport {
 
   override val corsAllowOrigins: List[String] = List("*")
   override val corsAllowedHeaders: List[String] = List("Origin", "X-Requested-With", "Content-Type", "Accept", "Accept-Encoding", "Accept-Language", "Host", "Referer", "User-Agent")
@@ -21,10 +16,8 @@ trait Routes extends LecturesListApi
   )
 
   val routes = pathPrefix("v1") {
-    cors{lecturesListRoute} ~
-    cors{lectureDetailsRoute}~
-    cors{lectureCreateRoute}~
-    cors{lectureDeleteRoute}~
-    cors{lectureUpdateRoute}
+    cors{lecturesListRoute }~
+    cors{lectureCreateRoute }~
+    cors{lectureDetailsRoute}
   } ~ path("")(getFromResource("public/index.html"))
 }

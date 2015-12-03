@@ -9,7 +9,7 @@ import utils.{CorsSupport, Config}
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 
-object Main extends App with Config with Routes with CorsSupport{
+object Main extends App with Config with Routes{
   private implicit val system = ActorSystem()
   protected implicit val executor: ExecutionContext = system.dispatcher
   protected val log: LoggingAdapter = Logging(system, getClass)

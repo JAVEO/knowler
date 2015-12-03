@@ -1,0 +1,93 @@
+<dom-module id="time-to-slide-mappings">
+    <style>
+        :host > div {
+            display: block;
+            width: 100%;
+            max-height: 500px;
+            overflow: auto;
+        }
+
+        .iron-selected {
+            background: #eee;
+        }
+
+        .slide {
+            white-space: nowrap;
+        }
+
+        .slide figcaption {
+            display: inline-block;
+        }
+    </style>
+    <template>
+        <h3>Mapowania slajdów</h3>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>L.p.</th>
+                    <th>Czas</th>
+                    <th>Slajd</th>
+                </tr>
+                </thead>
+                <tbody is="selectable-table">
+                <template is="dom-repeat" items="{{mappings}}">
+                    <tr>
+                        <td>{{index}}</td>
+                        <td>{{item.time}}</td>
+                        <td>
+                            <figure class="slide">
+                                <img src="{{item.slide.imageUrl}}" height="50px">
+                                <figcaption>{{item.slide.caption}}</figcaption>
+                            </figure>
+                        </td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'time-to-slide-mappings',
+            properties: {
+                mappings: {
+                    type: Object,
+                    notify: true
+                }
+            },
+            ready: function () {
+                this.mappings = [
+                    {
+                        time: "00:00",
+                        slide: {
+                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Czym%20jest%20Polymer&w=150&h=150&bg=3F51B5",
+                            caption: "Czym jest Polymer"
+                        }
+                    },
+                    {
+                        time: "01:34",
+                        slide: {
+                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Zalety&w=150&h=150&bg=3F51B5",
+                            caption: "Zalety"
+                        }
+                    },
+                    {
+                        time: "04:21",
+                        slide: {
+                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady&w=150&h=150&bg=3F51B5",
+                            caption: "Wady"
+                        }
+                    },
+                    {
+                        time: "05:18",
+                        slide: {
+                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady%20-%20ci%C4%85g%20dalszy&w=150&h=150&bg=3F51B5",
+                            caption: "Wady - ciąg dalszy"
+                        }
+                    }
+                ];
+            }
+        });
+    </script>
+</dom-module>

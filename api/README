@@ -1,0 +1,33 @@
+Currently implemented REST API:
+
+GET /v1/lectures
+returns json array:
+[
+  {
+    "id":"...",
+    "videoUrl":"...",
+    "title":"...",
+    "createdAt":"...",
+    "fileName":"..."
+  },
+  ...
+]
+
+POST /v1/lectures
+with input json
+{
+  "videoUrl":"...",
+  "title":"...",
+  "fileName":"..."
+}
+
+GET /v1/lectures/:lectureId
+returns json object:
+{
+  "id":"...",
+  "videoUrl":"...",
+  "title":"...",
+  "createdAt":"...",
+  "fileName":"..."
+}
+or "Not found"

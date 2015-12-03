@@ -1,12 +1,13 @@
 package dao
 
 import model.LectureRead
+import reactivemongo.bson.{BSONObjectID, BSONDocument, BSONDocumentReader}
 import utils.Database
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import reactivemongo.bson.{BSONObjectID, BSONDocumentReader, BSONDocument}
 
-object LecturesListDao {
+import scala.concurrent.Future
+
+object LecturesDetailsDao {
   implicit object LectureReader extends BSONDocumentReader[LectureRead] {
     def read(doc: BSONDocument): LectureRead = {
       val id = doc.getAs[BSONObjectID]("_id").get.stringify
@@ -18,8 +19,8 @@ object LecturesListDao {
     }
   }
 
-  def findAll: Future[List[LectureRead]] = {
-    val query = BSONDocument()
+  def findById(id: String): Future[List[LectureRead]] = {
+    val query = BSONDocument("_id" -> BSONObjectID(id))
     Database.collection.find(query).cursor[LectureRead].collect[List]()
   }
 }

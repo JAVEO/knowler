@@ -1,0 +1,61 @@
+<dom-module id="slide-list">
+    <style>
+        :host > div {
+            display: block;
+            width: 275px;
+            max-height: 800px;
+            overflow: auto;
+        }
+
+        .iron-selected {
+            background: #eee;
+        }
+    </style>
+
+    <template>
+        <h3>Wszystkie slajdy</h3>
+
+        <div>
+            <iron-selector selected="0">
+                <template is="dom-repeat" items="{{slides}}">
+                    <figure>
+                        <img src="{{item.imageUrl}}">
+                        <figcaption>{{item.caption}}</figcaption>
+                    </figure>
+                </template>
+            </iron-selector>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "slide-list",
+            properties: {
+                slides: {
+                    type: Object,
+                    notify: true
+                }
+            },
+            ready: function () {
+                this.slides = [
+                    {
+                        imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Czym%20jest%20Polymer&w=150&h=150&bg=3F51B5",
+                        caption: "Czym jest Polymer"
+                    },
+                    {
+                        imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Zalety&w=150&h=150&bg=3F51B5",
+                        caption: "Zalety"
+                    },
+                    {
+                        imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady&w=150&h=150&bg=3F51B5",
+                        caption: "Wady"
+                    },
+                    {
+                        imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady%20-%20ci%C4%85g%20dalszy&w=150&h=150&bg=3F51B5",
+                        caption: "Wady - ciąg dalszy"
+                    }
+                ];
+            }
+        });
+    </script>
+</dom-module>

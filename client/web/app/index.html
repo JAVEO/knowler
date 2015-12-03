@@ -1,4 +1,3 @@
-<!doctype html>
 <!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
@@ -8,51 +7,36 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
-<html lang="">
-
+<!doctype html>
+<html lang="pl">
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
-  <!-- Place favicon.ico in the `app/` directory -->
+  <meta name="generator" content="Kowler - system prezentacji" />
+  <title>Kowler - Prezentacje</title>
 
-  <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#303F9F">
-
-  <!-- Web Application Manifest -->
   <link rel="manifest" href="manifest.json">
-
-  <!-- Tile color for Win8 -->
   <meta name="msapplication-TileColor" content="#3372DF">
 
-  <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="PSK">
+  <meta name="application-name" content="KNOWLER">
   <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
-  <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
-  <!-- Tile icon for Win8 (144x144) -->
   <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
-  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <!-- endbuild-->
 
-  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-  <!-- endbuild -->
 
-  <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
-  <!-- endreplace-->
 </head>
 
 <body unresolved class="fullbleed layout vertical">
@@ -60,146 +44,105 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template is="dom-bind" id="app">
     <paper-drawer-panel id="navDrawerPanel" responsive-width="1280px">
       <div class="nav" drawer>
-          <!-- Drawer Toolbar -->
+
           <paper-toolbar id="drawerToolbar">
             <span class="paper-font-title">Menu</span>
-            <!--<paper-input class="paper-input-test" error-message="Invalid input!" label="Input label"></paper-input>-->
           </paper-toolbar>
-          <!-- Drawer Content -->
-          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}" on-iron-select="onMenuSelect">
+          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
             <a data-route="home" href="/">
               <iron-icon icon="home"></iron-icon>
               <span>Home</span>
             </a>
-            <a data-route="users" href="/users">
-              <iron-icon icon="info"></iron-icon>
-              <span>Users</span>
-            </a>
-            <a data-route="contact" href="/contact">
+            <a data-route="movie-search" href="/movie-search">
               <iron-icon icon="mail"></iron-icon>
-              <span>Contact</span>
+              <span>Lista prezentacji</span>
+            </a>
+            <a data-route="edit-presentation" href="/edit-presentation">
+              <iron-icon icon="create"></iron-icon>
+              <span>Edit presentation</span>
             </a>
           </paper-menu>
       </div>
-      <!--<div main> Main panel... </div>-->
-      <paper-drawer-panel id="mainDrawerPanel" class="main-drawer-panel" main responsive-width="600px"
-                          drawer-width="[[_computeListWidth(_isMobile)]]" drawer-toggle-attribute="list-toggle"
-                          narrow="{{_isMobile}}">
-        <div drawer>
-          <paper-header-panel class="list-panel">
-            <!-- List Toolbar -->
-            <paper-toolbar>
-              <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-              <paper-input class="paper-input-test" error-message="Invalid input!" label="Input label"></paper-input>
-            </paper-toolbar>
+      <paper-header-panel class="content-panel" main>
+        <paper-toolbar>
+          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+          <paper-icon-button icon="arrow-back" list-toggle on-tap="goBack"></paper-icon-button>
+          <paper-input class="searchBox"
+                       label="Wyszukaj prezentację"
+                       no-label-float="true"
+                       value="{{searchPhrase}}"
+                       on-keydown="handleLectureSearch"
+                       style="width: 100%;"></paper-input>
+        </paper-toolbar>
+        <div class="content">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+            <section data-route="home">
+              <paper-material elevation="1">
+                <h2 >Cześć, miło Cię poznać.</h2>
+                <h3 >Może obejrzymy prezentację?</h3>
+              </paper-material>
+            </section>
+            <section data-route="presentation">
+              <paper-material elevation="1">
+                <youtube-slider video-id="{{params.id}}"></youtube-slider>
+              </paper-material>
+            </section>
 
-              <!-- List -->
-              <paper-menu class="list" on-iron-activate="_listTap">
-                <a data-route="presentation" href="/presentation/w0AOGeqOnFY">
-                  <div style="padding: 10px;">
-                    <img src="https://i.ytimg.com/vi/w0AOGeqOnFY/mqdefault.jpg" style="width: 70px;">
-                  </div>
-                  <span>The Coconut Song - (Da Coconut Nut)</span>
-                </a>
+            <section data-route="movie-search">
+              <paper-material elevation="1">
+                <h2 class="paper-font-display2">Lista prezentacji</h2>
+                <paper-header-panel class="list-panel">
+                  <paper-menu class="list" on-iron-activate="_listTap">
+                    <a data-route="presentation" href="/presentation/wZHU-U9WzNc">
+                      <div style="padding: 10px;">
+                        <img src="https://i.ytimg.com/vi/wZHU-U9WzNc/mqdefault.jpg" style="width: 70px;">
+                      </div>
+                      <span>Modern Enterprise Java Architectures with Spring 3.1</span>
+                    </a>
+                  </paper-menu>
+                </paper-header-panel>
+              </paper-material>
+            </section>
 
-                <a data-route="presentation" href="/presentation/xb_PyKuI7II">
-                  <div style="padding: 10px;">
-                    <img src="https://i.ytimg.com/vi/xb_PyKuI7II/mqdefault.jpg" style="width: 70px;">
-                  </div>
-                  <span>Get Perpendicular</span>
-                </a>
-                <a data-route="presentation" href="/presentation/Sagg08DrO5U">
-                  <div style="padding: 10px;">
-                    <img src="https://i.ytimg.com/vi/Sagg08DrO5U/mqdefault.jpg" style="width: 70px;">
-                  </div>
-                  <span>Gandalf Sax guy 10 Hours</span>
-                </a>
-                <a data-route="presentation" href="/presentation/Tumd-t0c6XA">
-                  <div style="padding: 10px;">
-                    <img src="https://i.ytimg.com/vi/Tumd-t0c6XA/mqdefault.jpg" style="width: 70px;">
-                  </div>
-                  <span>Jak pan spędził wakacje?</span>
-                </a>
+            <section data-route="edit-presentation">
+              <paper-material elevation="1" class="row">
+                <div class="col-md-8">
+                  <google-youtube
+                          id="googleYoutube"
+                          video-id="wZHU-U9WzNc"
+                          height="400px"
+                          width="540px"
+                          rel="0"
+                          start="0"
+                          autoplay="0"
+                          style="width:540px; margin: auto;">
+                  </google-youtube>
 
-            </paper-menu>
-          </paper-header-panel>
+                  <map-slide></map-slide>
+
+                  <time-to-slide-mappings></time-to-slide-mappings>
+                </div>
+                <slide-list class="col-md-4"></slide-list>
+              </paper-material>
+            </section>
+
+          </iron-pages>
         </div>
-
-        <paper-header-panel class="content-panel" main>
-          <!-- Main Toolbar -->
-          <paper-toolbar>
-            <paper-icon-button icon="arrow-back" list-toggle></paper-icon-button>
-          </paper-toolbar>
-          <!-- Main Content -->
-          <div class="content">
-            <iron-pages attr-for-selected="data-route" selected="{{route}}">
-              <section data-route="home">
-                <paper-material elevation="1">
-                  <my-greeting></my-greeting>
-                  <p class="paper-font-subhead">You now have:</p>
-                  <my-list></my-list>
-                  <p class="paper-font-body2">Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-                </paper-material>
-                <paper-material elevation="1">
-                  <p class="paper-font-body2">This is another card.</p>
-                </paper-material>
-                <paper-material elevation="1" class="paper-font-body2">
-                  <h1 id="license">License</h1>
-                  <p>Everything in this repo is BSD style license unless otherwise specified.</p>
-                  <p>Copyright (c) 2015 The Polymer Authors. All rights reserved.</p>
-                  <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-                  <ul>
-                    <li>Redistributions of source code must retain the above copyright
-                      notice, this list of conditions and the following disclaimer.</li>
-                    <li>Redistributions in binary form must reproduce the above
-                      copyright notice, this list of conditions and the following disclaimer
-                      in the documentation and/or other materials provided with the
-                      distribution.</li>
-                    <li>Neither the name of Google Inc. nor the names of its
-                      contributors may be used to endorse or promote products derived from
-                      this software without specific prior written permission.</li>
-                  </ul>
-                  <p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-                </paper-material>
-              </section>
-              <section data-route="presentation">
-                <paper-material elevation="1">
-                  <youtube-slider video-id="{{params.id}}"></youtube-slider>
-                </paper-material>
-              </section>
-              <section data-route="users">
-                <paper-material elevation="1">
-                  <h2 class="paper-font-display2">Users</h2>
-                  <p>This is the users section</p>
-                  <a href="/users/Rob">Rob</a>
-                </paper-material>
-              </section>
-              <section data-route="user-info">
-                <paper-material elevation="1">
-                  <h2 class="paper-font-display2">
-                    User:<span>{{params.name}}</span>
-                  </h2>
-                  <div>This is <span>{{params.name}}</span>'s section</div>
-                </paper-material>
-              </section>
-
-              <section data-route="contact">
-                <paper-material elevation="1">
-                  <h2 class="paper-font-display2">Contact</h2>
-                  <p>This is the contact section</p>
-                </paper-material>
-              </section>
-            </iron-pages>
-          </div>
-        </paper-header-panel>
-      </paper-drawer-panel>
+      </paper-header-panel>
     </paper-drawer-panel>
 
-  </template>
 
-  <!-- build:js scripts/app.js -->
+
+    <iron-ajax
+            id="ajax"
+            url="http://localhost:9001/v1/lectures"
+            handle-as="json"
+            auto
+            >
+    </iron-ajax>
+
+  </template>
   <script src="scripts/app.js"></script>
-  <!-- endbuild-->
 </body>
 
 </html>
