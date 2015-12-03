@@ -15,9 +15,10 @@ trait Routes extends LecturesApi with CorsSupport {
     `Access-Control-Allow-Credentials`(corsAllowCredentials)
   )
 
-  val routes = pathPrefix("v1") {
+  def routes(fileUploadDirectory: String) = pathPrefix("v1") {
       cors{lecturesListRoute }~
       cors{lectureCreateRoute }~
-      cors{lectureDetailsRoute}
+      cors{lectureDetailsRoute}~
+      cors{pdfUploadRoute(fileUploadDirectory)}
   } ~ path("")(getFromResource("public/index.html"))
 }

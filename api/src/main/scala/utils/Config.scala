@@ -8,4 +8,5 @@ trait Config {
 
   val httpInterface = httpConfig.getString("interface")
   val httpPort = httpConfig.getInt("port")
+  val fileUploadDirectory = config.getString("file.upload.directory")
 }
