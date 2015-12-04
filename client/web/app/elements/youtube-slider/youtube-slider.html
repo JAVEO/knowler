@@ -1,6 +1,4 @@
-
 <dom-module id="youtube-slider">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <style>
         .tempSecondsPicker{
             padding: 10px;
@@ -30,15 +28,17 @@
     </style>
 
     <template>
+        <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
+
         <div class="row">
-            <div class="text-center"><span>{{playerTime}}</span></div>
-            <div class="text-center"><span>{{imgUrl}}</span></div>
+            <div class="text-center col-md-6"><span>{{playerTime}}</span></div>
+            <div class="text-center col-md-6"><span>{{imgUrl}}</span></div>
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 show show-video">
                 <google-youtube
                         id="googleYoutube"
-                        video-id="{{videoId}}"
+                        video-id="{{lecture.videoUrl}}"
                         rel="0"
                         start="0"
                         autoplay="0"
@@ -72,7 +72,8 @@
                 videoId: {
                     type: String,
                     notify: true,
-                    reflectToAttribute: true
+                    reflectToAttribute: true,
+                    observer: "videoChanged"
                 },
                 imgUrl: {
                     type: String,
@@ -106,7 +107,7 @@
                         19: "src/spring/output-7.png",
                         20: "src/spring/output-8.png",
                         21: "src/spring/output-9.png",
-                        22: "src/spring/output-10.png",
+                        22: "src/spring/output-10.png"
                     }
                 },
                 slidesMappings: {
@@ -142,14 +143,15 @@
             },
             clickedSlide: function(e){
                 console.log("youtubeslider-choose time&slide");
-                console.log(e);
-                this.$.googleYoutube.seekTo(e.detail[0]);
+                console.log("to time: ", e.detail[0]);
+
+                this.async(function(){this.$.googleYoutube.seekTo(e.detail[0])}, 10);
                 this.$.imgDisplay.set("img", this.images[e.detail[1]]);
             },
             playerChanged: function(time){
                 console.log("playerChanged");
                 console.log(time);
-                var image = this.images[this.findCurrentImage(time)]
+                var image = this.images[this.findCurrentImage(time)];
                 console.log(image);
                 if(this.imgUrl != image) this.set("imgUrl", image);
             },
@@ -159,13 +161,20 @@
                 for(var i = 0; i< secToSlides.length; i++){
                     if(i>0 && secToSlides[i][0] > time){
                         id = secToSlides[i-1][1];
-                        console.log(secToSlides[i-1][0], time)
+                        console.log(secToSlides[i-1][0], time);
                         break;
                     }
                 }
-                console.log("id: ", id)
-                this.images[id][1]
+                console.log("id: ", id);
+                this.images[id][1];
                 return id;
+            },
+            lecturesResponse: function(e){
+                console.log("oneslide response", e)
+            },
+            videoChanged: function(){
+                console.log("video ID: ", this.videoId)
+                this.$.lectures.get(this.videoId);
             },
             ready: function(){
                 console.log("width: ", window.innerWidth);

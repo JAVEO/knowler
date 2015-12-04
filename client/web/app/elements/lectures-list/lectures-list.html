@@ -1,0 +1,48 @@
+<dom-module id="lectures-list">
+    <style>
+
+    </style>
+    <template>
+        <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
+
+        <h2 class="paper-font-display2">Lista prezentacji</h2>
+        <paper-header-panel class="list-panel">
+            <paper-menu class="list" on-iron-activate="_listTap">
+                <template is="dom-repeat" items="{{lectures}}">
+                    <div style="padding: 5px;">
+                        <a data-route="presentation" href$="/presentation/{{item.id}}">
+                            <span style="padding: 10px;">
+                                <img src$="https://i.ytimg.com/vi/{{item.videoUrl}}/mqdefault.jpg" style="width: 70px;">
+                            </span>
+                            <span>Modern Enterprise Java Architectures with Spring 3.1 --###</span><span>{{index}}</span>
+                        </a>
+                    </div>
+                </template>
+            </paper-menu>
+        </paper-header-panel>
+
+        <paper-button style="margin-top: 30px;" raised on-tap="newTempLecture">Dodaj nowy testowy filmik</paper-button>
+    </template>
+    <script>
+        Polymer({
+            is: 'lectures-list',
+            properties: {
+                lectures: Object
+            },
+            newTempLecture: function(){
+                this.$.lectures.create({
+                    "videoUrl":"wZHU-U9WzNc",
+                    "title":"To jest testowy filmik pokazujący działąnie api!",
+                    "fileName":"Jeszcze nie wymyślono!"
+                });
+                location.reload();
+            },
+            lecturesResponse: function(a){
+                console.log("response in lectures list", this.lectures);
+            },
+            ready: function () {
+                this.$.lectures.query()
+            }
+        });
+    </script>
+</dom-module>
