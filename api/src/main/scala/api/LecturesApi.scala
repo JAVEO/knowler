@@ -7,7 +7,6 @@ import akka.http.scaladsl.marshalling.{Marshaller, ToResponseMarshaller}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
-import akka.stream.io.SynchronousFileSink
 import akka.stream.scaladsl.{Sink, Source}
 import akka.util.ByteString
 import model.LectureCreate
@@ -26,7 +25,7 @@ trait LecturesApi {
 
   implicit val upickleFromRequestUnmarshaller: FromRequestUnmarshaller[LectureCreate] = {
     new Unmarshaller[HttpRequest, LectureCreate] {
-      def apply(req: HttpRequest)(implicit ec: ExecutionContext): Future[LectureCreate] = {
+      def apply(req: HttpRequest)(implicit ec: ExecutionContext, materializer: Materializer): Future[LectureCreate] = {
         req.entity.withContentType(ContentTypes.`application/json`).toStrict(1.second)
           .map(_.data.toArray).map(x => read[LectureCreate](new String(x)))
       }
@@ -77,7 +76,7 @@ trait LecturesApi {
         entity(as[Multipart.FormData]) { entity =>
           val files: Source[String, Any] = entity.parts.mapAsync(parallelism = 4) { bodyPart =>
             val filePath = fileUploadDirectory + "/" + bodyPart.filename.getOrElse("temp")
-            bodyPart.entity.dataBytes.runWith(SynchronousFileSink(new File(filePath))).map(a => filePath)
+            bodyPart.entity.dataBytes.runWith(Sink.file(new File(filePath))).map(a => filePath)
           }
           complete(files)
         }

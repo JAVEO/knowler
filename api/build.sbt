@@ -7,18 +7,13 @@ scalaVersion := "2.11.7"
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= {
-  val akkaStreamVersion = "1.0"
-  val akkaVersion = "2.3.12"
+  val akkaStreamVersion = "2.0-M2"
 
   Seq(
-    "com.typesafe.akka" %% "akka-actor"                           % akkaVersion,
     "com.typesafe.akka" %% "akka-stream-experimental"             % akkaStreamVersion,
     "com.typesafe.akka" %% "akka-http-experimental"               % akkaStreamVersion,
     "com.typesafe.akka" %% "akka-http-core-experimental"          % akkaStreamVersion,
-    "com.typesafe.akka" %% "akka-http-spray-json-experimental"    % akkaStreamVersion,
-    "com.typesafe.akka" %% "akka-http-testkit-experimental"       % akkaStreamVersion,
     "org.scalatest"     %% "scalatest"                            % "2.2.5" % "test",
-    "com.typesafe.akka" %% "akka-testkit"                         % akkaVersion % "test",
     "org.reactivemongo" %% "reactivemongo" % "0.11.3",
     "com.lihaoyi" %% "upickle" % "0.3.4",
     "joda-time" % "joda-time" % "2.4",
