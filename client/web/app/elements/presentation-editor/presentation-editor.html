@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <google-youtube
                     id="presentation"
-                    video-id="wZHU-U9WzNc"
+                    video-id="[[lecture.videoUrl]]"
                     height="400px"
                     width="540px"
                     rel="0"
@@ -21,11 +21,20 @@
             <time-to-slide-mappings id="timeToSlideMappings"></time-to-slide-mappings>
         </div>
         <slide-list class="col-md-4" on-slide-selected="_updateSelectedSlide"></slide-list>
+
+
+        <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
     </template>
     <script>
         Polymer({
             is: 'presentation-editor',
             properties: {
+                lectureId: {
+                    type: String,
+                    notify: true,
+                    reflectToAttribute: true,
+                    observer: "_lectureChanged"
+                }
             },
             _updateSelectedTime: function (e) {
                 var time = e.detail.value;
@@ -36,6 +45,9 @@
             },
             _saveNewMapping: function (e) {
                 this.$.timeToSlideMappings.addNewMapping(e.detail.time, e.detail.slide);
+            },
+            _lectureChanged: function () {
+                this.$.lectures.get(this.lectureId);
             }
         });
     </script>
