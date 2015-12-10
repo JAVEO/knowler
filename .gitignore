@@ -13,10 +13,13 @@ api/out
 api/.idea_modules
 api/.classpath
 api/.project
+api/*.txt
 /RUNNING_PID
 /.settings
 
 .idea/*
+api/*.pdf
+api/tmp/*.pdf
 
 client/web/bower_components/*
 client/web/.tmp/*
