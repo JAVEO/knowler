@@ -30,7 +30,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>
+                    <td class="col-md-3">
                         <paper-input value="{{time}}" readonly></paper-input>
                     </td>
                     <td>
@@ -43,7 +43,7 @@
             </tbody>
         </table>
 
-        <paper-button raised="">Dodaj nowe powiązanie</paper-button>
+        <paper-button raised on-tap="_newMapping">Dodaj nowe powiązanie</paper-button>
     </template>
     <script>
         Polymer({
@@ -51,6 +51,7 @@
             properties: {
                 time: {
                     type: String,
+                    value: '00:00',
                     notify: true
                 },
                 slide: {
@@ -58,8 +59,14 @@
                     notify: true
                 }
             },
+            _newMapping: function (e) {
+                var self = this;
+                this.fire('new-slide-mapping', {
+                    time: self.time,
+                    slide: self.slide
+                });
+            },
             ready: function () {
-                this.time = "04:32";
                 this.slide = {
                     imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Czym%20jest%20Polymer&w=150&h=150&bg=3F51B5",
                     caption: "Czym jest Polymer"

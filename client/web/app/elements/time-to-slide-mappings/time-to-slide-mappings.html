@@ -21,6 +21,7 @@
     </style>
     <template>
         <h3>Mapowania slajdów</h3>
+
         <div>
             <table class="table">
                 <thead>
@@ -28,10 +29,11 @@
                     <th>L.p.</th>
                     <th>Czas</th>
                     <th>Slajd</th>
+                    <th>Akcja</th>
                 </tr>
                 </thead>
                 <tbody is="selectable-table">
-                <template is="dom-repeat" items="{{mappings}}">
+                <template is="dom-repeat" items="{{mappings}}" sort="_sort">
                     <tr>
                         <td>{{index}}</td>
                         <td>{{item.time}}</td>
@@ -40,6 +42,9 @@
                                 <img src="{{item.slide.imageUrl}}" height="50px">
                                 <figcaption>{{item.slide.caption}}</figcaption>
                             </figure>
+                        </td>
+                        <td>
+                            <paper-icon-button icon="icons:delete" title="Usuń" on-tap="_onRemoveMapping"></paper-icon-button>
                         </td>
                     </tr>
                 </template>
@@ -52,41 +57,23 @@
             is: 'time-to-slide-mappings',
             properties: {
                 mappings: {
-                    type: Object,
+                    type: Array,
+                    value: [],
                     notify: true
                 }
             },
-            ready: function () {
-                this.mappings = [
-                    {
-                        time: "00:00",
-                        slide: {
-                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Czym%20jest%20Polymer&w=150&h=150&bg=3F51B5",
-                            caption: "Czym jest Polymer"
-                        }
-                    },
-                    {
-                        time: "01:34",
-                        slide: {
-                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Zalety&w=150&h=150&bg=3F51B5",
-                            caption: "Zalety"
-                        }
-                    },
-                    {
-                        time: "04:21",
-                        slide: {
-                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady&w=150&h=150&bg=3F51B5",
-                            caption: "Wady"
-                        }
-                    },
-                    {
-                        time: "05:18",
-                        slide: {
-                            imageUrl: "https://placeholdit.imgix.net/~text?txtsize=14&txt=Wady%20-%20ci%C4%85g%20dalszy&w=150&h=150&bg=3F51B5",
-                            caption: "Wady - ciąg dalszy"
-                        }
-                    }
-                ];
+            addNewMapping: function (time, slide) {
+                this.push('mappings', {time: time, slide: slide});
+            },
+            _onRemoveMapping: function (e) {
+                // good enough for today
+                var indexOf = this.mappings.indexOf(e.model.item);
+
+                this.splice('mappings', indexOf, 1);
+            },
+            _sort: function (a, b) {
+                // good enough for today
+                return a.time.localeCompare(b.time);
             }
         });
     </script>

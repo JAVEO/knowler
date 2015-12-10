@@ -16,7 +16,7 @@
         <h3>Wszystkie slajdy</h3>
 
         <div>
-            <iron-selector selected="0">
+            <iron-selector id="slideSelector" selected="0" on-iron-select="_onItemSelected">
                 <template is="dom-repeat" items="{{slides}}">
                     <figure>
                         <img src="{{item.imageUrl}}">
@@ -55,6 +55,17 @@
                         caption: "Wady - ciąg dalszy"
                     }
                 ];
+            },
+            _onItemSelected: function (e) {
+
+                var selectedIndex = this.$.slideSelector.selected;
+                var self = this;
+
+                this.fire("slide-selected", {
+                    id: selectedIndex,
+                    imageUrl: self.slides[selectedIndex].imageUrl,
+                    caption: self.slides[selectedIndex].caption
+                })
             }
         });
     </script>

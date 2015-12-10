@@ -1,0 +1,42 @@
+<dom-module id="presentation-editor">
+    <style>
+
+    </style>
+    <template>
+        <div class="col-md-8">
+            <google-youtube
+                    id="presentation"
+                    video-id="wZHU-U9WzNc"
+                    height="400px"
+                    width="540px"
+                    rel="0"
+                    start="0"
+                    autoplay="0"
+                    on-currenttimeformatted-changed="_updateSelectedTime"
+                    style="width:540px; margin: auto;">
+            </google-youtube>
+
+            <map-slide id="mapSlide" on-new-slide-mapping="_saveNewMapping"></map-slide>
+
+            <time-to-slide-mappings id="timeToSlideMappings"></time-to-slide-mappings>
+        </div>
+        <slide-list class="col-md-4" on-slide-selected="_updateSelectedSlide"></slide-list>
+    </template>
+    <script>
+        Polymer({
+            is: 'presentation-editor',
+            properties: {
+            },
+            _updateSelectedTime: function (e) {
+                var time = e.detail.value;
+                this.$.mapSlide.time = (time.length === 4 ? '0' + time : time);
+            },
+            _updateSelectedSlide: function (e) {
+                this.$.mapSlide.slide = e.detail;
+            },
+            _saveNewMapping: function (e) {
+                this.$.timeToSlideMappings.addNewMapping(e.detail.time, e.detail.slide);
+            }
+        });
+    </script>
+</dom-module>
