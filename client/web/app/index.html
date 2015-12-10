@@ -57,10 +57,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <iron-icon icon="mail"></iron-icon>
               <span>Lista prezentacji</span>
             </a>
-            <a data-route="edit-presentation" href="/edit-presentation">
-              <iron-icon icon="create"></iron-icon>
-              <span>Edit presentation</span>
-            </a>
           </paper-menu>
       </div>
       <paper-header-panel class="content-panel" main>
@@ -96,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <section data-route="edit-presentation">
               <paper-material elevation="1" class="row">
-                <presentation-editor></presentation-editor>
+                <presentation-editor lecture-id="{{params.id}}"></presentation-editor>
               </paper-material>
             </section>
 

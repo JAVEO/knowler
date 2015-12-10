@@ -1,13 +1,15 @@
 <dom-module id="lectures-list">
     <style>
-
+        a > paper-button {
+            color: black;
+        }
     </style>
     <template>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
 
         <h2 class="paper-font-display2">Lista prezentacji</h2>
         <paper-header-panel class="list-panel">
-            <paper-menu class="list" on-iron-activate="_listTap">
+            <paper-menu class="list" on-iron-activate="_listTap" selectable="none">
                 <template is="dom-repeat" items="{{lectures}}">
                     <div style="padding: 5px;">
                         <a data-route="presentation" href$="/presentation/{{item.id}}">
@@ -16,6 +18,7 @@
                             </span>
                             <span>Modern Enterprise Java Architectures with Spring 3.1 --###</span><span>{{index}}</span>
                         </a>
+                        <a href$="/presentation/{{item.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
                     </div>
                 </template>
             </paper-menu>
