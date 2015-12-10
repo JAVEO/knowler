@@ -1,0 +1,42 @@
+<dom-module id="lectures-service">
+    <template>
+        <iron-ajax
+                id="ajax"
+                last-response="{{lastResponse}}"
+                on-response="response"
+                ></iron-ajax>
+    </template>
+    <script>
+        Polymer({
+            is: "lectures-service",
+            properties:{
+                lastResponse: {
+                    type: Object,
+                    notify: true,
+                    readOnly: false
+                }
+            },
+            url: "http://localhost:9001/v1",
+            queryAll: "/lectures",
+            query: function(){
+                this.$.ajax.url = this.url + this.queryAll;
+                this.$.ajax.generateRequest();
+            },
+            create: function(data){
+                console.log("data for post: ", data)
+                this.$.ajax.url = this.url + this.queryAll;
+                this.$.ajax.body = data;
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "POST";
+                this.$.ajax.generateRequest();
+            },
+            get: function(lectureId){
+                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
+                this.$.ajax.generateRequest();
+            },
+            response: function(a){
+                this.fire('response', a);
+            }
+        });
+    </script>
+</dom-module>
