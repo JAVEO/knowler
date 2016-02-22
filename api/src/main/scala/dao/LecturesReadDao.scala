@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
-object LecturesDetailsDao {
+object LecturesReadDao {
   implicit object LectureReader extends BSONDocumentReader[LectureRead] {
     def read(doc: BSONDocument): LectureRead = {
       val id = doc.getAs[BSONObjectID]("_id").get.stringify
@@ -19,8 +19,17 @@ object LecturesDetailsDao {
     }
   }
 
-  def findById(id: String): Future[List[LectureRead]] = {
+  def findById(id: String): Future[Option[LectureRead]] = {
     val query = BSONDocument("_id" -> BSONObjectID(id))
+    findByQuery(query).map(_.headOption)
+  }
+
+  def findAll: Future[List[LectureRead]] = {
+    val query = BSONDocument()
+    findByQuery(query)
+  }
+
+  private def findByQuery(query: BSONDocument): Future[List[LectureRead]] = {
     Database.collection.find(query).cursor[LectureRead].collect[List]()
   }
 }

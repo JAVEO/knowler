@@ -64,3 +64,14 @@ http://reactivemongo.org/
 Error akka-http (required marshaller):
 
 https://github.com/akka/akka/issues/17754
+
+
+RUN SERVER
+===============
+cd api/
+activator run
+
+RUN CLIENT
+==============
+cd client/
+gulp serve
