@@ -1,1 +1,6 @@
 GET     /                           controllers.Application.index
+
+GET     /lectures                   controllers.Lectures.list
+POST    /lectures                   controllers.Lectures.create
+GET     /lectures/:id               controllers.Lectures.details(id)
+PUT     /lectures/:id/mapping       controllers.Lectures.addMapping(id)
