@@ -37,12 +37,7 @@
                     <tr>
                         <td>{{index}}</td>
                         <td>{{item.time}}</td>
-                        <td>
-                            <figure class="slide">
-                                <img src="{{item.slide.imageUrl}}" height="50px">
-                                <figcaption>{{item.slide.caption}}</figcaption>
-                            </figure>
-                        </td>
+                        <td>{{item.slide}}</td>
                         <td>
                             <paper-icon-button icon="icons:delete" title="Usuń" on-tap="_onRemoveMapping"></paper-icon-button>
                         </td>

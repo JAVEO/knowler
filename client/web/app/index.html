@@ -78,9 +78,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <h3 >Może obejrzymy prezentację?</h3>
               </paper-material>
             </section>
-            <section data-route="presentation">
+            <section data-route="view-lecture">
               <paper-material elevation="1">
-                <youtube-slider video-id="{{params.id}}"></youtube-slider>
+                <lecture-view video-id="{{params.id}}"></lecture-view>
               </paper-material>
             </section>
 
@@ -90,9 +90,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-material>
             </section>
 
-            <section data-route="edit-presentation">
+            <section data-route="edit-lecture">
               <paper-material elevation="1" class="row">
-                <presentation-editor lecture-id="{{params.id}}"></presentation-editor>
+                <lecture-editor lecture-id="{{params.id}}"></lecture-editor>
+              </paper-material>
+            </section>
+
+            <section data-route="add-lecture">
+              <paper-material elevation="1" >
+                <lecture-creator></lecture-creator>
               </paper-material>
             </section>
 

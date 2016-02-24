@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="../../../bower_components/bootstrap/dist/css/bootstrap.min.css">
 
-<dom-module id="youtube-slider">
+<dom-module id="lecture-view">
     <style>
         .tempSecondsPicker{
             padding: 10px;
@@ -32,6 +32,9 @@
     <template>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
 
+        <div class="row">
+            <a href$="/lecture/{{lecture.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
+        </div>
         <div class="row">
             <div class="text-center col-md-6"><span>{{playerTime}}</span></div>
             <div class="text-center col-md-6"><span>{{imgUrl}}</span></div>
@@ -65,7 +68,7 @@
 
     <script>
         Polymer({
-            is: "youtube-slider",
+            is: "lecture-view",
             properties: {
                 videoHeight:{
                     type: Number,

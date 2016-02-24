@@ -16,7 +16,7 @@
                     readOnly: false
                 }
             },
-            url: "http://localhost:9001/v1",
+            url: "http://localhost:9000",
             queryAll: "/lectures",
             query: function(){
                 this.$.ajax.url = this.url + this.queryAll;
@@ -32,6 +32,14 @@
             },
             get: function(lectureId){
                 this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
+                this.$.ajax.generateRequest();
+            },
+            addMapping: function(lectureId, data) {
+                console.log("add mapping: ", data)
+                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId + "/mapping";
+                this.$.ajax.body = data;
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "PUT";
                 this.$.ajax.generateRequest();
             },
             response: function(a){
