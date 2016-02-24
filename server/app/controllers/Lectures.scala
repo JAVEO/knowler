@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import play.modules.reactivemongo._
 import reactivemongo.api.commands.WriteResult
+import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -24,9 +25,14 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       .map(list => Ok(Json.toJson(list)))
   }
 
-  def create = Action.async(parse.json) { request =>
-    collection.insert(request.body.as[JsObject])
-      .map(result => Created(toJson(result)))
+  def create = Action.async(parse.json) { implicit request =>
+    val id = BSONObjectID.generate
+    val _id = BSONObjectIDFormat.partialWrites(id)
+    val document = request.body.as[JsObject]
+    val docWithId = document.+("_id" -> _id)
+    collection.insert(docWithId)
+      .map(result => Created(toJson(result))
+        .withHeaders(LOCATION -> routes.Lectures.details(id.stringify).absoluteURL()))
   }
 
   def details(id: String) = Action.async {
@@ -41,7 +47,7 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   def addMapping(id: String) = Action.async(parse.json) { request =>
     findById(id)
       .flatMap {
-        case head :: Nil => collection.update(idSelector(id), addToSetJson(request.body)).map(r => Ok(toJson(r)))
+        case head :: Nil => collection.update(idSelector(id), pushMapping(request.body)).map(r => Ok(toJson(r)))
         case Nil => Future.successful(NotFound)
         case _ => Future.successful(BadRequest)
       }
@@ -57,8 +63,8 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     (__ \ 'id).json.copyFrom( (__ \ '_id \ '$oid).json.pick ))
     .andThen((__ \ '_id).json.prune)
 
-  def addToSetJson(body: JsValue): JsObject =
-    Json.obj("$addToSet" -> Json.obj("mapping" -> body))
+  def pushMapping(body: JsValue): JsObject =
+    Json.obj("$push" -> Json.obj("mapping" -> body))
 
   def idSelector(id: String): JsObject =
     Json.obj("_id" -> Json.obj("$oid" -> id))
