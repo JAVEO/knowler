@@ -1,0 +1,20 @@
+This is your new Play application
+=================================
+
+This file will be packaged with your application, when using `activator dist`.
+
+
+
+curl -i http://localhost:9000/lectures
+
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+    -d '{ "videoUrl" : "https://www.youtube.com/watch?v=pHT1OWIsCbY", "title": " Michał Suchecki - Polymer", "file": ""}' \
+    http://localhost:9000/lectures
+
+curl -i http://localhost:9000/lectures/56cd68aa970600b106dceef4
+
+curl -i -X PUT -H "Content-Type: application/json; charset=utf-8" \
+    -d '{ "second" : "00:00", "slide": 1}' http://localhost:9000/lectures/56cd68aa970600b106dceef4/mapping
+
+curl -i -X PUT -H "Content-Type: application/json; charset=utf-8" \
+    -d '{ "second" : "00:10", "slide": 2}' http://localhost:9000/lectures/56cd68aa970600b106dceef4/mapping

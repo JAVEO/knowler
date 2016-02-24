@@ -1,9 +1,8 @@
 package service
 
-import dao.{LecturesDetailsDao, LecturesListDao, LecturesCreateDao}
+import dao.{LecturesReadDao, LecturesCreateDao}
 import model.{LectureRead, LectureCreate}
 import reactivemongo.api.commands.WriteResult
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object LecturesService {
@@ -11,8 +10,8 @@ object LecturesService {
     LecturesCreateDao.create(lecture)
 
   def findAll: Future[List[LectureRead]] =
-    LecturesListDao.findAll
+    LecturesReadDao.findAll
 
   def findById(id: String): Future[Option[LectureRead]] =
-    LecturesDetailsDao.findById(id).map(_.headOption)
+    LecturesReadDao.findById(id)
 }
