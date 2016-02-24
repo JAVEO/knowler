@@ -23,17 +23,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'movie-search';
     });
 
-    page('/presentation/add', function () {
-      app.route = 'add-presentation';
+    page('/lecture/add', function () {
+      app.route = 'add-lecture';
     });
 
-    page('/presentation/:id', function (data) {
-      app.route = 'presentation';
+    page('/lecture/:id', function (data) {
+      app.route = 'view-lecture';
       app.params = data.params;
     });
 
-    page('/presentation/:id/edit', function (data) {
-      app.route = 'edit-presentation';
+    page('/lecture/:id/edit', function (data) {
+      app.route = 'edit-lecture';
       app.params = data.params;
     });
 
