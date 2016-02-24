@@ -24,21 +24,15 @@
             </paper-menu>
         </paper-header-panel>
 
-        <paper-button style="margin-top: 30px;" raised on-tap="newTempLecture">Dodaj nowy testowy filmik</paper-button>
+        <a href="/presentation/add">
+            <paper-button style="margin-top: 30px;" raised>Dodaj</paper-button>
+        </a>
     </template>
     <script>
         Polymer({
             is: 'lectures-list',
             properties: {
                 lectures: Object
-            },
-            newTempLecture: function(){
-                this.$.lectures.create({
-                    "videoUrl":"wZHU-U9WzNc",
-                    "title":"To jest testowy filmik pokazujący działanie api!",
-                    "fileName":"Jeszcze nie wymyślono!"
-                });
-                location.reload();
             },
             lecturesResponse: function(a){
                 console.log("response in lectures list", this.lectures);
