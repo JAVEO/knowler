@@ -18,7 +18,7 @@
 
             <map-slide id="mapSlide" on-new-slide-mapping="_saveNewMapping"></map-slide>
 
-            <time-to-slide-mappings id="timeToSlideMappings"></time-to-slide-mappings>
+            <time-to-slide-mappings id="timeToSlideMappings" mappings="{{lecture.mapping}}"></time-to-slide-mappings>
         </div>
         <slide-list class="col-md-4" on-slide-selected="_updateSelectedSlide"></slide-list>
 
@@ -45,6 +45,9 @@
             },
             _saveNewMapping: function (e) {
                 this.$.timeToSlideMappings.addNewMapping(e.detail.time, e.detail.slide);
+                this.$.lectures.addMapping(this.lectureId, {
+                "time": e.detail.time,
+                "slide": e.detail.slide.id});
             },
             _lectureChanged: function () {
                 this.$.lectures.get(this.lectureId);
