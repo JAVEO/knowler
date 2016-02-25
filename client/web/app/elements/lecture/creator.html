@@ -4,18 +4,22 @@
     <template>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
 
-        <div class="col-md-8">
-            <paper-button style="margin-top: 30px;" raised on-tap="newTempLecture">Dodaj nowy testowy filmik</paper-button>
-        </div>
+        <h2 class="paper-font-display2">Nowa prezentacja</h2>
+        <paper-input value="{{videoUrl}}" label="YouTube video id"></paper-input>
+        <paper-input value="{{title}}" label="Tytuł"></paper-input>
+        <paper-button style="margin-top: 30px;" raised on-tap="newTempLecture">Dodaj</paper-button>
     </template>
     <script>
         Polymer({
             is: 'lecture-creator',
+            properties: {
+                videoUrl: String,
+                title: String
+            },
             newTempLecture: function(){
                 this.$.lectures.create({
-                    "videoUrl":"wZHU-U9WzNc",
-                    "title":"To jest testowy filmik pokazujący działanie api!",
-                    "fileName":"Jeszcze nie wymyślono!"
+                    "videoUrl": this.videoUrl,
+                    "title":this.title
                 });
                 location.reload();
             },
