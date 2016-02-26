@@ -12,7 +12,7 @@
                     rel="0"
                     start="0"
                     autoplay="0"
-                    on-currenttimeformatted-changed="_updateSelectedTime"
+                    on-currenttime-changed="_updateSelectedTime"
                     style="width:540px; margin: auto;">
             </google-youtube>
 
@@ -37,8 +37,7 @@
                 }
             },
             _updateSelectedTime: function (e) {
-                var time = e.detail.value;
-                this.$.mapSlide.time = (time.length === 4 ? '0' + time : time);
+                this.$.mapSlide.time = e.detail.value;
             },
             _updateSelectedSlide: function (e) {
                 this.$.mapSlide.slide = e.detail;

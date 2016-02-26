@@ -3,22 +3,26 @@
         a > paper-button {
             color: black;
         }
+        .card-content {
+            width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
     <template>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
 
-        <h2 class="paper-font-display2">Lista prezentacji</h2>
+        <h2 class="paper-font-display2">Prezentacje</h2>
+
         <paper-header-panel class="list-panel">
             <paper-menu class="list" on-iron-activate="_listTap" selectable="none">
                 <template is="dom-repeat" items="{{lectures}}">
-                    <div style="padding: 5px;">
-                        <a data-route="view-lecture" href$="/lecture/{{item.id}}">
-                            <span style="padding: 10px;">
-                                <img src$="https://i.ytimg.com/vi/{{item.videoUrl}}/mqdefault.jpg" style="width: 70px;">
-                            </span>
-                            <span>{{item.title}}</span>
-                        </a>
-                    </div>
+                    <a data-route="view-lecture" href$="/lecture/{{item.id}}">
+                        <paper-card image="https://i.ytimg.com/vi/{{item.videoUrl}}/mqdefault.jpg">
+                            <div class="card-content">{{item.title}}</div>
+                        </paper-card>
+                    </a>
                 </template>
             </paper-menu>
         </paper-header-panel>
