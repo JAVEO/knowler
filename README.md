@@ -73,5 +73,6 @@ activator run
 
 RUN CLIENT
 ==============
-cd client/
+cd client/web/
+npm install
 gulp serve
