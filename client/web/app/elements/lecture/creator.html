@@ -19,7 +19,8 @@
             newTempLecture: function(){
                 this.$.lectures.create({
                     "videoUrl": this.videoUrl,
-                    "title":this.title
+                    "title":this.title,
+                    "mapping": []
                 });
                 location.reload();
             },
