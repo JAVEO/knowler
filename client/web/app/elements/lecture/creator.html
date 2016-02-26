@@ -5,7 +5,7 @@
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lectures}}"></lectures-service>
 
         <h2 class="paper-font-display2">Nowa prezentacja</h2>
-        <paper-input value="{{videoUrl}}" label="YouTube video id"></paper-input>
+        <paper-input value="{{videoUrl}}" label="YouTube video url or id"></paper-input>
         <paper-input value="{{title}}" label="Tytuł"></paper-input>
         <paper-button style="margin-top: 30px;" raised on-tap="newTempLecture">Dodaj</paper-button>
     </template>
@@ -16,16 +16,28 @@
                 videoUrl: String,
                 title: String
             },
+            transformVideoUrl: function(){
+                var vars = this.videoUrl.split(/[?,&]+/);
+                for (var i=0; i<vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] === "v") {
+                        console.log("Detected videoId: " + pair[1] + " in url: " + this.videoUrl);
+                        return pair[1];
+                    }
+
+                }
+                console.log("Parameter 'v' (videoId) not detected in url: " + this.videoUrl);
+                return this.videoUrl;
+            },
             newTempLecture: function(){
-                this.$.lectures.create({
-                    "videoUrl": this.videoUrl,
+               this.$.lectures.create({
+                    "videoUrl": this.transformVideoUrl(),
                     "title":this.title,
                     "mapping": []
                 });
-                location.reload();
             },
             lecturesResponse: function(a){
-                console.log("response in add lecture", a);
+                page('/lecture/' + event.detail.response.$oid)
             }
         });
     </script>

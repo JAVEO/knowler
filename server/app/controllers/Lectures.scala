@@ -31,7 +31,7 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     val document = request.body.as[JsObject]
     val docWithId = document.+("_id" -> _id)
     collection.insert(docWithId)
-      .map(result => Created(toJson(result))
+      .map(result => Created(_id)
         .withHeaders(LOCATION -> routes.Lectures.details(id.stringify).absoluteURL()))
   }
 
@@ -42,6 +42,11 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
         case Nil => NotFound
         case _ => BadRequest
       }
+  }
+
+  def delete(id: String) = Action.async {
+    val idSel = idSelector(id)
+    collection.remove(idSel).map(r => Ok(idSel))
   }
 
   def addMapping(id: String) = Action.async(parse.json) { request =>
