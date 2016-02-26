@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object LecturesCreateDao {
   implicit object LectureWriter extends BSONDocumentWriter[LectureCreate] {
     def write(lecture: LectureCreate): BSONDocument = BSONDocument(
-      "videoUrl" -> lecture.videoUrl,
+      "videoUrl" -> lecture.videoId,
       "title" -> lecture.title,
       "createdAt" -> DateTime.now.toString,
       "fileName" -> lecture.fileName)

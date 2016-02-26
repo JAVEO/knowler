@@ -24,16 +24,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/lecture/add', function () {
-      app.route = 'add-lecture';
-    });
-
-    page('/lecture/:id', function (data) {
-      app.route = 'view-lecture';
-      app.params = data.params;
+      app.route = 'edit-lecture';
     });
 
     page('/lecture/:id/edit', function (data) {
       app.route = 'edit-lecture';
+      app.params = data.params;
+    });
+
+    page('/lecture/:id', function (data) {
+      app.route = 'view-lecture';
       app.params = data.params;
     });
 

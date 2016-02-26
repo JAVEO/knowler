@@ -1,62 +1,249 @@
 <dom-module id="lecture-editor">
     <style>
-
+        .slider{
+            padding: 20px;
+            width: 100%;
+        }
+        .tool-bar {
+            @apply(--layout-horizontal);
+            @apply(--layout-justified);
+        }
+        .green {
+            color: var(--paper-green-300);
+        }
+        .mt-50 {
+            margin-top: 50px;
+        }
+        h2 {
+            color: var(--paper-blue-600);
+        }
     </style>
     <template>
-        <div class="col-md-8">
-            <google-youtube
-                    id="presentation"
-                    video-id="[[lecture.videoUrl]]"
-                    height="400px"
-                    width="540px"
-                    rel="0"
-                    start="0"
-                    autoplay="0"
-                    on-currenttime-changed="_updateSelectedTime"
-                    style="width:540px; margin: auto;">
-            </google-youtube>
-
-            <map-slide id="mapSlide" on-new-slide-mapping="_saveNewMapping"></map-slide>
-
-            <time-to-slide-mappings id="timeToSlideMappings" mappings="{{lecture.mapping}}"></time-to-slide-mappings>
+        <h2>Base data</h2>
+        <div class="row">
+            <div class="col-sm-6">
+                <paper-input value="{{lecture.title}}" label="Title"></paper-input>
+            </div>
         </div>
-        <slide-list class="col-md-4" on-slide-selected="_updateSelectedSlide"></slide-list>
+        <div class="row">
+            <div class="col-sm-6">
+                <paper-input value="{{lecture.description}}" label="Description"></paper-input>
+            </div>
+        </div>
 
+        <h2 class="mt-50">Presentation edit</h2>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <paper-input value="{{videoUrl}}" label="YouTube URL"></paper-input>
+                <google-youtube
+                        id="presentation"
+                        autoplay="1"
+                        video-id="{{lecture.videoId}}"
+                        height="{{videoHeight}}px"
+                        width="100%"
+                        rel="0"
+                        start="0"
+                        autoplay="0"
+                        on-google-youtube-ready="_youtubeReady"
+                        on-google-youtube-state-change="_youtubeStateChanged"
+                        style="margin: auto;">
+                </google-youtube>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
+                <pdf-viewer on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 slider">
+                <time-grider id="timeGrider" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_updateSelectedSection"></time-grider>
+            </div>
+            <div class="col-sm-12">
+                <slide-list></slide-list>
+            </div>
+        </div>
 
-        <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
+        <div class="tool-bar">
+            <div class="layout horizontal">
+                <paper-input id="fromInput"  class="flex-none" label="Start time" value="{{timeFrom}}"></paper-input>
+                <paper-button id="fromButton" on-tap="timeFromChanged" class="self-end green"><iron-icon icon="check"></iron-icon></paper-button>
+            </div>
+            <div class="layout horizontal">
+                <paper-input id="toInput" class="flex-none" label="End time" value="{{timeTo}}"></paper-input>
+                <paper-button id=toButton on-tap="timeToChanged" class="self-end green"><iron-icon icon="check"></iron-icon></paper-button>
+            </div>
+            <div class="self-end">
+                <paper-button class="flex-none" toggles raised on-tap="delete"><iron-icon icon="delete"></iron-icon> Delete</paper-button>
+            </div>
+        </div>
+
+        <div class="text-center mt-50" style="display:block;">
+            <paper-button on-tap="save" class="success" raised>Zapisz</paper-button></a>
+        </div>
+
+        <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
     </template>
     <script>
         Polymer({
             is: 'lecture-editor',
             properties: {
+                videoHeight: {
+                    type: Number
+                },
+                selectedIndex: Number,
+                timeFrom: Number,
+                timeTo: Number,
+                videoUrl: {
+                    type: String,
+                    observer: "_videoUrlChanged"
+                },
+                lecture: {
+                    type: Object,
+                    notify: true
+                },
                 lectureId: {
                     type: String,
                     notify: true,
-                    reflectToAttribute: true,
-                    observer: "_lectureChanged"
+                    observer: "_loadNewLecture"
+                },
+                duration: {
+                    type: Number
+                },
+                currentSlide: {
+                    type: Number
+                },
+                pdfUrl: {
+                    type: String,
+                    value: "TODO changeMe"
+                },
+                pagesCount: {
+                    type: Number
                 }
             },
-            _updateSelectedTime: function (e) {
-                this.$.mapSlide.time = e.detail.value;
+            observers: [
+                'generateNewMappings(lecture.videoId, pdfUrl, duration, pagesCount)'
+            ],
+            pagesCountChanged: function(e) {
+                this.pagesCount = e.detail.value;
             },
-            _updateSelectedSlide: function (e) {
-                this.$.mapSlide.slide = e.detail;
+            _videoUrlChanged: function(videoUrl) {
+                if (videoUrl === undefined || videoUrl === "") {
+                    return;
+                }
+                var videoId = UrlUtils.getParam(videoUrl, "v");
+                this.set('lecture.videoId', videoId);
             },
-            _saveNewMapping: function (e) {
-                this.$.timeToSlideMappings.addNewMapping(e.detail.time, e.detail.slide);
-                this.$.lectures.addMapping(this.lectureId, {
-                "time": e.detail.time,
-                "slide": e.detail.slide.id});
+            _updateSelectedSection: function(e) {
+                var self = this;
+
+                function getNextTime(index) {
+                    if (index < self.lecture.mappings.length - 1) {
+                        return self.lecture.mappings[index + 1].time;
+                    }
+                    return self.duration;
+                }
+
+                this.selectedIndex = e.detail.index
+
+                console.log("Updating form");
+                this.timeFrom = this.lecture.mappings[this.selectedIndex].time.toHHMMSS();
+                this.timeTo = getNextTime(this.selectedIndex).toHHMMSS();
+
+                var isFirst = this.selectedIndex === 0;
+                this.$.fromButton.disabled = isFirst;
+                this.$.fromInput.disabled = isFirst;
+
+                var isLast = this.selectedIndex === this.lecture.mappings.length - 1;
+                this.$.toButton.disabled = isLast;
+                this.$.toInput.disabled = isLast;
+
+                console.log("Updating video and presentation view");
+                var selectedMapping = this.lecture.mappings[this.selectedIndex];
+                this.async(function() {
+                    this.$.presentation.seekTo(selectedMapping.time)
+                }, 10);
+                this.setCurrentSlide(selectedMapping.slide);
             },
-            _lectureChanged: function () {
+            setCurrentSlide: function(slide) {
+                this.set("currentSlide", slide);
+            },
+            getVideoDuration: function(response) {
+                return Math.round(response.detail.target.F.duration);
+            },
+            _youtubeReady: function(e) {
+                this.set('duration', this.getVideoDuration(e));
+            },
+            _youtubeStateChanged: function(e) {
+                var newDuration = this.getVideoDuration(e);
+                if (newDuration !== 0 && this.duration !== newDuration) {
+                    this.set('duration', newDuration);
+                }
+            },
+            _loadNewLecture: function() {
                 this.$.lectures.get(this.lectureId);
             },
-            ready: function(){
-                var googleYouTube  = this.$.presentation;
+            generateNewMappings: function(videoUrl, pdfUrl, duration, pagesCount) {
+                if (duration === 0) {
+                    console.log("Mappings will not be generated, duration: " + duration + " is not valid");
+                    return;
+                }
+
+                console.log("Generating default mappings");
+                var mappings = [];
+                var singleDur = this.duration / pagesCount;
+                for (var i = 0; i < pagesCount; i++) {
+                    mappings.push({
+                        time: Math.round(singleDur * i),
+                        slide: i
+                    });
+                }
+                this.set('lecture.mappings', mappings)
+            },
+            ready: function() {
+                this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
+
+                var self = this;
+                if (this.lectureId === undefined) {
+                    console.log("lectureId not found. Creating new object");
+                    this.lecture = {
+                        videoUrl: undefined,
+                        title: undefined,
+                        description: undefined,
+                        mappings: []
+                    }
+                }
+
                 page.exit('/lecture/:id/edit', function(ctx, next) {
-                    googleYouTube.pause();
+                    self.$.presentation.pause();
                     next();
                 });
+            },
+            save: function() {
+                this.$.lectures.create(this.lecture);
+            },
+            delete: function() {
+                this.lecture.mappings.splice(this.selectedIndex, 1);
+                this.$.timeGrider.mappingChanged();
+            },
+            updateMappingTime: function(str, mapping) {
+                var splitted = str.split(":");
+                if (splitted.length !== 3) {
+                    console.error("Invalid time format. Expected: HH:MM:SS, was: " + this);
+                    return;
+                }
+                var hoursSec = parseInt(splitted[0]) * 3600;
+                var minutesSec = parseInt(splitted[1]) * 60;
+                mapping.time = hoursSec + minutesSec + parseInt(splitted[2]);
+                this.$.timeGrider.mappingChanged();
+            },
+            timeFromChanged: function() {
+                this.updateMappingTime(this.timeFrom, this.lecture.mappings[this.selectedIndex]);
+            },
+            timeToChanged: function() {
+                this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
+            },
+            lecturesResponse: function() {
+                //page('/movie-search')
             }
         });
     </script>

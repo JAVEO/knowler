@@ -2,36 +2,41 @@
     <style is="custom-style">
         #grids{
             width: 100%;
-            height: 60px;
+            height: 55px;
 
             @apply(--layout-horizontal);
-            @apply(--layout-left);
-            background: white;
         }
-        .grid{
-            height: 60px;
-            position: relative;
+        .section-parent{
+            @apply(--layout-horizontal);
+        }
+        .draggable{
+            width: 5px;
+            height: 55px;
+        }
+        .dragging {
+            cursor: col-resize;
+        }
+        .dragging paper-button {
+            cursor:inherit;
         }
 
         paper-button.blue {
             background: var(--paper-light-blue-500);
             --paper-button-flat-focus-color: var(--paper-light-blue-50);
         }
-        paper-button.blue:hover {
-            background: var(--paper-light-blue-50);
-        }
-        paper-button.ripple {
-            --paper-button-ink-color: var(--paper-pink-a200);
+        paper-button.selected {
+            background: var(--paper-light-blue-200);
         }
         paper-button{
+            height: 55px;
+            width: 100%;
             min-width: 1px !important;
-            margin: 0 0 0 1px !important;
-            position: relative;
-            padding: 0 !important;
+            margin: 0 0 0 0px !important;
         }
 
     </style>
     <template>
+        <p style="z-index:10; position:fixed;" id="timeTooltip"></p>
         <div id="grids"></div>
     </template>
     <script>
@@ -39,53 +44,159 @@
             is: "time-grider",
             googleYoutube: document.getElementById("googleYoutube"),
             properties: {
-                    mappings:{
-                        type: Object,
-                        notify: true,
-                        observer: "mappingChanged"
-                    },
-                    duration:{
-                        type: Number,
-                        value: 3600,
-                        notify: true
-                    }
-            },
-            ready: function(){
-            },
-            mappingChanged: function(){
-                var self = this;
-                var secToSlides = this.mappings.sort(function(a, b){return a.time-b.time});;
-
-                for(var i = 0; i< secToSlides.length-1; i++){
-                    secToSlides[i].timeTo = (secToSlides[i+1].time - secToSlides[i].time);
+                editable: {
+                    type: Boolean,
+                    value: false
+                },
+                mappings: {
+                    type: Object,
+                    notify: true,
+                    observer: "mappingChanged"
+                },
+                duration: {
+                    type: Number,
+                    notify: true,
+                    observer: "mappingChanged"
                 }
-                secToSlides[secToSlides.length-1].timeTo = (this.duration - secToSlides[secToSlides.length-1].time);
+            },
+            ready: function() {},
+            mappingChanged: function() {
+                if (this.mappings === undefined || this.duration === undefined || this.mappings === undefined || this.mappings.length === 0) {
+                    return;
+                }
+                console.log("Mappings have changed: " + JSON.stringify(this.mappings));
 
-                var mouseOver = function(i){
-                    return function(e){
-                        console.log("over: "+ i +" !");
+                var self = this;
+                var secToSlides = this.mappings;
 
+                function getContainerId(num) {
+                    return "container-" + num;
+                }
+
+                function getSectionId(num) {
+                    return "section-" + num;
+                }
+
+                function getDraggableId(num) {
+                    return "draggable-" + num;
+                }
+
+                function calculateWidth(elemDur) {
+                    return (elemDur / self.duration) * 100 + "%";
+                }
+
+                function createGridCell(i, elemDur, draggable) {
+                    var container = document.createElement("div");
+                    container.id = getContainerId(i);
+                    container.className = "section-parent grid-elem";
+                    container.appendChild(createSection(i));
+                    container.style.width = calculateWidth(elemDur);
+                    if (draggable !== undefined) {
+                        container.appendChild(draggable);
                     }
-                };
-                var click = function(i){
-                    return function(e){
-                        console.log("click: "+ i +" !");
-                        self.fire('choose-slide', secToSlides[i]);
-                    }
-                };
-                for(var i = 0; i< secToSlides.length; i++){
+                    Polymer.dom(self.$.grids).appendChild(container);
+                }
+
+                function createSection(i) {
                     var grid = document.createElement("paper-button");
                     grid.raised = true;
-                    grid.id = "grid"+i;
-                    grid.className = "blue ripple";
-                    grid.style.width = (secToSlides[i].timeTo / this.duration)*100 + "%";
-                    grid.textContent =" ";
-
-                    grid.addEventListener("mouseover", mouseOver(i));
-                    grid.addEventListener("click", click(i));
-
-                    Polymer.dom(this.$.grids).appendChild(grid);
+                    grid.id = getSectionId(i);
+                    grid.className = "section blue";
+                    grid.textContent = " ";
+                    grid.addEventListener("tap", click(i));
+                    return grid;
                 }
+
+                function creteDraggable(i) {
+                    var div = document.createElement("div");
+                    div.id = getDraggableId(i);
+                    if (self.editable === true) {
+                        div.className = "draggable dragging";
+                        div.addEventListener("track", drag(i));
+                    } else {
+                        div.className = "draggable";
+                    }
+                    return div;
+                }
+
+                function resizeElement(elemDur, index) {
+                    self.$$("#" + getContainerId(index)).style.width = calculateWidth(elemDur);
+                }
+
+                function getTimeForIndex(index) {
+                    if (index >= self.mappings.length) {
+                        return self.duration;
+                    } else {
+                        return self.mappings[index].time;
+                    }
+                }
+
+                function updateTime(track, index) {
+                    if (index < self.mappings.length) {
+                        self.mappings[index].time = Math.round(calculateNewTime(track, index));
+                    }
+                }
+
+                function calculateNewTime(track, index) {
+                    return getTimeForIndex(index) + (self.duration / self.$.grids.offsetWidth) * track.dx;
+                }
+
+                function resizeElements(track, index) {
+                    var rightTime = calculateNewTime(track, index + 1);
+
+                    resizeElement(rightTime - self.mappings[index].time, index);
+                    resizeElement(getTimeForIndex(index + 2) - rightTime, index + 1);
+
+                    displayTooltip(rightTime, track);
+                }
+
+                function displayTooltip(value, track) {
+                    self.$.timeTooltip.textContent = Math.round(value).toHHMMSS();
+                    self.$.timeTooltip.style.left = track.x + "px";
+                    self.$.timeTooltip.style.top = (track.y - 25) + "px";
+                }
+
+                var drag = function(i) {
+                    var tooltip = self.$.timeTooltip;
+                    return function(e) {
+                        switch (e.detail.state) {
+                            case 'start':
+                                self.$.grids.classList.add('dragging');
+                                break;
+                            case 'track':
+                                resizeElements(e.detail, i);
+                                break;
+                            case 'end':
+                                self.$.grids.classList.remove('dragging');
+                                updateTime(e.detail, i + 1);
+                                self.$.timeTooltip.textContent = "";
+                                break;
+                        }
+                    };
+                };
+                var click = function(i) {
+                    return function(e) {
+                        console.log("clicked: " + i);
+                        while (self.$$(".selected") !== null) {
+                            self.$$(".selected").classList.remove('selected');
+                        }
+                        self.$$("#" + getSectionId(i)).classList.add('selected');
+                        self.fire('choose-slide', {
+                            index: i,
+                            element: secToSlides[i]
+                        });
+                    };
+                };
+
+                //Remove previous timeline
+                while (this.$$(".grid-elem") !== null) {
+                    Polymer.dom(this.$.grids).removeChild(this.$$(".grid-elem"));
+                }
+                //Create new timeline
+                for (var i = 0; i < secToSlides.length - 1; i++) {
+                    createGridCell(i, (secToSlides[i + 1].time - secToSlides[i].time), creteDraggable(i));
+                }
+                createGridCell(secToSlides.length - 1, (this.duration - secToSlides[secToSlides.length - 1].time));
             }
         });
     </script>

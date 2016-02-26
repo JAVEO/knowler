@@ -68,7 +68,7 @@ https://github.com/akka/akka/issues/17754
 
 RUN SERVER
 ===============
-cd api/
+cd server/
 activator run
 
 RUN CLIENT
