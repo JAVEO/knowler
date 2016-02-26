@@ -31,18 +31,10 @@
 
     <template>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
-
-        <div class="row">
-            <a href$="/lecture/{{lecture.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
-        </div>
-        <div class="row">
-            <div class="text-center col-md-6"><span>{{playerTime}}</span></div>
-            <div class="text-center col-md-6"><span>{{imgUrl}}</span></div>
-        </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 show show-video">
                 <google-youtube
-                        id="googleYoutube"
+                        id="googleYouTube"
                         video-id="{{lecture.videoUrl}}"
                         rel="0"
                         start="0"
@@ -64,6 +56,11 @@
             </div>
         </div>
 
+        <div class="row text-center" style="display:block;">
+            <paper-button on-tap="delete" class="success danger" raised>Usuń</paper-button></a>
+            <a href$="/lecture/{{lecture.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
+        </div>
+
     </template>
 
     <script>
@@ -74,19 +71,15 @@
                     type: Number,
                     value: "200px"
                 },
-                videoId: {
+                lectureId: {
                     type: String,
                     notify: true,
                     reflectToAttribute: true,
-                    observer: "videoChanged"
+                    observer: "lectureChanged"
                 },
                 imgUrl: {
                     type: String,
                     value: "src/spring/output-0.png"
-                },
-                playerTime: {
-                    type: Number,
-                    observer: "playerChanged"
                 },
                 images: {
                     type: Object,
@@ -150,7 +143,7 @@
                 console.log("youtubeslider-choose time&slide");
                 console.log("to time: ", e.detail[0]);
 
-                this.async(function(){this.$.googleYoutube.seekTo(e.detail[0])}, 10);
+                this.async(function(){this.$.googleYouTube.seekTo(e.detail[0])}, 10);
                 this.$.imgDisplay.set("img", this.images[e.detail[1]]);
             },
             playerChanged: function(time){
@@ -177,16 +170,26 @@
             lecturesResponse: function(e){
                 console.log("oneslide response", e)
             },
-            videoChanged: function(){
-                console.log("video ID: ", this.videoId)
-                this.$.lectures.get(this.videoId);
+            lectureChanged: function(){
+                console.log("video ID: ", this.lectureId)
+                //TODO
+                this.$.lectures.get(this.lectureId);
             },
             ready: function(){
                 console.log("width: ", window.innerWidth);
                 if(window.innerWidth > 1279) this.videoHeight = "480px";
                 else if(window.innerWidth > 799) this.videoHeight = "300px";
-                console.log("heigh: ", this.videoHeight);
+                console.log("height: ", this.videoHeight);
 
+                var googleYouTube  = this.$.googleYouTube;
+                page.exit('/lecture/:id', function(ctx, next) {
+                    googleYouTube.pause();
+                    next();
+                });
+            },
+            delete: function(){
+                this.$.lectures.delete(this.lectureId);
+                page('/movie-search');
             }
         });
     </script>

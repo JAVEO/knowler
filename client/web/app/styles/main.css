@@ -30,3 +30,10 @@ paper-input.searchBox #input{
 paper-input.searchBox .label-and-input-container label{
   color: white !important;
 }
+
+paper-button.danger {
+  color: #D9534F;
+}
+paper-button.danger:hover {
+  color: #C9302C;
+}

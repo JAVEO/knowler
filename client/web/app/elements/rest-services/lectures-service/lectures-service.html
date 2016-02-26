@@ -30,6 +30,12 @@
                 this.$.ajax.method = "POST";
                 this.$.ajax.generateRequest();
             },
+            delete: function(lectureId){
+                console.log("data for delete: ", lectureId)
+                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
+                this.$.ajax.method = "DELETE";
+                this.$.ajax.generateRequest();
+            },
             get: function(lectureId){
                 this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
                 this.$.ajax.generateRequest();

@@ -51,6 +51,13 @@
             },
             _lectureChanged: function () {
                 this.$.lectures.get(this.lectureId);
+            },
+            ready: function(){
+                var googleYouTube  = this.$.presentation;
+                page.exit('/lecture/:id/edit', function(ctx, next) {
+                    googleYouTube.pause();
+                    next();
+                });
             }
         });
     </script>

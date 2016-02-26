@@ -1,4 +1,3 @@
-api/.idea/*
 api/.gitreview
 api/logs
 api/project/project
@@ -17,7 +16,7 @@ api/*.txt
 /RUNNING_PID
 /.settings
 
-.idea/*
+*.idea/*
 api/*.pdf
 api/tmp/*.pdf
 
