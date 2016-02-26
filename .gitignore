@@ -25,3 +25,5 @@ client/web/bower_components/*
 client/web/.tmp/*
 client/web/dist/*
 client/web/node_modules/*
+client/web/.idea/*
+client/web/*.iml
