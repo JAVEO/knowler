@@ -41,17 +41,25 @@
             properties: {
                     mappings:{
                         type: Object,
-                        value: {}
+                        notify: true,
+                        observer: "mappingChanged"
+                    },
+                    duration:{
+                        type: Number,
+                        value: 3600,
+                        notify: true
                     }
             },
             ready: function(){
+            },
+            mappingChanged: function(){
                 var self = this;
-                var secToSlides = this.mappings.secondsToSlides;
+                var secToSlides = this.mappings.sort(function(a, b){return a.time-b.time});;
 
                 for(var i = 0; i< secToSlides.length-1; i++){
-                    secToSlides[i].push(secToSlides[i+1][0] - secToSlides[i][0]);
+                    secToSlides[i].timeTo = (secToSlides[i+1].time - secToSlides[i].time);
                 }
-                secToSlides[secToSlides.length-1].push(this.mappings.duration - secToSlides[secToSlides.length-1][0]);
+                secToSlides[secToSlides.length-1].timeTo = (this.duration - secToSlides[secToSlides.length-1].time);
 
                 var mouseOver = function(i){
                     return function(e){
@@ -70,7 +78,7 @@
                     grid.raised = true;
                     grid.id = "grid"+i;
                     grid.className = "blue ripple";
-                    grid.style.width = (secToSlides[i][2] / this.mappings.duration)*100 + "%";
+                    grid.style.width = (secToSlides[i].timeTo / this.duration)*100 + "%";
                     grid.textContent =" ";
 
                     grid.addEventListener("mouseover", mouseOver(i));
@@ -78,7 +86,6 @@
 
                     Polymer.dom(this.$.grids).appendChild(grid);
                 }
-
             }
         });
     </script>
