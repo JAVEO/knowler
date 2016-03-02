@@ -47,7 +47,7 @@
                 </google-youtube>
             </div>
             <div class="col-md-6 col-sm-12 show show-slide">
-                <slide-image class="" id="imgDisplay" img="{{imgUrl}}"></slide-image>
+                <canvas id="the-canvas" style="border:1px  solid black"></canvas>
             </div>
         </div>
         <div class="row">
@@ -76,37 +76,6 @@
                     notify: true,
                     reflectToAttribute: true,
                     observer: "lectureChanged"
-                },
-                imgUrl: {
-                    type: String,
-                    value: "src/spring/output-0.png"
-                },
-                images: {
-                    type: Object,
-                    value:{
-                        0: "src/spring/output-0.png",
-                        1: "src/spring/output-1.png",
-                        3: "src/spring/output-2.png",
-                        5: "src/spring/output-3.png",
-                        2: "src/spring/output-4.png",
-                        6: "src/spring/output-5.png",
-                        7: "src/spring/output-6.png",
-                        8: "src/spring/output-7.png",
-                        9: "src/spring/output-8.png",
-                        10: "src/spring/output-9.png",
-                        11: "src/spring/output-7.png",
-                        12: "src/spring/output-0.png",
-                        13: "src/spring/output-1.png",
-                        14: "src/spring/output-2.png",
-                        15: "src/spring/output-3.png",
-                        16: "src/spring/output-4.png",
-                        17: "src/spring/output-5.png",
-                        18: "src/spring/output-6.png",
-                        19: "src/spring/output-7.png",
-                        20: "src/spring/output-8.png",
-                        21: "src/spring/output-9.png",
-                        22: "src/spring/output-10.png"
-                    }
                 }
             },
             clickedSlide: function(e){
@@ -114,7 +83,7 @@
                 console.log("to time: ", e.detail.time);
 
                 this.async(function(){this.$.googleYouTube.seekTo(e.detail.time)}, 10);
-                this.$.imgDisplay.set("img", this.images[e.detail.slide]);
+                this.renderPdf(e.detail.slide);
             },
             playerChanged: function(time){
                 console.log("playerChanged");
@@ -122,9 +91,8 @@
                 if (time.detail.value == 0) {
                     return;
                 }
-                var image = this.images[this.findCurrentImage(time)];
-                console.log(image);
-                if(this.imgUrl != image) this.set("imgUrl", image);
+                var slideId = this.findCurrentImage(time);
+                this.renderPdf(slideId);
             },
             findCurrentImage: function(time){
                 var secToSlides = this.lecture.mapping;
@@ -137,7 +105,6 @@
                     }
                 }
                 console.log("id: ", id);
-                this.images[id].slide;
                 return id;
             },
             lecturesResponse: function(e){
@@ -158,6 +125,59 @@
                 page.exit('/lecture/:id', function(ctx, next) {
                     googleYouTube.pause();
                     next();
+                });
+
+                this.renderPdf(1);
+            },
+
+            renderPdf: function(pageId) {
+                console.log("render pdf with page", pageId)
+                //
+                // If absolute URL from the remote server is provided, configure the CORS
+                // header on that server.
+                //
+                var url = 'src/spring/pres.pdf';
+
+                //
+                // Disable workers to avoid yet another cross-origin issue (workers need
+                // the URL of the script to be loaded, and dynamically loading a cross-origin
+                // script does not work).
+                //
+                // PDFJS.disableWorker = true;
+
+                //
+                // The workerSrc property shall be specified.
+                //
+                PDFJS.workerSrc = '../../scripts/pdf.worker.js';
+
+                //
+                // Asynchronous download PDF
+                //
+                PDFJS.getDocument(url).then(function getPdf(pdf) {
+                    //
+                    // Fetch the first page
+                    //
+                    pdf.getPage(pageId + 1).then(function getPage(page) {
+                      var scale = 1.5;
+                      var viewport = page.getViewport(scale);
+
+                      //
+                      // Prepare canvas using PDF page dimensions
+                      //
+                      var canvas = document.getElementById('the-canvas');
+                      var context = canvas.getContext('2d');
+                      canvas.height = viewport.height;
+                      canvas.width = viewport.width;
+
+                      //
+                      // Render PDF page into canvas context
+                      //
+                      var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                      };
+                      page.render(renderContext);
+                    });
                 });
             },
             delete: function(){
