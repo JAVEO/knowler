@@ -76,6 +76,11 @@
                     notify: true,
                     reflectToAttribute: true,
                     observer: "lectureChanged"
+                },
+                currentSlide: {
+                    type: Number,
+                    value: -1,
+                    observer: "renderPdf"
                 }
             },
             clickedSlide: function(e){
@@ -83,7 +88,7 @@
                 console.log("to time: ", e.detail.time);
 
                 this.async(function(){this.$.googleYouTube.seekTo(e.detail.time)}, 10);
-                this.renderPdf(e.detail.slide);
+                this.set('currentSlide', e.detail.slide);
             },
             playerChanged: function(time){
                 console.log("playerChanged");
@@ -92,7 +97,7 @@
                     return;
                 }
                 var slideId = this.findCurrentImage(time);
-                this.renderPdf(slideId);
+                this.set('currentSlide', slideId);
             },
             findCurrentImage: function(time){
                 var secToSlides = this.lecture.mapping;
@@ -127,10 +132,11 @@
                     next();
                 });
 
-                this.renderPdf(1);
+                this.set('currentSlide', 0);
             },
 
-            renderPdf: function(pageId) {
+            renderPdf: function() {
+                var pageId = this.currentSlide + 1;
                 console.log("render pdf with page", pageId)
                 //
                 // If absolute URL from the remote server is provided, configure the CORS
@@ -158,7 +164,7 @@
                     //
                     // Fetch the first page
                     //
-                    pdf.getPage(pageId + 1).then(function getPage(page) {
+                    pdf.getPage(pageId).then(function getPage(page) {
                       var origViewport = page.getViewport(1);
                       var scale = desiredHeight / origViewport.height;
                       var viewport = page.getViewport(scale);
