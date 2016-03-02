@@ -41,7 +41,7 @@
                         autoplay="0"
                         on-currenttime-changed="playerChanged"
                         width="100%"
-                        height="{{videoHeight}}"
+                        height="{{videoHeight}}px"
                         style="margin: auto auto;"
                 >
                 </google-youtube>
@@ -69,7 +69,7 @@
             properties: {
                 videoHeight:{
                     type: Number,
-                    value: "200px"
+                    value: 200
                 },
                 lectureId: {
                     type: String,
@@ -117,8 +117,8 @@
             },
             ready: function(){
                 console.log("width: ", window.innerWidth);
-                if(window.innerWidth > 1279) this.videoHeight = "480px";
-                else if(window.innerWidth > 799) this.videoHeight = "300px";
+                if(window.innerWidth > 1279) this.videoHeight = 480;
+                else if(window.innerWidth > 799) this.videoHeight = 300;
                 console.log("height: ", this.videoHeight);
 
                 var googleYouTube  = this.$.googleYouTube;
@@ -150,6 +150,7 @@
                 //
                 PDFJS.workerSrc = '../../scripts/pdf.worker.js';
 
+                var desiredHeight = this.videoHeight;
                 //
                 // Asynchronous download PDF
                 //
@@ -158,7 +159,8 @@
                     // Fetch the first page
                     //
                     pdf.getPage(pageId + 1).then(function getPage(page) {
-                      var scale = 1.5;
+                      var origViewport = page.getViewport(1);
+                      var scale = desiredHeight / origViewport.height;
                       var viewport = page.getViewport(scale);
 
                       //
