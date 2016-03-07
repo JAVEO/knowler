@@ -16,7 +16,8 @@
     "iron-icons": "PolymerElements/iron-icons#~1.0.3",
     "google-youtube": "GoogleWebComponents/google-youtube#~1.1.2",
     "bootstrap": "~3.3.5",
-    "pdfjs-dist": "^1.4.124"
+    "pdfjs-dist": "^1.4.124",
+    "disqus-comments": "https://github.com/divshot/disqus-comments.git#a7115d6cadaede553a8308e2bdf328b06a78d051"
   },
   "devDependencies": {
     "web-component-tester": "*",

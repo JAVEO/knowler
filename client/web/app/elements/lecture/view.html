@@ -61,6 +61,7 @@
             <a href$="/lecture/{{lecture.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
         </div>
 
+        <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}" url="http://localhost:3000/#!/lecture/{{lectureId}}"></disqus-comments>
     </template>
 
     <script>
@@ -122,6 +123,7 @@
                 console.log("video ID: ", this.lectureId)
                 //TODO
                 this.$.lectures.get(this.lectureId);
+                this.$.knowlerComments.reset();
             },
             ready: function(){
                 if(window.innerWidth > 1279) this.videoHeight = 480;
