@@ -83,12 +83,15 @@
                     observer: "renderPdf"
                 }
             },
+            setCurrentSlide: function(slide) {
+                this.set('currentSlide', slide);
+            },
             clickedSlide: function(e){
                 console.log("youtubeslider-choose time&slide");
                 console.log("to time: ", e.detail.time);
 
                 this.async(function(){this.$.googleYouTube.seekTo(e.detail.time)}, 10);
-                this.set('currentSlide', e.detail.slide);
+                this.setCurrentSlide(e.detail.slide);
             },
             playerChanged: function(time){
                 console.log("playerChanged");
@@ -97,7 +100,7 @@
                     return;
                 }
                 var slideId = this.findCurrentImage(time);
-                this.set('currentSlide', slideId);
+                this.setCurrentSlide(slideId);
             },
             findCurrentImage: function(time){
                 var secToSlides = this.lecture.mapping;
@@ -121,10 +124,8 @@
                 this.$.lectures.get(this.lectureId);
             },
             ready: function(){
-                console.log("width: ", window.innerWidth);
                 if(window.innerWidth > 1279) this.videoHeight = 480;
                 else if(window.innerWidth > 799) this.videoHeight = 300;
-                console.log("height: ", this.videoHeight);
 
                 var googleYouTube  = this.$.googleYouTube;
                 page.exit('/lecture/:id', function(ctx, next) {
@@ -132,7 +133,7 @@
                     next();
                 });
 
-                this.set('currentSlide', 0);
+                this.setCurrentSlide(0);
             },
 
             renderPdf: function() {
@@ -154,7 +155,7 @@
                 //
                 // The workerSrc property shall be specified.
                 //
-                PDFJS.workerSrc = '../../scripts/pdf.worker.js';
+                PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
 
                 var desiredHeight = this.videoHeight;
                 //
