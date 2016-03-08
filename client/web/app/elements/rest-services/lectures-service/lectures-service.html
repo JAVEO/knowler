@@ -23,7 +23,7 @@
                 this.$.ajax.generateRequest();
             },
             create: function(data){
-                console.log("data for post: ", data)
+                console.log("data for post: ", data);
                 this.$.ajax.url = this.url + this.queryAll;
                 this.$.ajax.body = data;
                 this.$.ajax.contentType = "application/json";
@@ -31,7 +31,7 @@
                 this.$.ajax.generateRequest();
             },
             delete: function(lectureId){
-                console.log("data for delete: ", lectureId)
+                console.log("data for delete: ", lectureId);
                 this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
                 this.$.ajax.method = "DELETE";
                 this.$.ajax.generateRequest();
@@ -41,7 +41,7 @@
                 this.$.ajax.generateRequest();
             },
             addMapping: function(lectureId, data) {
-                console.log("add mapping: ", data)
+                console.log("add mapping: ", data);
                 this.$.ajax.url = this.url + this.queryAll + "/" + lectureId + "/mapping";
                 this.$.ajax.body = data;
                 this.$.ajax.contentType = "application/json";

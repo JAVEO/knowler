@@ -69,7 +69,7 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
     .andThen((__ \ '_id).json.prune)
 
   def pushMapping(body: JsValue): JsObject =
-    Json.obj("$push" -> Json.obj("mapping" -> body))
+    Json.obj("$push" -> Json.obj("mappings" -> body))
 
   def idSelector(id: String): JsObject =
     Json.obj("_id" -> Json.obj("$oid" -> id))

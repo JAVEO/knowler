@@ -1,30 +1,32 @@
 <dom-module id="slide-list">
     <style>
-        :host > div {
-            display: block;
-            width: 275px;
-            max-height: 800px;
-            overflow: auto;
+        .presentation-list {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            display:inline-flex;
+            max-width: 100%;
         }
 
         .iron-selected {
             background: #eee;
         }
+        .list-elem {
+            padding: 15px;
+        }
+        .list-elem:hover {
+            cursor: pointer;
+        }
     </style>
 
     <template>
-        <h3>Wszystkie slajdy</h3>
-
-        <div>
-            <iron-selector id="slideSelector" selected="0" on-iron-select="_onItemSelected">
-                <template is="dom-repeat" items="{{slides}}">
-                    <figure>
-                        <img src="{{item.imageUrl}}" width="150", height="150">
-                        <figcaption>{{item.caption}}</figcaption>
-                    </figure>
-                </template>
-            </iron-selector>
-        </div>
+        <iron-selector id="slideSelector" selected="0" on-iron-select="_onItemSelected" class="presentation-list">
+            <template is="dom-repeat" items="{{slides}}">
+                <div class="list-elem">
+                    <img src="{{item.imageUrl}}" width="150" , height="auto">
+                    <figcaption>{{item.caption}}</figcaption>
+                </div>
+            </template>
+        </iron-selector>
     </template>
 
     <script>
@@ -36,7 +38,7 @@
                     notify: true
                 }
             },
-            ready: function () {
+            ready: function() {
                 this.slides = [];
                 for (var i = 0; i < 11; i++) {
                     var slide = {
@@ -46,7 +48,7 @@
                     this.push('slides', slide);
                 }
             },
-            _onItemSelected: function (e) {
+            _onItemSelected: function(e) {
 
                 var selectedIndex = this.$.slideSelector.selected;
                 var self = this;
@@ -55,7 +57,7 @@
                     id: selectedIndex,
                     imageUrl: self.slides[selectedIndex].imageUrl,
                     caption: self.slides[selectedIndex].caption
-                })
+                });
             }
         });
     </script>

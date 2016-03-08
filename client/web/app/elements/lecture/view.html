@@ -1,13 +1,5 @@
-<link rel="stylesheet" href="../../../bower_components/bootstrap/dist/css/bootstrap.min.css">
-
 <dom-module id="lecture-view">
     <style>
-        .tempSecondsPicker{
-            padding: 10px;
-        }
-        .show{
-
-        }
         .row{
             @apply(--layout-horizontal);
             @apply(--layout-center);
@@ -20,9 +12,6 @@
                 width: 100%;
             }
         }
-        .show-video{
-            text-align: center;
-        }
         .slider{
             padding: 20px;
             width: 100%;
@@ -30,35 +19,35 @@
     </style>
 
     <template>
-        <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
+        <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
         <div class="row">
-            <div class="col-md-6 col-sm-12 show show-video">
+            <div class="col-md-6 col-sm-12">
                 <google-youtube
                         id="googleYouTube"
-                        video-id="{{lecture.videoUrl}}"
+                        video-id="{{lecture.videoId}}"
                         rel="0"
                         start="0"
                         autoplay="0"
                         on-currenttime-changed="playerChanged"
+                        on-google-youtube-ready="_youtubeReady"
                         width="100%"
                         height="{{videoHeight}}px"
-                        style="margin: auto auto;"
-                >
+                        style="margin: auto;">
                 </google-youtube>
             </div>
-            <div class="col-md-6 col-sm-12 show show-slide">
-                <canvas id="the-canvas" style="border:1px  solid black"></canvas>
+            <div class="col-md-6 col-sm-12">
+                <pdf-viewer current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
             </div>
         </div>
         <div class="row">
             <div class="slider">
-                <time-grider mappings="{{lecture.mapping}}" on-choose-slide="clickedSlide"></time-grider>
+                <time-grider duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
             </div>
         </div>
 
         <div class="row text-center" style="display:block;">
-            <paper-button on-tap="delete" class="success danger" raised>Usuń</paper-button></a>
-            <a href$="/lecture/{{lecture.id}}/edit"><paper-button raised>Edytuj</paper-button></a>
+            <paper-button on-tap="delete" class="danger" raised>Usuń</paper-button></a>
+            <a href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edytuj</paper-button></a>
         </div>
 
         <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}"></disqus-comments>
@@ -68,20 +57,20 @@
         Polymer({
             is: "lecture-view",
             properties: {
-                videoHeight:{
+                videoHeight: {
                     type: Number,
-                    value: 200
+                },
+                currentSlide: {
+                    type: Number,
+                },
+                duration:{
+                    type: Number
                 },
                 lectureId: {
                     type: String,
                     notify: true,
                     reflectToAttribute: true,
                     observer: "lectureChanged"
-                },
-                currentSlide: {
-                    type: Number,
-                    value: -1,
-                    observer: "renderPdf"
                 }
             },
             setCurrentSlide: function(slide) {
@@ -89,6 +78,7 @@
             },
             clickedSlide: function(e){
                 console.log("youtubeslider-choose time&slide");
+                e.detail = e.detail.element;
                 console.log("to time: ", e.detail.time);
 
                 this.async(function(){this.$.googleYouTube.seekTo(e.detail.time)}, 10);
@@ -96,15 +86,18 @@
             },
             playerChanged: function(time){
                 console.log("playerChanged");
-                console.log(time);
+
                 if (time.detail.value == 0) {
                     return;
                 }
                 var slideId = this.findCurrentImage(time);
                 this.setCurrentSlide(slideId);
             },
+            _youtubeReady: function(e) {
+                this.duration = e.detail.target.F.duration;
+            },
             findCurrentImage: function(time){
-                var secToSlides = this.lecture.mapping;
+                var secToSlides = this.lecture.mappings;
                 var id = 0;
                 for(var i = 0; i< secToSlides.length; i++){
                     if(i>0 && secToSlides[i].time > time.detail.value){
@@ -116,79 +109,17 @@
                 console.log("id: ", id);
                 return id;
             },
-            lecturesResponse: function(e){
-                console.log("oneslide response", e)
-            },
             lectureChanged: function(){
-                console.log("video ID: ", this.lectureId)
-                //TODO
                 this.$.lectures.get(this.lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){
-                if(window.innerWidth > 1279) this.videoHeight = 480;
-                else if(window.innerWidth > 799) this.videoHeight = 300;
+                this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
 
                 var googleYouTube  = this.$.googleYouTube;
                 page.exit('/lecture/:id', function(ctx, next) {
                     googleYouTube.pause();
                     next();
-                });
-
-                this.setCurrentSlide(0);
-            },
-
-            renderPdf: function() {
-                var pageId = this.currentSlide + 1;
-                console.log("render pdf with page", pageId)
-                //
-                // If absolute URL from the remote server is provided, configure the CORS
-                // header on that server.
-                //
-                var url = 'src/spring/pres.pdf';
-
-                //
-                // Disable workers to avoid yet another cross-origin issue (workers need
-                // the URL of the script to be loaded, and dynamically loading a cross-origin
-                // script does not work).
-                //
-                // PDFJS.disableWorker = true;
-
-                //
-                // The workerSrc property shall be specified.
-                //
-                PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
-
-                var desiredHeight = this.videoHeight;
-                //
-                // Asynchronous download PDF
-                //
-                PDFJS.getDocument(url).then(function getPdf(pdf) {
-                    //
-                    // Fetch the first page
-                    //
-                    pdf.getPage(pageId).then(function getPage(page) {
-                      var origViewport = page.getViewport(1);
-                      var scale = desiredHeight / origViewport.height;
-                      var viewport = page.getViewport(scale);
-
-                      //
-                      // Prepare canvas using PDF page dimensions
-                      //
-                      var canvas = document.getElementById('the-canvas');
-                      var context = canvas.getContext('2d');
-                      canvas.height = viewport.height;
-                      canvas.width = viewport.width;
-
-                      //
-                      // Render PDF page into canvas context
-                      //
-                      var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                      };
-                      page.render(renderContext);
-                    });
                 });
             },
             delete: function(){
