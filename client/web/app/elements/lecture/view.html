@@ -50,6 +50,7 @@
             <a href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edytuj</paper-button></a>
         </div>
 
+        <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}"></disqus-comments>
     </template>
 
     <script>
@@ -110,6 +111,7 @@
             },
             lectureChanged: function(){
                 this.$.lectures.get(this.lectureId);
+                this.$.knowlerComments.reset();
             },
             ready: function(){
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
