@@ -53,7 +53,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <iron-icon icon="home"></iron-icon>
               <span>Home</span>
             </a>
-            <a data-route="movie-search" href="/movie-search">
+            <a data-route="lecture-search" href="/lecture-search">
               <iron-icon icon="mail"></iron-icon>
               <span>Prezentacje</span>
             </a>
@@ -67,8 +67,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                        label="Wyszukaj prezentację"
                        no-label-float="true"
                        value="{{searchPhrase}}"
-                       on-keydown="handleLectureSearch"
+                       on-keydown="searchPhraseChange"
                        style="width: 100%;"></paper-input>
+          <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon> Szukaj</paper-button>
         </paper-toolbar>
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
@@ -84,9 +85,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-material>
             </section>
 
-            <section data-route="movie-search">
+            <section data-route="lecture-search">
               <paper-material elevation="1">
-                <lectures-list></lectures-list>
+                <lectures-list search-phrase="{{params.searchPhrase}}"></lectures-list>
               </paper-material>
             </section>
 

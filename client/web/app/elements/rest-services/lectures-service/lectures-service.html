@@ -18,8 +18,12 @@
             },
             url: "http://localhost:9000",
             queryAll: "/lectures",
-            query: function(){
-                this.$.ajax.url = this.url + this.queryAll;
+            query: function(search){
+                var url = this.url + this.queryAll;
+                if (StringUtils.isNotEmpty(search)) {
+                    url += "?search=" + search
+                }
+                this.$.ajax.url = url;
                 this.$.ajax.generateRequest();
             },
             create: function(data){

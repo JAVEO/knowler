@@ -54,17 +54,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // Scale middleContainer appName
     Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
   });
-  app.goBack = function(){
-    window.history.back();
+  app.goBack = function() {
+      window.history.back();
   };
-  app.handleLectureSearch = function(e){
-    console.log(app.searchPhrase);
-    console.log(e);
-    if(e.keyCode == 13){
-      console.log("enter");
-      page('/movie-search')
-      e.preventDefault()
-    }
+
+  app.searchLectures = function(e) {
+      var searchPhrase = app.searchPhrase
+      if (StringUtils.isEmpty(searchPhrase)) {
+        page('/lecture-search/#taehc[]');
+      } else {
+        page('/lecture-search/' + searchPhrase);
+      }
+  };
+  app.searchPhraseChange = function(e) {
+      if (e.keyCode == 13) {
+          app.searchLectures(e);
+      }
   };
 
 })(document);

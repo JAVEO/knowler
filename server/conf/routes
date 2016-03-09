@@ -1,6 +1,6 @@
 GET     /                           controllers.Application.index
 
-GET     /lectures                   controllers.Lectures.list
+GET     /lectures                   controllers.Lectures.list(search: Option[String])
 POST    /lectures                   controllers.Lectures.create
 GET     /lectures/:id               controllers.Lectures.details(id)
 DELETE  /lectures/:id               controllers.Lectures.delete(id)
