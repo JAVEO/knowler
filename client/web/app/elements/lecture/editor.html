@@ -19,19 +19,15 @@
         }
     </style>
     <template>
-        <h2>Base data</h2>
+        <h2>Edit presentation</h2>
         <div class="row">
             <div class="col-sm-6">
                 <paper-input value="{{lecture.title}}" label="Title"></paper-input>
             </div>
-        </div>
-        <div class="row">
             <div class="col-sm-6">
                 <paper-input value="{{lecture.description}}" label="Description"></paper-input>
             </div>
         </div>
-
-        <h2 class="mt-50">Presentation edit</h2>
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <paper-input value="{{videoUrl}}" label="YouTube URL"></paper-input>
@@ -50,7 +46,7 @@
                 </google-youtube>
             </div>
             <div class="col-md-6 col-sm-12">
-                <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
+                <paper-input value="{{lecture.presentationUrl}}" label="Presentation URL"></paper-input>
                 <pdf-viewer on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
             </div>
         </div>
@@ -112,16 +108,12 @@
                 currentSlide: {
                     type: Number
                 },
-                pdfUrl: {
-                    type: String,
-                    value: "TODO changeMe"
-                },
                 pagesCount: {
                     type: Number
                 }
             },
             observers: [
-                'generateNewMappings(lecture.videoId, pdfUrl, duration, pagesCount)'
+                'generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
             pagesCountChanged: function(e) {
                 this.pagesCount = e.detail.value;
@@ -182,7 +174,7 @@
             _loadNewLecture: function() {
                 this.$.lectures.get(this.lectureId);
             },
-            generateNewMappings: function(videoUrl, pdfUrl, duration, pagesCount) {
+            generateNewMappings: function(videoUrl, duration, pagesCount) {
                 if (duration === 0) {
                     console.log("Mappings will not be generated, duration: " + duration + " is not valid");
                     return;
@@ -207,6 +199,7 @@
                     console.log("lectureId not found. Creating new object");
                     this.lecture = {
                         videoUrl: undefined,
+                        presentationUrl: undefined,
                         title: undefined,
                         description: undefined,
                         mappings: []
