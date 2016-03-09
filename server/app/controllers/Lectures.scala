@@ -1,7 +1,6 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import play.api.libs.json.{Json, JsObject}
 import play.api.libs.json._
 import play.api.mvc._
 import play.modules.reactivemongo._
@@ -17,8 +16,14 @@ import scala.concurrent.Future
 class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   extends Controller with MongoController with ReactiveMongoComponents {
 
-  def list = Action.async {
-    collection.find(Json.obj())
+  def list(phrase: Option[String]) = Action.async {
+    def query = phrase.map(p =>
+      Json.obj("$or" -> Json.arr(
+        Json.obj("title" -> Json.obj("$regex" -> p)),
+        Json.obj("description" -> Json.obj("$regex" -> p)))
+      )).getOrElse(Json.obj())
+
+    collection.find(query)
       .cursor[JsObject]()
       .collect[List]()
       .map(list => list.map(_.transform(idTransformer).get))

@@ -33,6 +33,12 @@ ArrayUtils.getOrElse = function(array, index, other) {
     }
     return other;
 };
+ArrayUtils.isEmpty = function(array) {
+    return array === undefined || array.length === 0;
+};
+ArrayUtils.isNotEmpty = function(array) {
+    return !ArrayUtils.isEmpty(array);
+};
 
 function GoogleYouTubeUtils() {}
 GoogleYouTubeUtils.determinePreferredHeight = function() {
@@ -42,4 +48,12 @@ GoogleYouTubeUtils.determinePreferredHeight = function() {
     	return 300;
     }
     return 200;
+};
+
+function StringUtils() {}
+StringUtils.isEmpty = function(str) {
+    return str === undefined || str === "";
+};
+StringUtils.isNotEmpty = function(str) {
+    return !StringUtils.isEmpty(str);
 };
