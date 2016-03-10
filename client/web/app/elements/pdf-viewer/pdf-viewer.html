@@ -17,90 +17,65 @@
             properties: {
                 lectureId: {
                     type: String,
-                    notify: true
+                    notify: true,
+                    observer: "downloadPdf"
                 },
                 slideHeight: {
                     type: Number
                 },
                 currentSlide: {
                     type: Number,
-                    value: 0,
-                    observer: "renderPdf"
-                },
-                previousSlide: {
-                    type: Number
+                    value: 0
                 },
                 pagesCount: {
                     type: Number,
                     notify: true
+                },
+                pdf: {
+                    type: Object
                 }
             },
             observers: [
-                'renderPdf(lectureId, slideHeight, currentSlide)'
+                'renderPdf(pdf, slideHeight, currentSlide)'
             ],
-            renderPdf: function(lectureId, slideHeight, currentSlide) {
-                if (lectureId === undefined) {
-                    return;
-                }
-                if (this.previousSlide === currentSlide || slideHeight === undefined) {
-                    return;
-                }
-                this.previousSlide = currentSlide;
-
+            downloadPdf: function() {
+                var self = this;
+                var url = 'http://localhost:9000/lectures/' + this.lectureId + '/pdf';
+                PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
+                PDFJS.getDocument(url).then(function getPdf(pdf) {
+                    self.set('pdf', pdf);
+                    self.set('pagesCount', pdf.numPages);
+                });
+            },
+            renderPdf: function(pdf, slideHeight, currentSlide) {
                 var self = this;
                 var pageId = currentSlide + 1;
-                console.log("Render pdf with page: ", pageId, " height: ", slideHeight);
-                //
-                // If absolute URL from the remote server is provided, configure the CORS
-                // header on that server.
-                //
-                var url = 'http://localhost:9000/lectures/' + lectureId + '/pdf';
 
-                //
-                // Disable workers to avoid yet another cross-origin issue (workers need
-                // the URL of the script to be loaded, and dynamically loading a cross-origin
-                // script does not work).
-                //
-                // PDFJS.disableWorker = true;
+                this.pdf.getPage(pageId).then(function getPage(page) {
+                  var origViewport = page.getViewport(1);
+                  var scale = slideHeight / origViewport.height;
+                  var viewport = page.getViewport(scale);
 
-                //
-                // The workerSrc property shall be specified.
-                //
-                PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
+                  //
+                  // Prepare canvas using PDF page dimensions
+                  //
 
-                //
-                // Asynchronous download PDF
-                //
-                PDFJS.getDocument(url).then(function getPdf(pdf) {
-                    self.pagesCount = pdf.numPages;
-                    //
-                    // Fetch the first page
-                    //
-                    pdf.getPage(pageId).then(function getPage(page) {
-                      var origViewport = page.getViewport(1);
-                      var scale = slideHeight / origViewport.height;
-                      var viewport = page.getViewport(scale);
+                  var canvas = self.$.theCanvas;
+                  var context = canvas.getContext('2d');
+                  context.clearRect(0, 0, canvas.width, canvas.height);
+                  canvas.height = viewport.height;
+                  canvas.width = viewport.width;
 
-                      //
-                      // Prepare canvas using PDF page dimensions
-                      //
-
-                      var canvas = self.$.theCanvas;
-                      var context = canvas.getContext('2d');
-                      context.clearRect(0, 0, canvas.width, canvas.height);
-                      canvas.height = viewport.height;
-                      canvas.width = viewport.width;
-
-                      //
-                      // Render PDF page into canvas context
-                      //
-                      var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                      };
-                      page.render(renderContext);
-                    });
+                  //
+                  // Render PDF page into canvas context
+                  //
+                  var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                  };
+                  page.render(renderContext);
                 });
+
             }
         });
     </script>
