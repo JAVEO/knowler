@@ -15,6 +15,10 @@
         Polymer({
             is: "pdf-viewer",
             properties: {
+                lectureId: {
+                    type: String,
+                    notify: true
+                },
                 slideHeight: {
                     type: Number
                 },
@@ -32,9 +36,12 @@
                 }
             },
             observers: [
-                'renderPdf(slideHeight, currentSlide)'
+                'renderPdf(lectureId, slideHeight, currentSlide)'
             ],
-            renderPdf: function(slideHeight, currentSlide) {
+            renderPdf: function(lectureId, slideHeight, currentSlide) {
+                if (lectureId === undefined) {
+                    return;
+                }
                 if (this.previousSlide === currentSlide || slideHeight === undefined) {
                     return;
                 }
@@ -47,7 +54,7 @@
                 // If absolute URL from the remote server is provided, configure the CORS
                 // header on that server.
                 //
-                var url = 'src/spring/pres.pdf';
+                var url = 'http://localhost:9000/lectures/' + lectureId + '/pdf';
 
                 //
                 // Disable workers to avoid yet another cross-origin issue (workers need

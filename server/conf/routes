@@ -5,3 +5,4 @@ POST    /lectures                   controllers.Lectures.create
 GET     /lectures/:id               controllers.Lectures.details(id)
 DELETE  /lectures/:id               controllers.Lectures.delete(id)
 PUT     /lectures/:id/mapping       controllers.Lectures.addMapping(id)
+GET     /lectures/:id/pdf           controllers.Lectures.download(id)

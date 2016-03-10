@@ -35,7 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="stylesheet" href="styles/main.css">
 
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-
+  <script src=" https://apis.google.com/js/client.js"></script>
   <link rel="import" href="elements/elements.html">
 </head>
 
@@ -72,7 +72,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon> Szukaj</paper-button>
           <google-signin
                   client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
-                  scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube">
+                  scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
+                  on-google-signin-success="userLogged">
           </google-signin>
         </paper-toolbar>
         <div class="content">

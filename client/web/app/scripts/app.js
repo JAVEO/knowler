@@ -71,5 +71,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           app.searchLectures(e);
       }
   };
+  app.userLogged = function(e) {
+      var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getName();
+      console.log('Logged user: ', user);
+  };
 
 })(document);

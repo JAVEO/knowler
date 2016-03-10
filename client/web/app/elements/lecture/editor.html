@@ -46,8 +46,8 @@
                 </google-youtube>
             </div>
             <div class="col-md-6 col-sm-12">
-                <paper-input value="{{lecture.presentationUrl}}" label="Presentation URL"></paper-input>
-                <pdf-viewer on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
+                <pdf-viewer lecture-id="{{lectureId}}" on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
             </div>
         </div>
         <div class="row">
@@ -93,6 +93,10 @@
                     type: String,
                     observer: "_videoUrlChanged"
                 },
+                presentationUrl: {
+                    type: String,
+                    observer: "_presentationUrlChanged"
+                },
                 lecture: {
                     type: Object,
                     notify: true
@@ -124,6 +128,13 @@
                 }
                 var videoId = UrlUtils.getParam(videoUrl, "v");
                 this.set('lecture.videoId', videoId);
+            },
+            _presentationUrlChanged: function(presentationUrl) {
+                if (presentationUrl === undefined || presentationUrl === "") {
+                    return;
+                }
+                var fileId = UrlUtils.getParam(presentationUrl, "id");
+                this.set('lecture.fileId', fileId);
             },
             _updateSelectedSection: function(e) {
                 var self = this;
@@ -199,7 +210,7 @@
                     console.log("lectureId not found. Creating new object");
                     this.lecture = {
                         videoUrl: undefined,
-                        presentationUrl: undefined,
+                        fileId: undefined,
                         title: undefined,
                         description: undefined,
                         mappings: []

@@ -1,19 +1,20 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
+import play.api.libs.ws.WSClient
 import play.api.mvc._
 import play.modules.reactivemongo._
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
 @Singleton
-class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   extends Controller with MongoController with ReactiveMongoComponents {
 
   def list(phrase: Option[String]) = Action.async {
@@ -61,6 +62,22 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi)
         case Nil => Future.successful(NotFound)
         case _ => Future.successful(BadRequest)
       }
+  }
+
+  def download(id: String) = Action.async {
+    findById(id)
+      .flatMap {
+        case head :: Nil => downloadFormDrive(head.value("fileId").as[String])
+        case Nil => Future.successful(NotFound)
+        case _ => Future.successful(BadRequest)
+      }
+  }
+
+  def downloadFormDrive(id: String): Future[Result] = {
+    ws.url("https://drive.google.com/uc?id=" + id).getStream().map {
+      case (response, body) =>
+        Result(ResponseHeader(response.status, response.headers.mapValues(_.head)), body)
+    }
   }
 
   def findById(id: String): Future[List[JsObject]] = {
