@@ -47,7 +47,10 @@
             </div>
             <div class="col-md-6 col-sm-12">
                 <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
-                <pdf-viewer file-id="{{lecture.fileId}}" on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
+                            current-slide="{{currentSlide}}"
+                            slide-height="{{videoHeight}}"
+                            on-pdf-changed="pdfChanged"></pdf-viewer>
             </div>
         </div>
         <div class="row">
@@ -55,7 +58,7 @@
                 <time-grider id="timeGrider" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_updateSelectedSection"></time-grider>
             </div>
             <div class="col-sm-12">
-                <slide-list></slide-list>
+                <slide-list id="slideList"></slide-list>
             </div>
         </div>
 
@@ -119,8 +122,8 @@
             observers: [
                 'generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
-            pagesCountChanged: function(e) {
-                this.pagesCount = e.detail.value;
+            pdfChanged: function(e) {
+                this.$.slideList.set('pdf', e.detail.value);
             },
             _videoUrlChanged: function(videoUrl) {
                 if (StringUtils.isEmpty(videoUrl)) {
