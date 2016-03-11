@@ -47,7 +47,7 @@
             </div>
             <div class="col-md-6 col-sm-12">
                 <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
-                <pdf-viewer lecture-id="{{lectureId}}" on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                <pdf-viewer file-id="{{lecture.fileId}}" on-pages-count-changed="pagesCountChanged" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
             </div>
         </div>
         <div class="row">
@@ -123,14 +123,14 @@
                 this.pagesCount = e.detail.value;
             },
             _videoUrlChanged: function(videoUrl) {
-                if (videoUrl === undefined || videoUrl === "") {
+                if (StringUtils.isEmpty(videoUrl)) {
                     return;
                 }
                 var videoId = UrlUtils.getParam(videoUrl, "v");
                 this.set('lecture.videoId', videoId);
             },
             _presentationUrlChanged: function(presentationUrl) {
-                if (presentationUrl === undefined || presentationUrl === "") {
+                if (StringUtils.isEmpty(presentationUrl)) {
                     return;
                 }
                 var fileId = UrlUtils.getParam(presentationUrl, "id");

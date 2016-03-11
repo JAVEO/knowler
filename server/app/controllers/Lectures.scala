@@ -64,17 +64,8 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
       }
   }
 
-  def download(id: String) = Action.async {
-    findById(id)
-      .flatMap {
-        case head :: Nil => downloadFormDrive(head.value("fileId").as[String])
-        case Nil => Future.successful(NotFound)
-        case _ => Future.successful(BadRequest)
-      }
-  }
-
-  def downloadFormDrive(id: String): Future[Result] = {
-    ws.url("https://drive.google.com/uc?id=" + id).getStream().map {
+  def download(fileId: String) = Action.async {
+    ws.url("https://drive.google.com/uc?id=" + fileId).getStream().map {
       case (response, body) =>
         Result(ResponseHeader(response.status, response.headers.mapValues(_.head)), body)
     }
