@@ -109,7 +109,10 @@
                 console.log("id: ", id);
                 return id;
             },
-            lectureChanged: function(){
+            lectureChanged: function(newId, oldId){
+                if (StringUtils.isEmpty(this.lectureId)) {
+                    return;
+                }
                 this.$.lectures.get(this.lectureId);
                 this.$.knowlerComments.reset();
             },

@@ -39,8 +39,12 @@
                 'renderPdf(pdf, slideHeight, currentSlide)'
             ],
             downloadPdf: function() {
+                if (StringUtils.isEmpty(this.lectureId)) {
+                    return;
+                }
                 var self = this;
                 var url = 'http://localhost:9000/lectures/' + this.lectureId + '/pdf';
+                PDFJS.disableWorker = true;
                 PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
                 PDFJS.getDocument(url).then(function getPdf(pdf) {
                     self.set('pdf', pdf);
