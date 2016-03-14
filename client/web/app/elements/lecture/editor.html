@@ -124,6 +124,7 @@
             ],
             pdfChanged: function(e) {
                 this.$.slideList.set('pdf', e.detail.value);
+                this.set('pagesCount', e.detail.value.numPages);
             },
             _videoUrlChanged: function(videoUrl) {
                 if (StringUtils.isEmpty(videoUrl)) {
