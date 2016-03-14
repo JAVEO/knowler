@@ -173,14 +173,11 @@
             setCurrentSlide: function(slide) {
                 this.set("currentSlide", slide);
             },
-            getVideoDuration: function(response) {
-                return Math.round(response.detail.target.F.duration);
-            },
             _youtubeReady: function(e) {
-                this.set('duration', this.getVideoDuration(e));
+                this.set('duration', GoogleYouTubeUtils.getVideoDuration(e));
             },
             _youtubeStateChanged: function(e) {
-                var newDuration = this.getVideoDuration(e);
+                var newDuration = GoogleYouTubeUtils.getVideoDuration(e);
                 if (newDuration !== 0 && this.duration !== newDuration) {
                     this.set('duration', newDuration);
                 }

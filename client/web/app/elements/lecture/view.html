@@ -34,6 +34,7 @@
                         autoplay="0"
                         on-currenttime-changed="playerChanged"
                         on-google-youtube-ready="_youtubeReady"
+                        on-google-youtube-state-change="_youtubeStateChanged"
                         width="100%"
                         height="{{videoHeight}}px"
                         style="margin: auto;">
@@ -98,7 +99,13 @@
                 this.setCurrentSlide(slideId);
             },
             _youtubeReady: function(e) {
-                this.duration = e.detail.target.F.duration;
+                this.set('duration', GoogleYouTubeUtils.getVideoDuration(e));
+            },
+            _youtubeStateChanged: function(e) {
+                var newDuration = GoogleYouTubeUtils.getVideoDuration(e);
+                if (newDuration !== 0 && this.duration !== newDuration) {
+                    this.set('duration', newDuration);
+                }
             },
             findCurrentImage: function(time){
                 var secToSlides = this.lecture.mappings;
