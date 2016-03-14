@@ -16,9 +16,13 @@
             padding: 20px;
             width: 100%;
         }
+        h2 {
+            color: var(--paper-blue-600);
+        }
     </style>
 
     <template>
+        <h2>{{lecture.title}}</h2>
         <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
         <div class="row">
             <div class="col-md-6 col-sm-12">
