@@ -49,6 +49,9 @@ GoogleYouTubeUtils.determinePreferredHeight = function() {
     }
     return 200;
 };
+GoogleYouTubeUtils.getVideoDuration = function(response) {
+    return Math.round(response.detail.target.F.duration);
+};
 
 function StringUtils() {}
 StringUtils.isEmpty = function(str) {

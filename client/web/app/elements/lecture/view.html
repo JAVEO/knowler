@@ -16,9 +16,13 @@
             padding: 20px;
             width: 100%;
         }
+        h2 {
+            color: var(--paper-blue-600);
+        }
     </style>
 
     <template>
+        <h2>{{lecture.title}}</h2>
         <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
         <div class="row">
             <div class="col-md-6 col-sm-12">
@@ -30,13 +34,14 @@
                         autoplay="0"
                         on-currenttime-changed="playerChanged"
                         on-google-youtube-ready="_youtubeReady"
+                        on-google-youtube-state-change="_youtubeStateChanged"
                         width="100%"
                         height="{{videoHeight}}px"
                         style="margin: auto;">
                 </google-youtube>
             </div>
             <div class="col-md-6 col-sm-12">
-                <pdf-viewer current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
             </div>
         </div>
         <div class="row">
@@ -94,7 +99,13 @@
                 this.setCurrentSlide(slideId);
             },
             _youtubeReady: function(e) {
-                this.duration = e.detail.target.F.duration;
+                this.set('duration', GoogleYouTubeUtils.getVideoDuration(e));
+            },
+            _youtubeStateChanged: function(e) {
+                var newDuration = GoogleYouTubeUtils.getVideoDuration(e);
+                if (newDuration !== 0 && this.duration !== newDuration) {
+                    this.set('duration', newDuration);
+                }
             },
             findCurrentImage: function(time){
                 var secToSlides = this.lecture.mappings;
@@ -109,7 +120,10 @@
                 console.log("id: ", id);
                 return id;
             },
-            lectureChanged: function(){
+            lectureChanged: function(newId, oldId){
+                if (StringUtils.isEmpty(this.lectureId)) {
+                    return;
+                }
                 this.$.lectures.get(this.lectureId);
                 this.$.knowlerComments.reset();
             },

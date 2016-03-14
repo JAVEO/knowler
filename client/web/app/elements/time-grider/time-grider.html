@@ -50,18 +50,19 @@
                 },
                 mappings: {
                     type: Object,
-                    notify: true,
-                    observer: "mappingChanged"
+                    notify: true
                 },
                 duration: {
                     type: Number,
-                    notify: true,
-                    observer: "mappingChanged"
+                    notify: true
                 }
             },
+            observers: [
+                'mappingChanged(mappings, duration)'
+            ],
             ready: function() {},
             mappingChanged: function() {
-                if (this.mappings === undefined || this.duration === undefined || this.mappings === undefined || this.mappings.length === 0) {
+                if (this.mappings.length === 0) {
                     return;
                 }
                 console.log("Mappings have changed: " + JSON.stringify(this.mappings));
