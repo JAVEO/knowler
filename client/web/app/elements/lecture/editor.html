@@ -192,6 +192,9 @@
                     return;
                 }
 
+                if (ArrayUtils.isNotEmpty(this.lecture.mappings)) {
+                    return;
+                }
                 console.log("Generating default mappings");
                 var mappings = [];
                 var singleDur = this.duration / pagesCount;
@@ -248,7 +251,8 @@
                 this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
             },
             lecturesResponse: function() {
-                //page('/lecture-search')
+                var last = this.$.lectures.lastResponse;
+                page('/lecture/' + last.$oid);
             }
         });
     </script>
