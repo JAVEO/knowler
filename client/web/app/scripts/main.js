@@ -12,7 +12,7 @@ Number.prototype.toHHMMSS = function() {
     var seconds = sec_num % 60;
 
     return [hours, minutes, seconds].map(appendZero).join(":");
-}
+};
 
 function UrlUtils() {}
 UrlUtils.getParam = function(url, param) {
@@ -25,6 +25,7 @@ UrlUtils.getParam = function(url, param) {
     }
     return url;
 };
+UrlUtils.backendUrl = "http://localhost:9000";
 
 function ArrayUtils() {}
 ArrayUtils.getOrElse = function(array, index, other) {

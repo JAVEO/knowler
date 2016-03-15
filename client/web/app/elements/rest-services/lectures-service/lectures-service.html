@@ -16,19 +16,18 @@
                     readOnly: false
                 }
             },
-            url: "http://localhost:9000",
             queryAll: "/lectures",
             query: function(search){
-                var url = this.url + this.queryAll;
+                var url = UrlUtils.backendUrl + this.queryAll;
                 if (StringUtils.isNotEmpty(search)) {
-                    url += "?search=" + search
+                    url += "?search=" + search;
                 }
                 this.$.ajax.url = url;
                 this.$.ajax.generateRequest();
             },
             create: function(data){
                 console.log("data for post: ", data);
-                this.$.ajax.url = this.url + this.queryAll;
+                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll;
                 this.$.ajax.body = data;
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "POST";
@@ -36,17 +35,17 @@
             },
             delete: function(lectureId){
                 console.log("data for delete: ", lectureId);
-                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
+                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId;
                 this.$.ajax.method = "DELETE";
                 this.$.ajax.generateRequest();
             },
             get: function(lectureId){
-                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId;
+                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId;
                 this.$.ajax.generateRequest();
             },
             addMapping: function(lectureId, data) {
                 console.log("add mapping: ", data);
-                this.$.ajax.url = this.url + this.queryAll + "/" + lectureId + "/mapping";
+                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId + "/mapping";
                 this.$.ajax.body = data;
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "PUT";

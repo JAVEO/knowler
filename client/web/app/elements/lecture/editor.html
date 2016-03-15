@@ -150,7 +150,7 @@
                     return self.duration;
                 }
 
-                this.selectedIndex = e.detail.index
+                this.selectedIndex = e.detail.index;
 
                 console.log("Updating form");
                 this.timeFrom = this.lecture.mappings[this.selectedIndex].time.toHHMMSS();
@@ -167,7 +167,7 @@
                 console.log("Updating video and presentation view");
                 var selectedMapping = this.lecture.mappings[this.selectedIndex];
                 this.async(function() {
-                    this.$.presentation.seekTo(selectedMapping.time)
+                    this.$.presentation.seekTo(selectedMapping.time);
                 }, 10);
                 this.setCurrentSlide(selectedMapping.slide);
             },
@@ -201,7 +201,7 @@
                         slide: i
                     });
                 }
-                this.set('lecture.mappings', mappings)
+                this.set('lecture.mappings', mappings);
             },
             ready: function() {
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
@@ -215,7 +215,7 @@
                         title: undefined,
                         description: undefined,
                         mappings: []
-                    }
+                    };
                 }
 
                 page.exit('/lecture/:id/edit', function(ctx, next) {

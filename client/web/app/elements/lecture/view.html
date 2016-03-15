@@ -55,7 +55,7 @@
             <a href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edytuj</paper-button></a>
         </div>
 
-        <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}"></disqus-comments>
+        <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}" https="true"></disqus-comments>
     </template>
 
     <script>
@@ -86,13 +86,13 @@
                 e.detail = e.detail.element;
                 console.log("to time: ", e.detail.time);
 
-                this.async(function(){this.$.googleYouTube.seekTo(e.detail.time)}, 10);
+                this.async(function(){this.$.googleYouTube.seekTo(e.detail.time);}, 10);
                 this.setCurrentSlide(e.detail.slide);
             },
             playerChanged: function(time){
                 console.log("playerChanged");
 
-                if (time.detail.value == 0) {
+                if (time.detail.value === 0) {
                     return;
                 }
                 var slideId = this.findCurrentImage(time);

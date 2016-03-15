@@ -59,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   app.searchLectures = function(e) {
-      var searchPhrase = app.searchPhrase
+      var searchPhrase = app.searchPhrase;
       if (StringUtils.isEmpty(searchPhrase)) {
         page('/lecture-search/#taehc[]');
       } else {
