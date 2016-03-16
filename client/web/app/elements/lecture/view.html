@@ -23,7 +23,7 @@
 
     <template>
         <h2>{{lecture.title}}</h2>
-        <lectures-service id="lectures" last-response="{{lecture}}"></lectures-service>
+        <lectures-service id="lectures" last-response="{{lecture}}" on-response="lecturesResponse"></lectures-service>
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <google-youtube
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div class="row text-center" style="display:block;">
+        <div class="row text-center" style="display:block;" hidden$="{{hiddenEditButton}}">
             <paper-button on-tap="delete" class="danger" raised>Usuń</paper-button></a>
             <a href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edytuj</paper-button></a>
         </div>
@@ -76,6 +76,13 @@
                     notify: true,
                     reflectToAttribute: true,
                     observer: "lectureChanged"
+                },
+                loggedUser: {
+                    type: String
+                },
+                hiddenEditButton: {
+                    type: Boolean,
+                    value: true
                 }
             },
             setCurrentSlide: function(slide) {
@@ -139,6 +146,14 @@
             delete: function(){
                 this.$.lectures.delete(this.lectureId);
                 page('/lecture-search');
+            },
+            setLoggedUser: function(user) {
+                this.set('loggedUser', user);
+            },
+            lecturesResponse: function() {
+                var last = this.$.lectures.lastResponse;
+                var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author)
+                this.set('hiddenEditButton', hidden);
             }
         });
     </script>
