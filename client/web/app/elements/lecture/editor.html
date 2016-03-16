@@ -250,9 +250,11 @@
             },
             timeFromChanged: function() {
                 this.updateMappingTime(this.timeFrom, this.lecture.mappings[this.selectedIndex]);
+                this.$.timeGrider.select(this.selectedIndex);
             },
             timeToChanged: function() {
                 this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
+                this.$.timeGrider.select(this.selectedIndex);
             },
             lecturesResponse: function() {
                 var last = this.$.lectures.lastResponse;

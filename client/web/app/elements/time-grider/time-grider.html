@@ -61,6 +61,16 @@
                 'mappingChanged(mappings, duration)'
             ],
             ready: function() {},
+            select: function(mappingIndex) {
+                while (this.$$(".selected") !== null) {
+                            this.$$(".selected").classList.remove('selected');
+                }
+                this.$$("#" + "section-" + mappingIndex).classList.add('selected');
+                this.fire('choose-slide', {
+                    index: mappingIndex,
+                    element: this.mappings[mappingIndex]
+                });
+            },
             mappingChanged: function() {
                 if (this.mappings.length === 0) {
                     return;
@@ -177,15 +187,7 @@
                 };
                 var click = function(i) {
                     return function(e) {
-                        console.log("clicked: " + i);
-                        while (self.$$(".selected") !== null) {
-                            self.$$(".selected").classList.remove('selected');
-                        }
-                        self.$$("#" + getSectionId(i)).classList.add('selected');
-                        self.fire('choose-slide', {
-                            index: i,
-                            element: secToSlides[i]
-                        });
+                        self.select(i);
                     };
                 };
 
