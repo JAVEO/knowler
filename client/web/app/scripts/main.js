@@ -35,7 +35,7 @@ ArrayUtils.getOrElse = function(array, index, other) {
     return other;
 };
 ArrayUtils.isEmpty = function(array) {
-    return array === undefined || array.length === 0;
+    return array === undefined || array === null || array.length === 0;
 };
 ArrayUtils.isNotEmpty = function(array) {
     return !ArrayUtils.isEmpty(array);
