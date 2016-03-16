@@ -150,7 +150,7 @@
                     return self.duration;
                 }
 
-                this.selectedIndex = e.detail.index
+                this.selectedIndex = e.detail.index;
 
                 console.log("Updating form");
                 this.timeFrom = this.lecture.mappings[this.selectedIndex].time.toHHMMSS();
@@ -167,7 +167,7 @@
                 console.log("Updating video and presentation view");
                 var selectedMapping = this.lecture.mappings[this.selectedIndex];
                 this.async(function() {
-                    this.$.presentation.seekTo(selectedMapping.time)
+                    this.$.presentation.seekTo(selectedMapping.time);
                 }, 10);
                 this.setCurrentSlide(selectedMapping.slide);
             },
@@ -192,6 +192,9 @@
                     return;
                 }
 
+                if (ArrayUtils.isNotEmpty(this.lecture.mappings)) {
+                    return;
+                }
                 console.log("Generating default mappings");
                 var mappings = [];
                 var singleDur = this.duration / pagesCount;
@@ -201,7 +204,7 @@
                         slide: i
                     });
                 }
-                this.set('lecture.mappings', mappings)
+                this.set('lecture.mappings', mappings);
             },
             ready: function() {
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
@@ -215,7 +218,7 @@
                         title: undefined,
                         description: undefined,
                         mappings: []
-                    }
+                    };
                 }
 
                 page.exit('/lecture/:id/edit', function(ctx, next) {
@@ -224,7 +227,11 @@
                 });
             },
             save: function() {
-                this.$.lectures.create(this.lecture);
+                if (this.lectureId === undefined) {
+                    this.$.lectures.create(this.lecture);
+                } else {
+                    this.$.lectures.update(this.lectureId, this.lecture);
+                }
             },
             delete: function() {
                 this.lecture.mappings.splice(this.selectedIndex, 1);
@@ -248,7 +255,12 @@
                 this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
             },
             lecturesResponse: function() {
-                //page('/lecture-search')
+                var last = this.$.lectures.lastResponse;
+                if (last.$oid !== undefined) {
+                    page('/lecture/' + last.$oid);
+                } else if (last.status !== undefined && this.lectureId !== undefined) {
+                    page('/lecture/' + this.lectureId);
+                }
             }
         });
     </script>

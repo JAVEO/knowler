@@ -41,35 +41,37 @@
                     Polymer.dom(self.$.slideSelector).removeChild(children[i]);
                 }
 
-                for (var i = 0; i < this.pdf.numPages; i++) {
-                    this.pdf.getPage(i + 1).then(function getPage(page) {
-                          var origViewport = page.getViewport(1);
-                          var scale = 150 / origViewport.height;
-                          var viewport = page.getViewport(scale);
+                function getPage(page) {
+                  var origViewport = page.getViewport(1);
+                  var scale = 150 / origViewport.height;
+                  var viewport = page.getViewport(scale);
 
-                          //
-                          // Prepare canvas using PDF page dimensions
-                          //
-                          var canvas = document.createElement('canvas');
-                          var context = canvas.getContext('2d');
-                          context.clearRect(0, 0, canvas.width, canvas.height);
-                          canvas.height = viewport.height;
-                          canvas.width = viewport.width;
+                  //
+                  // Prepare canvas using PDF page dimensions
+                  //
+                  var canvas = document.createElement('canvas');
+                  var context = canvas.getContext('2d');
+                  context.clearRect(0, 0, canvas.width, canvas.height);
+                  canvas.height = viewport.height;
+                  canvas.width = viewport.width;
 
-                          //
-                          // Render PDF page into canvas context
-                          //
-                          var renderContext = {
-                            canvasContext: context,
-                            viewport: viewport
-                          };
-                          page.render(renderContext);
+                  //
+                  // Render PDF page into canvas context
+                  //
+                  var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                  };
+                  page.render(renderContext);
 
-                          var listElem = document.createElement('div');
-                          listElem.className = 'list-elem';
-                          listElem.appendChild(canvas);
-                          Polymer.dom(self.$.slideSelector).appendChild(listElem);
-                    });
+                  var listElem = document.createElement('div');
+                  listElem.className = 'list-elem';
+                  listElem.appendChild(canvas);
+                  Polymer.dom(self.$.slideSelector).appendChild(listElem);
+                }
+
+                for (i = 0; i < this.pdf.numPages; i++) {
+                    this.pdf.getPage(i + 1).then(getPage);
                 }
             },
             _onItemSelected: function(e) {

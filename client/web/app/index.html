@@ -98,7 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <section data-route="edit-lecture">
               <paper-material elevation="1" class="row">
-                <lecture-editor lecture-id="{{params.id}}"></lecture-editor>
+                <lecture-editor lecture-id="{{params.editId}}"></lecture-editor>
               </paper-material>
             </section>
 
@@ -108,10 +108,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-drawer-panel>
 
   </template>
+  <!-- build:js scripts/app.js -->
   <script src="scripts/main.js"></script>
   <script src="scripts/app.js"></script>
   <script src="../bower_components/pdfjs-dist/build/pdf.js"></script>
   <script src="../bower_components/pdfjs-dist/build/pdf.worker.js"></script>
+  <!-- endbuild-->
 </body>
 
 </html>
