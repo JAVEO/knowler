@@ -72,12 +72,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
   };
   app.userLogged = function(e) {
-      var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getName();
-      console.log('Logged user: ', user);
+      var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+      console.log('Logged user: ', user.getName());
       app.$.lecturesList.showLectureAddButton();
+      app.$.lectureEditor.setAuthor(user.getEmail());
   };
   app.userLoggedOut = function(e) {
     app.$.lecturesList.hideLectureAddButton();
+    app.$.lectureEditor.setAuthor(undefined);
   };
 
 })(document);
