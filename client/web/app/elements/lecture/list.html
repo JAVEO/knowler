@@ -40,9 +40,11 @@
             </paper-menu>
         </paper-header-panel>
 
-        <a href="/lecture/add">
-            <paper-button style="margin-top: 30px;" raised>Dodaj</paper-button>
-        </a>
+        <div hidden$="{{hiddenLectureAddButton}}">
+            <a href="/lecture/add">
+                <paper-button style="margin-top: 30px;" raised>Dodaj</paper-button>
+            </a>
+        </div>
     </template>
     <script>
         Polymer({
@@ -52,6 +54,10 @@
                 searchPhrase: {
                     type: String,
                     observer: 'search'
+                },
+                hiddenLectureAddButton: {
+                    type: Boolean,
+                    value: true
                 }
             },
             ready: function() {
@@ -67,7 +73,13 @@
             },
             hasResults: function(lectures) {
                 return ArrayUtils.isEmpty(lectures);
-            }
+            },
+            showLectureAddButton: function() {
+                this.set('hiddenLectureAddButton', false);
+            },
+            hideLectureAddButton: function() {
+                this.set('hiddenLectureAddButton', true);
+            },
         });
     </script>
 </dom-module>

@@ -74,7 +74,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   style="margin-left: 25px;"
                   client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
                   scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
-                  on-google-signin-success="userLogged">
+                  on-google-signin-success="userLogged"
+                  on-google-signed-out="userLoggedOut">
           </google-signin>
         </paper-toolbar>
         <div class="content">
@@ -93,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <section data-route="lecture-search">
               <paper-material elevation="1">
-                <lectures-list search-phrase="{{params.searchPhrase}}"></lectures-list>
+                <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}"></lectures-list>
               </paper-material>
             </section>
 
