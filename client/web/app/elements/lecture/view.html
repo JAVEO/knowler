@@ -24,7 +24,9 @@
     <template>
         <h2>{{lecture.title}}</h2>
         <lectures-service id="lectures" last-response="{{lecture}}" on-response="lecturesResponse"></lectures-service>
-        <div class="row">
+        <fullscreen-api id="fsapi"></fullscreen-api>
+
+        <div id="presentationContent" class="row">
             <div class="col-md-6 col-sm-12">
                 <google-youtube
                         id="googleYouTube"
@@ -46,13 +48,14 @@
         </div>
         <div class="row">
             <div class="slider">
-                <time-grider duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
+                <time-grider id="timeGrider" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
             </div>
         </div>
 
-        <div class="row text-center" style="display:block;" hidden$="{{hiddenEditButton}}">
-            <paper-button on-tap="delete" class="danger" raised>Usuń</paper-button></a>
-            <a href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edytuj</paper-button></a>
+        <div class="row text-center" style="display:block;">
+            <paper-button hidden$="{{hiddenEditButton}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
+            <a hidden$="{{hiddenEditButton}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
+            <paper-button on-tap="goFullscreen" raised>Fullscreen</paper-button></a>
         </div>
 
         <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}" https="true"></disqus-comments>
@@ -83,15 +86,17 @@
                 hiddenEditButton: {
                     type: Boolean,
                     value: true
+                },
+                fsapi: {
+                    type: Object
                 }
             },
             setCurrentSlide: function(slide) {
                 this.set('currentSlide', slide);
             },
             clickedSlide: function(e){
-                console.log("youtubeslider-choose time&slide");
                 e.detail = e.detail.element;
-                console.log("to time: ", e.detail.time);
+                console.log("To time: ", e.detail.time);
 
                 this.async(function(){this.$.googleYouTube.seekTo(e.detail.time);}, 10);
                 this.setCurrentSlide(e.detail.slide);
@@ -104,6 +109,7 @@
                 }
                 var slideId = this.findCurrentImage(time);
                 this.setCurrentSlide(slideId);
+                this.$.timeGrider.markAsSelected(slideId);
             },
             _youtubeReady: function(e) {
                 this.set('duration', GoogleYouTubeUtils.getVideoDuration(e));
@@ -127,7 +133,10 @@
                 console.log("id: ", id);
                 return id;
             },
-            lectureChanged: function(newId, oldId){
+            goFullscreen: function () {
+                this.fsapi.toggleFullscreen();
+            },
+            lectureChanged: function(newId, oldId) {
                 if (StringUtils.isEmpty(this.lectureId)) {
                     return;
                 }
@@ -135,6 +144,10 @@
                 this.$.knowlerComments.reset();
             },
             ready: function(){
+                var fsapi = this.$.fsapi;
+                fsapi.target = this.$.presentationContent;
+                this.fsapi = fsapi;
+
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
 
                 var googleYouTube  = this.$.googleYouTube;

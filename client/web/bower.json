@@ -18,7 +18,8 @@
     "bootstrap": "~3.3.5",
     "pdfjs-dist": "^1.4.124",
     "disqus-comments": "https://github.com/divshot/disqus-comments.git#a7115d6cadaede553a8308e2bdf328b06a78d051",
-    "google-signin": "^1.3.2"
+    "google-signin": "^1.3.2",
+    "fullscreen-api": "^1.1.0"
   },
   "devDependencies": {
     "web-component-tester": "*",

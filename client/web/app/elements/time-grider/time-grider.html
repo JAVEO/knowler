@@ -62,11 +62,13 @@
                 'mappingChanged(mappings, duration)'
             ],
             ready: function() {},
-            select: function(mappingIndex) {
+            markAsSelected: function(mappingIndex) {
                 while (this.$$(".selected") !== null) {
-                            this.$$(".selected").classList.remove('selected');
+                    this.$$(".selected").classList.remove('selected');
                 }
                 this.$$("#" + "section-" + mappingIndex).classList.add('selected');
+            },
+            fireSelectionChanged: function(mappingIndex) {
                 this.fire('choose-slide', {
                     index: mappingIndex,
                     element: this.mappings[mappingIndex]
@@ -150,7 +152,7 @@
                 function calculateNewTime(track, index) {
                     var minTime = 8;
                     var newTime = getTimeForIndex(index) + (self.duration / self.$.grids.offsetWidth) * track.dx;
-                    
+
                     //Left
                     var leftConstraint = getTimeForIndex(index - 1) + minTime;
                     if (newTime < leftConstraint) {
@@ -204,7 +206,8 @@
                 };
                 var click = function(i) {
                     return function(e) {
-                        self.select(i);
+                        self.markAsSelected(i);
+                        self.fireSelectionChanged(i);
                     };
                 };
 
