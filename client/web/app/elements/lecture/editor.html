@@ -256,7 +256,11 @@
             },
             lecturesResponse: function() {
                 var last = this.$.lectures.lastResponse;
-                page('/lecture/' + last.$oid);
+                if (last.$oid !== undefined) {
+                    page('/lecture/' + last.$oid);
+                } else if (last.status !== undefined && this.lectureId !== undefined) {
+                    page('/lecture/' + this.lectureId);
+                }
             }
         });
     </script>
