@@ -23,6 +23,7 @@
                     url += "?search=" + search;
                 }
                 this.$.ajax.url = url;
+                this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();
             },
             create: function(data){
@@ -41,6 +42,7 @@
             },
             get: function(lectureId){
                 this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId;
+                this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();
             },
             update: function(lectureId, data) {
