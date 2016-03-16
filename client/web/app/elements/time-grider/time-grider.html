@@ -148,26 +148,33 @@
                 }
 
                 function calculateNewTime(track, index) {
-                    return getTimeForIndex(index) + (self.duration / self.$.grids.offsetWidth) * track.dx;
+                    var minTime = 8;
+                    var newTime = getTimeForIndex(index) + (self.duration / self.$.grids.offsetWidth) * track.dx;
+                    
+                    //Left
+                    var leftConstraint = getTimeForIndex(index - 1) + minTime;
+                    if (newTime < leftConstraint) {
+                        return leftConstraint;
+                    }
+
+                    //Right
+                    var rightConstraint = getTimeForIndex(index + 1) - minTime;
+                    if (newTime > rightConstraint) {
+                        return rightConstraint;
+                    }
+
+                    return newTime;
                 }
 
                 function resizeElements(track, index) {
                     function resizeElement(elemDur, index) {
                         self.$$("#" + getContainerId(index)).style.width = calculateWidth(elemDur);
                     }
-                    function canResize(time) {
-                        var minTime = 8;
-                        var leftConstraint = getTimeForIndex(index) + minTime;
-                        var rightConstraint = getTimeForIndex(index + 2) - minTime;
-                        return time > leftConstraint && time < rightConstraint;
-                    }
 
                     var rightTime = calculateNewTime(track, index + 1);
+                    resizeElement(rightTime - self.mappings[index].time, index);
+                    resizeElement(getTimeForIndex(index + 2) - rightTime, index + 1);
 
-                    if (canResize(rightTime)) {
-                        resizeElement(rightTime - self.mappings[index].time, index);
-                        resizeElement(getTimeForIndex(index + 2) - rightTime, index + 1);
-                    }
                     displayTooltip(rightTime, track);
                 }
 
