@@ -76,10 +76,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       console.log('Logged user: ', user.getName());
       app.$.lecturesList.showLectureAddButton();
       app.$.lectureEditor.setAuthor(user.getEmail());
+      app.$.lectureView.setLoggedUser(user.getEmail());
   };
   app.userLoggedOut = function(e) {
     app.$.lecturesList.hideLectureAddButton();
     app.$.lectureEditor.setAuthor(undefined);
+    app.$.lectureView.setLoggedUser(undefined);
   };
 
 })(document);
