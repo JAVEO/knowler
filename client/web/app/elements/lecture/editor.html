@@ -227,7 +227,11 @@
                 });
             },
             save: function() {
-                this.$.lectures.create(this.lecture);
+                if (this.lectureId === undefined) {
+                    this.$.lectures.create(this.lecture);
+                } else {
+                    this.$.lectures.update(this.lectureId, this.lecture);
+                }
             },
             delete: function() {
                 this.lecture.mappings.splice(this.selectedIndex, 1);

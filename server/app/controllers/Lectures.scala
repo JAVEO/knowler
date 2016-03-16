@@ -55,10 +55,10 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
     collection.remove(idSel).map(r => Ok(idSel))
   }
 
-  def addMapping(id: String) = Action.async(parse.json) { request =>
+  def update(id: String) = Action.async(parse.json) { request =>
     findById(id)
       .flatMap {
-        case head :: Nil => collection.update(idSelector(id), pushMapping(request.body)).map(r => Ok(toJson(r)))
+        case head :: Nil => collection.update(idSelector(id), request.body.as[JsObject]).map(r => Ok(toJson(r)))
         case Nil => Future.successful(NotFound)
         case _ => Future.successful(BadRequest)
       }
@@ -80,9 +80,6 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   val idTransformer = __.json.update(
     (__ \ 'id).json.copyFrom( (__ \ '_id \ '$oid).json.pick ))
     .andThen((__ \ '_id).json.prune)
-
-  def pushMapping(body: JsValue): JsObject =
-    Json.obj("$push" -> Json.obj("mappings" -> body))
 
   def idSelector(id: String): JsObject =
     Json.obj("_id" -> Json.obj("$oid" -> id))

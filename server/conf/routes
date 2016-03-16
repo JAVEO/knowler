@@ -4,5 +4,5 @@ GET     /lectures                   controllers.Lectures.list(search: Option[Str
 POST    /lectures                   controllers.Lectures.create
 GET     /lectures/:id               controllers.Lectures.details(id)
 DELETE  /lectures/:id               controllers.Lectures.delete(id)
-PUT     /lectures/:id/mapping       controllers.Lectures.addMapping(id)
+PUT     /lectures/:id               controllers.Lectures.update(id)
 GET     /lectures/:fileId/pdf       controllers.Lectures.download(fileId)

@@ -43,9 +43,9 @@
                 this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId;
                 this.$.ajax.generateRequest();
             },
-            addMapping: function(lectureId, data) {
-                console.log("add mapping: ", data);
-                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId + "/mapping";
+            update: function(lectureId, data) {
+                console.log("Update " + lectureId, data);
+                this.$.ajax.url = UrlUtils.backendUrl + this.queryAll + "/" + lectureId;
                 this.$.ajax.body = data;
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "PUT";
