@@ -65,13 +65,26 @@
 
                   var listElem = document.createElement('div');
                   listElem.className = 'list-elem';
+                  listElem.setAttribute('data-index', page.pageIndex);
                   listElem.appendChild(canvas);
-                  Polymer.dom(self.$.slideSelector).appendChild(listElem);
+                  return listElem;
                 }
 
+                var promises = [];
                 for (i = 0; i < this.pdf.numPages; i++) {
-                    this.pdf.getPage(i + 1).then(getPage);
+                    var promise = this.pdf.getPage(i + 1).then(getPage);
+                    promises.push(promise);
                 }
+
+                Promise.all(promises).then(function(values) {
+                    values.sort(function(a, b){
+                        var ai = parseInt(a.dataset.index);
+                        var bi = parseInt(b.dataset.index);
+                        return ai - bi;
+                    }).forEach(function(item){
+                        Polymer.dom(self.$.slideSelector).appendChild(item);
+                    });
+                });
             },
             _onItemSelected: function(e) {
 

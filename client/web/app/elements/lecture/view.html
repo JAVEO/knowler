@@ -165,7 +165,7 @@
             },
             lecturesResponse: function() {
                 var last = this.$.lectures.lastResponse;
-                var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author)
+                var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author);
                 this.set('hiddenEditButton', hidden);
             }
         });

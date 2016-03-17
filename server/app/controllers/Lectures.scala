@@ -65,9 +65,14 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   }
 
   def download(fileId: String) = Action.async {
-    ws.url("https://drive.google.com/uc?id=" + fileId).getStream().map {
+    ws.url("https://drive.google.com/uc?id=" + fileId).withFollowRedirects(true).getStream().map {
       case (response, body) =>
-        Result(ResponseHeader(response.status, response.headers.mapValues(_.head)), body)
+        if (response.status == OK) {
+          response.headers.get(CONTENT_LENGTH) match {
+            case Some(Seq(length)) => Ok.feed(body).as("application/pdf").withHeaders(CONTENT_LENGTH -> length)
+            case _ => Ok.chunked(body)
+          }
+        } else BadGateway
     }
   }
 
