@@ -14,6 +14,12 @@
         .mt-50 {
             margin-top: 50px;
         }
+        .pdf-container {
+            height: 100%;
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            @apply(--layout-center-justified);
+        }
         h2 {
             color: var(--paper-blue-600);
         }
@@ -28,7 +34,7 @@
                 <paper-input value="{{lecture.description}}" label="Description"></paper-input>
             </div>
         </div>
-        <div class="row">
+        <div class="row horizontal layout">
             <div class="col-md-6 col-sm-12">
                 <paper-input value="{{videoUrl}}" label="YouTube URL"></paper-input>
                 <google-youtube
@@ -45,9 +51,11 @@
                         style="margin: auto;">
                 </google-youtube>
             </div>
-            <div class="col-md-6 col-sm-12">
-                <paper-input value="{{presentationUrl}}" label="Presentation URL"></paper-input>
-                <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
+            <div class="col-md-6 col-sm-12 text-center">
+                <paper-button style="margin-top: 8px;" on-tap="openPicker" selection="presentationUrl" class="success" raised>
+                    <iron-icon icon="file-upload"></iron-icon>Pick file
+                </paper-button>
+                <pdf-viewer style="height: 100%" class="pdf-container" id="pdfViewer" file-id="{{lecture.fileId}}"
                             current-slide="{{currentSlide}}"
                             slide-height="{{videoHeight}}"
                             on-pdf-changed="pdfChanged"></pdf-viewer>
@@ -77,10 +85,11 @@
         </div>
 
         <div class="text-center mt-50" style="display:block;">
-            <paper-button on-tap="save" class="success" raised>Zapisz</paper-button></a>
+            <paper-button on-tap="save" class="success" raised>Save</paper-button>
         </div>
 
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
+        <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
     </template>
     <script>
         Polymer({
@@ -95,10 +104,6 @@
                 videoUrl: {
                     type: String,
                     observer: "_videoUrlChanged"
-                },
-                presentationUrl: {
-                    type: String,
-                    observer: "_presentationUrlChanged"
                 },
                 lecture: {
                     type: Object,
@@ -135,13 +140,6 @@
                 }
                 var videoId = UrlUtils.getParam(videoUrl, "v");
                 this.set('lecture.videoId', videoId);
-            },
-            _presentationUrlChanged: function(presentationUrl) {
-                if (StringUtils.isEmpty(presentationUrl)) {
-                    return;
-                }
-                var fileId = UrlUtils.getParam(presentationUrl, "id");
-                this.set('lecture.fileId', fileId);
             },
             _updateSelectedSection: function(e) {
                 var self = this;
@@ -188,6 +186,9 @@
             },
             _loadNewLecture: function() {
                 this.$.lectures.get(this.lectureId);
+            },
+            openPicker: function() {
+                this.$.googlePicker.openPicker();
             },
             generateNewMappings: function(videoUrl, duration, pagesCount) {
                 if (duration === 0) {

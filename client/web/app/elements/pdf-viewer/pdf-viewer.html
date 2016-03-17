@@ -8,7 +8,8 @@
     </style>
 
     <template>
-        <canvas id="theCanvas"></canvas>
+        <paper-spinner hidden$="{{isLoaded}}" active></paper-spinner>
+        <canvas hidden$="{{!isLoaded}}" id="theCanvas"></canvas>
     </template>
 
     <script>
@@ -31,6 +32,10 @@
                     type: Number,
                     notify: true
                 },
+                isLoaded: {
+                    type: Boolean,
+                    value: true
+                },
                 pdf: {
                     type: Object,
                     notify: true
@@ -40,14 +45,14 @@
                 'renderPdf(pdf, slideHeight, currentSlide)'
             ],
             downloadPdf: function() {
-                if (StringUtils.isEmpty(this.fileId)) {
-                    return;
-                }
                 var self = this;
                 var url = UrlUtils.backendUrl + '/lectures/' + this.fileId + '/pdf';
+                
+                self.set('isLoaded', false);
                 PDFJS.disableWorker = true;
                 PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
                 PDFJS.getDocument(url).then(function getPdf(pdf) {
+                    self.set('isLoaded', true);
                     self.set('pdf', pdf);
                     self.set('pagesCount', pdf.numPages);
                 });
