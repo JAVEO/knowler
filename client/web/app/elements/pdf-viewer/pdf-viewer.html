@@ -5,16 +5,42 @@
             width: 100%;
             height: 100%;
         }
+        .error {
+            color: var(--paper-red-700);
+            font-size: 1.05em;
+        }
+        .viewer-container {
+            height: 100%;
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            @apply(--layout-center-justified);
+        }
     </style>
 
     <template>
-        <canvas id="theCanvas"></canvas>
+        <div class="viewer-container">
+          <paper-spinner hidden$="{{!spinnerVisibility}}" active></paper-spinner>
+          <p hidden$="{{!errorVisibility}}" class="text-center error"><iron-icon icon="icons:warning"></iron-icon> Error occured when downloading pdf file. Make sure that your file is public.</p>
+          <canvas hidden$="{{!canvasVisibility}}" id="theCanvas"></canvas>
+        </div>
     </template>
 
     <script>
         Polymer({
             is: "pdf-viewer",
             properties: {
+                spinnerVisibility: {
+                    type: Boolean,
+                    value: false
+                },
+                errorVisibility: {
+                    type: Boolean,
+                    value: false
+                },
+                canvasVisibility: {
+                    type: Boolean,
+                    value: true
+                },
                 fileId: {
                     type: String,
                     notify: true,
@@ -31,6 +57,10 @@
                     type: Number,
                     notify: true
                 },
+                isLoaded: {
+                    type: Boolean,
+                    value: true
+                },
                 pdf: {
                     type: Object,
                     notify: true
@@ -40,16 +70,25 @@
                 'renderPdf(pdf, slideHeight, currentSlide)'
             ],
             downloadPdf: function() {
-                if (StringUtils.isEmpty(this.fileId)) {
-                    return;
-                }
                 var self = this;
                 var url = UrlUtils.backendUrl + '/lectures/' + this.fileId + '/pdf';
+
+                function setVisibility(spinner, error, canvas) {
+                  self.set("spinnerVisibility", spinner);
+                  self.set("errorVisibility", error);
+                  self.set("canvasVisibility", canvas);
+                }
+                setVisibility(true, false, false);
+
                 PDFJS.disableWorker = true;
                 PDFJS.workerSrc = '../../../bower_components/pdfjs-dist/build/pdf.worker.js';
                 PDFJS.getDocument(url).then(function getPdf(pdf) {
+                    setVisibility(false, false, true);
+                    self.set('isLoaded', true);
                     self.set('pdf', pdf);
                     self.set('pagesCount', pdf.numPages);
+                }).then(null, function(error) {
+                  setVisibility(false, true, false);
                 });
             },
             renderPdf: function(pdf, slideHeight, currentSlide) {

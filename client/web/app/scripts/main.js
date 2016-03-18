@@ -27,6 +27,9 @@ UrlUtils.getParam = function(url, param) {
 };
 UrlUtils.backendUrl = "http://localhost:9000";
 
+function GoogleConfig() {}
+GoogleConfig.developerKey = "AIzaSyClNyjcMSqAOtECy0NU5jIXJe1_jNoWNP8";
+
 function ArrayUtils() {}
 ArrayUtils.getOrElse = function(array, index, other) {
     if (index < array.length) {

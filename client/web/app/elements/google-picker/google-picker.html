@@ -1,0 +1,49 @@
+<dom-module id="google-picker">
+    <template></template>
+    <script>
+        Polymer({
+            is: "google-picker",
+            properties:{
+                fileId: {
+                	type: String,
+                	notify: true
+                },
+                picker: Object
+            },
+            openPicker: function() {
+            	var self = this;
+            	if (self.picker !== undefined) {
+            		self.picker.setVisible(true);
+            		return;
+            	}
+                // Use the API Loader script to load google.picker and gapi.auth.
+                gapi.load('picker', {'callback': createPicker});
+
+                // Create and render a Picker object for picking user Photos.
+                function createPicker() {
+                    var picker = new google.picker.PickerBuilder().
+                    	addView(google.picker.ViewId.PDFS).
+                    	setLocale('en').
+                    	setOAuthToken(gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token).
+                    	setDeveloperKey(GoogleConfig.developerKey).
+                    	setCallback(pickerCallback).
+                    	build();
+                    self.picker = picker;
+                    picker.setVisible(true);
+                }
+
+                // A simple callback implementation.
+                function pickerCallback(data) {
+                    var url = 'nothing';
+                    if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+                        var doc = data[google.picker.Response.DOCUMENTS][0];
+                        self.set('fileId', doc[google.picker.Document.ID]);
+                    }
+                }
+
+            },
+            ready: function(){
+            }
+        });
+    </script>
+</dom-module>
