@@ -3,7 +3,6 @@
         <iron-ajax
                 id="ajax"
                 last-response="{{lastResponse}}"
-                on-response="response"
                 ></iron-ajax>
     </template>
     <script>
@@ -52,9 +51,6 @@
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "PUT";
                 this.$.ajax.generateRequest();
-            },
-            response: function(a){
-                this.fire('response', a);
             }
         });
     </script>
