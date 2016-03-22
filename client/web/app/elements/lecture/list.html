@@ -1,16 +1,26 @@
 <dom-module id="lectures-list">
     <style>
-        .card-content {
-            width: 300px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .presentation-card {
+            padding-left: 7px;
+            padding-right: 7px;
+            margin-top: 7px;
+            margin-bottom: 7px;
         }
-        .paper-card-result {
+        .presentation-card paper-card {
             background-color: transparent;
+            cursor: pointer;
+            width: 100%;
         }
-        .paper-card-no-result {
-            background-color: var(--paper-light-blue-200);;
+        .presentation-card .card-content {
+            padding-top: 4px;
+            padding-bottom: 7px;
+        }
+        .presentation-card .title {
+            font-weight: 700;
+        }
+
+        .presentation-card .content {
+            padding-top: 5px !important;
         }
         .blue {
             color: var(--paper-light-blue-400);;
@@ -30,11 +40,14 @@
                         </div>
                     </template>
                     <template is="dom-repeat" items="{{lectures}}">
-                        <a data-route="view-lecture" href$="/lecture/{{item.id}}" class="col-md-4 text-center" style="margin-top: 20px;">
-                            <paper-card class="paper-card-result" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
-                                <div class="card-content">{{item.title}}</div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 presentation-card">
+                            <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
+                                <div class="card-content">
+                                    <div class="title">{{item.title}}</div>
+                                    <div class="description">{{item.description}}</div>
+                                </div>
                             </paper-card>
-                        </a>
+                        </div>
                     </template>
                 </div>
             </paper-menu>
@@ -42,7 +55,7 @@
 
         <div hidden$="{{hiddenLectureAddButton}}">
             <a href="/lecture/add">
-                <paper-button style="margin-top: 30px;" raised>Dodaj</paper-button>
+                <paper-button style="margin-top: 30px;" raised>Add</paper-button>
             </a>
         </div>
     </template>
@@ -70,6 +83,9 @@
                 } else {
                     this.$.lectures.query(searchPhrase);
                 }
+            },
+            viewDetails: function(e) {
+                page('/lecture/' + e.model.item.id);
             },
             hasResults: function(lectures) {
                 return ArrayUtils.isEmpty(lectures);

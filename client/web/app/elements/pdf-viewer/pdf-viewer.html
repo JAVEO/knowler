@@ -20,7 +20,10 @@
     <template>
         <div class="viewer-container">
           <paper-spinner hidden$="{{!spinnerVisibility}}" active></paper-spinner>
-          <p hidden$="{{!errorVisibility}}" class="text-center error"><iron-icon icon="icons:warning"></iron-icon> Error occured when downloading pdf file. Make sure that your file is public.</p>
+          <p hidden$="{{!errorVisibility}}" class="text-center error">
+            <iron-icon icon="icons:warning"></iron-icon> 
+            Error occured when downloading pdf file. Make sure that your file is public.
+          </p>
           <canvas hidden$="{{!canvasVisibility}}" id="theCanvas"></canvas>
         </div>
     </template>
@@ -70,6 +73,11 @@
                 'renderPdf(pdf, slideHeight, currentSlide)'
             ],
             downloadPdf: function() {
+                var alphaNumericRegex = /^[a-z0-9]+$/i;
+                if (!alphaNumericRegex.test(this.fileId)) {
+                  return;
+                }
+
                 var self = this;
                 var url = UrlUtils.backendUrl + '/lectures/' + this.fileId + '/pdf';
 
@@ -96,9 +104,7 @@
                 var pageId = currentSlide + 1;
 
                 this.pdf.getPage(pageId).then(function getPage(page) {
-                  var origViewport = page.getViewport(1);
-                  var scale = slideHeight / origViewport.height;
-                  var viewport = page.getViewport(scale);
+                  var viewport = page.getViewport(1);
 
                   //
                   // Prepare canvas using PDF page dimensions

@@ -16,6 +16,9 @@ Number.prototype.toHHMMSS = function() {
 
 function UrlUtils() {}
 UrlUtils.getParam = function(url, param) {
+    if (url === undefined) {
+        return;
+    }
     var vars = url.split(/[?,&]+/);
     for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split("=");
@@ -24,6 +27,10 @@ UrlUtils.getParam = function(url, param) {
         }
     }
     return url;
+};
+UrlUtils.isValidUrl = function(value) {
+    var regex = new RegExp("(http|ftp|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?"); ///^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    return regex.test(value);
 };
 UrlUtils.backendUrl = "http://localhost:9000";
 
