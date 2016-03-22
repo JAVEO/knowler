@@ -1,5 +1,9 @@
 <dom-module id="google-picker">
-    <template></template>
+    <template>
+        <paper-input value="{{presentationUrl}}" label="Pdf file URL">
+            <paper-icon-button suffix icon="attachment" on-tap="openPicker"></paper-icon-button>
+        </paper-input>
+    </template>
     <script>
         Polymer({
             is: "google-picker",
@@ -8,8 +12,12 @@
                 	type: String,
                 	notify: true
                 },
+                presentationUrl: String,
                 picker: Object
             },
+            observers: [
+                'presentationUrlChanged(presentationUrl)'
+            ],
             openPicker: function() {
             	var self = this;
             	if (self.picker !== undefined) {
@@ -41,6 +49,13 @@
                     }
                 }
 
+            },
+            presentationUrlChanged: function(val) {
+                if (StringUtils.isEmpty(val)) {
+                    return;
+                }
+                var fileId = UrlUtils.getParam(val, "id");
+                this.set('fileId', fileId);
             },
             ready: function(){
             }

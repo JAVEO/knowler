@@ -1,0 +1,133 @@
+<dom-module id="youtube-search-select">
+    <style>
+        .youtube-dropdown {
+            position: absolute !important;
+            left: 0px;
+            right: 0px;
+        }
+        .youtube-dropdown .dropdown-content {
+            background-color: white;
+            line-height: 20px;
+            border-radius: 3px;
+            box-shadow: 0px 2px 6px #ccc;
+        }
+        .iron-list {
+            padding-right: 20px;
+        }
+        .list-item-padding {
+            padding: 10px 20px 10px 20px;
+        }
+        
+        .list-item {
+            @apply(--layout-horizontal);
+        }
+        .list-item:hover {
+            cursor: pointer;
+        }
+        
+        .avatar {
+            height: 40px;
+            width: 40px;
+            border-radius: 20px;
+            box-sizing: border-box;
+            background-color: #ddd;
+        }
+        .pad {
+            @apply(--layout-flex);
+            @apply(--layout-vertical);
+            padding: 0 16px;
+            max-width: 100%;
+        }
+        .primary, .secondary {
+            display:inline-block;
+            white-space: nowrap;
+            overflow:hidden !important;
+            text-overflow: ellipsis;
+        }
+        .primary {
+            font-size: 16px;
+        }
+        .secondary {
+            font-size: 14px;
+            color: gray;
+        }
+    </style>
+    <template>
+        <paper-input value="{{inputValue}}" label="YouTube URL or search query">
+            <paper-icon-button suffix icon="search" on-tap="openDropdown"></paper-icon-button>
+        </paper-input>
+        <div>
+            <iron-dropdown id="dropdownElement" class="youtube-dropdown">
+                <div class="dropdown-content">
+                    <iron-list items="{{videos}}" as="item" on-selected-item-changed="selectedVideoChanged" selection-enabled class="iron-list">
+                        <template>
+                            <div tabindex$="[[tabIndex]]" class="list-item-padding">
+                                <div class="list-item">
+                                    <img class="avatar" src="https://i.ytimg.com/vi/{{item.id.videoId}}/mqdefault.jpg">
+                                    <div class="pad">
+                                        <div class="primary">{{item.snippet.title}}</div>
+                                        <div class="secondary">{{item.snippet.description}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </iron-list>
+                </div>
+            </iron-dropdown>
+        </div>
+
+    </template>
+    <script>
+        Polymer({
+            is: "youtube-search-select",
+            properties: {
+                videos: Object,
+                inputValue: {
+                    type: String,
+                    observer: 'inputValueChanged'
+                },
+                videoId: {
+                	type: String,
+                	notify: true
+                }
+            },
+            inputValueChanged: function(val) {
+                if (StringUtils.isEmpty(val)) {
+                    return;
+                }
+
+                if (UrlUtils.isValidUrl(val)) {
+                    var videoId = UrlUtils.getParam(val, "v");
+                    this.set('videoId', videoId);
+                    this.$.dropdownElement.close();
+                } else {
+                    this.search(val);
+                }
+            },
+            search: function(query) {
+                var self = this;
+                gapi.client.load('youtube', 'v3', function() {
+                    console.log("Youtube API loaded");
+                    gapi.client.youtube.search.list({
+                        'part': 'snippet',
+                        'key': GoogleConfig.developerKey,
+                        'q': query,
+                        'type': 'video',
+                        'maxResults': 5
+                    }).then(function(response){
+                        console.log("Youtube API response:" + JSON.stringify(response.result));
+                        self.set('videos' , response.result.items);
+                        self.$.dropdownElement.open();
+                    });
+                });
+            },
+            selectedVideoChanged: function(e) {
+                this.set('videoId', e.detail.value.id.videoId);
+                this.$.dropdownElement.close();
+            },
+            ready: function(){
+            }
+        });
+
+    </script>
+</dom-module>

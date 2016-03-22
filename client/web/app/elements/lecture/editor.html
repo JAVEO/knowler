@@ -28,9 +28,10 @@
                 <paper-input value="{{lecture.description}}" label="Description"></paper-input>
             </div>
         </div>
-        <div class="row horizontal layout">
+        <div class="row layout horizontal">
+
             <div class="col-md-6 col-sm-12">
-                <paper-input value="{{videoUrl}}" label="YouTube URL"></paper-input>
+                <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
                 <google-youtube
                         id="presentation"
                         autoplay="1"
@@ -45,10 +46,8 @@
                         style="margin: auto;">
                 </google-youtube>
             </div>
-            <div class="col-md-6 col-sm-12 text-center">
-                <paper-button style="margin-top: 8px;" on-tap="openPicker" selection="presentationUrl" class="success" raised>
-                    <iron-icon icon="file-upload"></iron-icon>Pick file
-                </paper-button>
+            <div class="col-md-6 col-sm-12">
+                <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
                 <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
                             current-slide="{{currentSlide}}"
                             slide-height="{{videoHeight}}"
@@ -83,7 +82,6 @@
         </div>
 
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
-        <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
     </template>
     <script>
         Polymer({
@@ -95,10 +93,6 @@
                 selectedIndex: Number,
                 timeFrom: Number,
                 timeTo: Number,
-                videoUrl: {
-                    type: String,
-                    observer: "_videoUrlChanged"
-                },
                 lecture: {
                     type: Object,
                     notify: true
@@ -127,13 +121,6 @@
             pdfChanged: function(e) {
                 this.$.slideList.set('pdf', e.detail.value);
                 this.set('pagesCount', e.detail.value.numPages);
-            },
-            _videoUrlChanged: function(videoUrl) {
-                if (StringUtils.isEmpty(videoUrl)) {
-                    return;
-                }
-                var videoId = UrlUtils.getParam(videoUrl, "v");
-                this.set('lecture.videoId', videoId);
             },
             _updateSelectedSection: function(e) {
                 var self = this;
@@ -180,9 +167,6 @@
             },
             _loadNewLecture: function() {
                 this.$.lectures.get(this.lectureId);
-            },
-            openPicker: function() {
-                this.$.googlePicker.openPicker();
             },
             generateNewMappings: function(videoUrl, duration, pagesCount) {
                 if (duration === 0) {
