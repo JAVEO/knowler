@@ -55,7 +55,18 @@
         <div class="row text-center" style="display:block;">
             <paper-button hidden$="{{hiddenEditButton}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
             <a hidden$="{{hiddenEditButton}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
-            <paper-button on-tap="goFullscreen" raised>Fullscreen</paper-button></a>
+            <paper-button on-tap="goFullscreen" raised>
+                <iron-icon icon="icons:fullscreen"></iron-icon>
+            </paper-button></a>
+        </div>
+
+        <div class="row text-right" style="display:block;">
+            <iron-icon icon="icons:visibility"></iron-icon>
+            {{statistics.viewCount}}
+            <iron-icon icon="icons:thumb-up"></iron-icon>
+            {{statistics.likeCount}}
+            <iron-icon icon="icons:thumb-down"></iron-icon>
+            {{statistics.dislikeCount}}
         </div>
 
         <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}" https="true"></disqus-comments>
@@ -88,6 +99,9 @@
                     value: true
                 },
                 fsapi: {
+                    type: Object
+                },
+                statistics: {
                     type: Object
                 }
             },
@@ -167,6 +181,20 @@
                 var last = this.$.lectures.lastResponse;
                 var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author);
                 this.set('hiddenEditButton', hidden);
+                var self = this;
+
+                gapi.client.load('youtube', 'v3', function() {
+                    console.log("Youtube API loaded");
+                    gapi.client.youtube.videos.list({
+                        'part': 'snippet,contentDetails,statistics',
+                        'key': GoogleConfig.developerKey,
+                        'id': last.videoId
+                    }).then(function(response){
+                        console.log("Youtube API response:", response);
+                        var stats = response.result.items[0].statistics;
+                        self.set('statistics' , stats);
+                    });
+                });
             }
         });
     </script>

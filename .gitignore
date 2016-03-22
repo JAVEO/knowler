@@ -17,6 +17,7 @@ api/*.txt
 /.settings
 
 *.idea/*
+api/.idea
 api/*.pdf
 api/tmp/*.pdf
 
