@@ -73,11 +73,6 @@
                 'renderPdf(pdf, slideHeight, currentSlide)'
             ],
             downloadPdf: function() {
-                var alphaNumericRegex = /^[a-z0-9]+$/i;
-                if (!alphaNumericRegex.test(this.fileId)) {
-                  return;
-                }
-
                 var self = this;
                 var url = UrlUtils.backendUrl + '/lectures/' + this.fileId + '/pdf';
 
