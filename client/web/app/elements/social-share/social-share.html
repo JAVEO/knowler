@@ -1,0 +1,116 @@
+<dom-module id="social-share">
+    <style>
+        a, a:hover, a:active, a:visited {
+            text-decoration:none;
+        }
+        .share-service-icon-facebook {
+            background: rgba(0, 0, 0, 0) url("//s.ytimg.com/yts/imgbin/www-sharing-2x-vflkyhLwp.png") no-repeat scroll 0 -1095px / 32px 1349px;
+        }
+        .share-service-icon-twitter {
+            background: rgba(0, 0, 0, 0) url("//s.ytimg.com/yts/imgbin/www-sharing-vflKETXDP.png") no-repeat scroll 0 -348px;
+        }
+        .share-service-icon-google {
+            background: rgba(0, 0, 0, 0) url("//s.ytimg.com/yts/imgbin/www-sharing-vflKETXDP.png") no-repeat scroll 0 -276px;
+        }
+        .share-service-icon {
+            vertical-align: middle;
+            margin: -1px;
+            height: 32px;
+            width: 32px;
+        }
+        .yt-sprite {
+            display: inline-block;
+        }
+        .share-service-button, .share-service-button:hover, .share-service-button:active {
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            outline:none;
+        }
+  }
+    </style>
+
+    <template>
+        <button id="facebookShare" class="share-service-button" on-tap="fbShare">
+            <span class="share-service-icon share-service-icon-facebook yt-sprite"></span>
+        </button>
+
+        <a href="http://twitter.com/intent/tweet?text={{text}}&hashtags=knowler&url={{encodedUrl}}">
+            <button id="twitterShare" class="share-service-button">
+                <span class="share-service-icon share-service-icon-twitter yt-sprite"></span>
+            </button>
+        </a>
+
+        <a href="https://plus.google.com/share?url={{encodedUrl}}" 
+            onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">
+            <button id="googleShare" class="share-service-button">
+                <span class="share-service-icon share-service-icon-google yt-sprite"></span>
+            </button>
+        </a>
+        
+    </template>
+
+    <script>
+        //Facebook
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '885500308243636',
+                xfbml: true,
+                version: 'v2.5'
+            });
+        };
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+
+        //Twitter
+        window.twttr = (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0],
+               t = window.twttr || {};
+            if (d.getElementById(id)) return t;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://platform.twitter.com/widgets.js";
+            fjs.parentNode.insertBefore(js, fjs);
+
+            t._e = [];
+            t.ready = function(f) {
+                t._e.push(f);
+            };
+
+            return t;
+        }(document, "script", "twitter-wjs"));
+
+        Polymer({
+            is: "social-share",
+            properties: {
+                text: String,
+                url: {
+                    type: String,
+                    observer: 'urlChanged'
+                },
+                encodedUrl: String
+            },
+            urlChanged: function(val) {
+                this.set('encodedUrl', encodeURIComponent(this.url));
+            },
+            fbShare: function() {
+                var self = this;
+                FB.ui({
+                    method: 'share',
+                    href: self.url,
+                }, function(response) {});
+            }
+        });
+    </script>
+
+</dom-module>

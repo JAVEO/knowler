@@ -122,8 +122,11 @@
                 });
             },
             selectedVideoChanged: function(e) {
-                this.set('videoId', e.detail.value.id.videoId);
-                this.$.dropdownElement.close();
+                var video = e.detail.value;
+                if (video) {
+                    this.set('videoId', e.detail.value.id.videoId);
+                    this.$.dropdownElement.close();
+                }
             },
             ready: function(){
             }
