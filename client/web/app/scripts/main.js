@@ -26,10 +26,10 @@ UrlUtils.getParam = function(url, param) {
             return pair[1];
         }
     }
-    return url;
+    return undefined;
 };
 UrlUtils.isValidUrl = function(value) {
-    var regex = new RegExp("(http|ftp|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?"); ///^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    var regex = new RegExp("(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})");
     return regex.test(value);
 };
 UrlUtils.backendUrl = "http://localhost:9000";
@@ -39,10 +39,7 @@ GoogleConfig.developerKey = "AIzaSyClNyjcMSqAOtECy0NU5jIXJe1_jNoWNP8";
 
 function ArrayUtils() {}
 ArrayUtils.getOrElse = function(array, index, other) {
-    if (index < array.length) {
-        return array[index];
-    }
-    return other;
+    return (index < array.length && index >= 0) ? array[index] : other;
 };
 ArrayUtils.isEmpty = function(array) {
     return array === undefined || array === null || array.length === 0;

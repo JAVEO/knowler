@@ -92,13 +92,25 @@
                 }
             },
             inputValueChanged: function(val) {
+                function getVideoIdFromUrl(url) {
+                    //VideoId from full URL
+                    var videoId = UrlUtils.getParam(url, "v");
+                    if (videoId !== undefined) {
+                        return videoId;
+                    }
+
+                    //VideoId from short URL
+                    var result = url.replace('https://youtu.be/','');
+                    var parameterPos = result.indexOf('?');
+                    return (parameterPos === -1) ? result : result.slice(0, parameterPos); 
+                }
+
                 if (StringUtils.isEmpty(val)) {
                     return;
                 }
 
                 if (UrlUtils.isValidUrl(val)) {
-                    var videoId = UrlUtils.getParam(val, "v");
-                    this.set('videoId', videoId);
+                    this.set('videoId', getVideoIdFromUrl(val));
                     this.$.dropdownElement.close();
                 } else {
                     this.search(val);
@@ -107,7 +119,6 @@
             search: function(query) {
                 var self = this;
                 gapi.client.load('youtube', 'v3', function() {
-                    console.log("Youtube API loaded");
                     gapi.client.youtube.search.list({
                         'part': 'snippet',
                         'key': GoogleConfig.developerKey,
@@ -115,7 +126,6 @@
                         'type': 'video',
                         'maxResults': 5
                     }).then(function(response){
-                        console.log("Youtube API response:" + JSON.stringify(response.result));
                         self.set('videos' , response.result.items);
                         self.$.dropdownElement.open();
                     });
