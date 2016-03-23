@@ -64,14 +64,16 @@
         </div>
 
         <div class="tool-bar">
-            <div class="layout horizontal">
-                <paper-input id="fromInput"  class="flex-none" label="Start time" value="{{timeFrom}}"></paper-input>
-                <paper-button id="fromButton" on-tap="timeFromChanged" class="self-end green"><iron-icon icon="check"></iron-icon></paper-button>
-            </div>
-            <div class="layout horizontal">
-                <paper-input id="toInput" class="flex-none" label="End time" value="{{timeTo}}"></paper-input>
-                <paper-button id=toButton on-tap="timeToChanged" class="self-end green"><iron-icon icon="check"></iron-icon></paper-button>
-            </div>
+            <form on-submit="timeFromChanged">
+                <paper-input class="flex-none" label="Start time" value="{{timeFrom}}">
+                    <paper-icon-button on-tap="timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                </paper-input>
+            </form>
+            <form on-submit="timeToChanged">
+                <paper-input class="flex-none" label="End time" value="{{timeTo}}">
+                    <paper-icon-button on-tap="timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                </paper-input>
+            </form>
             <div class="self-end">
                 <paper-button class="flex-none" toggles raised on-tap="delete"><iron-icon icon="delete"></iron-icon> Delete</paper-button>
             </div>
@@ -231,11 +233,13 @@
                 mapping.time = hoursSec + minutesSec + parseInt(splitted[2]);
                 this.$.timeGrider.mappingChanged();
             },
-            timeFromChanged: function() {
+            timeFromChanged: function(e) {
+                e.preventDefault();
                 this.updateMappingTime(this.timeFrom, this.lecture.mappings[this.selectedIndex]);
                 this.$.timeGrider.select(this.selectedIndex);
             },
-            timeToChanged: function() {
+            timeToChanged: function(e) {
+                e.preventDefault();
                 this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
                 this.$.timeGrider.select(this.selectedIndex);
             },
