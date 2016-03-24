@@ -16,13 +16,16 @@
                 width: 100%;
             }
         }
-        h2 {
+        .title {
             color: var(--paper-blue-600);
+        }
+        .author-image {
+            width: 50px;
+            height: 50px;
         }
     </style>
 
     <template>
-        <h2>{{lecture.title}}</h2>
         <firebase-collection
                 id="firebaseCollection"
                 location="{{backend}}"></firebase-collection>
@@ -33,6 +36,15 @@
                 data="{{lecture}}"></firebase-document>
 
         <fullscreen-api id="fsapi"></fullscreen-api>
+        <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
+        <iron-meta id="meta"></iron-meta>
+
+
+        <h2 class="title">{{lecture.title}}</h2>
+        <p>
+            <img class="img-rounded author-image" src="{{authorImageUrl}}">
+            {{lecture.author.name}}
+        </p>
 
         <div id="presentationContent" class="row">
             <div class="col-md-6 col-sm-12">
@@ -61,8 +73,8 @@
         </div>
 
         <div class="row text-center" style="display:block;">
-            <paper-button hidden$="{{hiddenEditButton}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
-            <a hidden$="{{hiddenEditButton}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
+            <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
+            <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
             <paper-button on-tap="goFullscreen" raised>
                 <iron-icon icon="icons:fullscreen"></iron-icon>
             </paper-button></a>
@@ -95,18 +107,19 @@
                 duration:{
                     type: Number
                 },
+                lecture: {
+                    type: Object,
+                    observer: "lectureChanged"
+                },
                 lectureId: {
                     type: String,
                     notify: true,
                     reflectToAttribute: true,
-                    observer: "lectureChanged"
+                    observer: "lectureIdChanged"
                 },
-                loggedUser: {
-                    type: String
-                },
-                hiddenEditButton: {
+                isOwner: {
                     type: Boolean,
-                    value: true
+                    value: false
                 },
                 fsapi: {
                     type: Object
@@ -115,7 +128,10 @@
                     type: Object
                 },
                 backend: String,
-                backendDocument: String
+                backendDocument: String,
+                authorImageUrl: {
+                    type: String
+                }
             },
             setCurrentSlide: function(slide) {
                 this.set('currentSlide', slide);
@@ -162,11 +178,11 @@
             goFullscreen: function () {
                 this.fsapi.toggleFullscreen();
             },
-            lectureChanged: function(newId, oldId) {
-                if (StringUtils.isEmpty(this.lectureId)) {
+            lectureIdChanged: function(lectureId) {
+                if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.set('backendDocument', this.backend + '/' + this.lectureId);
+                this.set('backendDocument', this.backend + '/' + lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){
@@ -187,27 +203,56 @@
                 this.$.firebaseCollection.removeByKey(this.lectureId);
                 page('/lecture-search');
             },
-            setLoggedUser: function(user) {
-                this.set('loggedUser', user);
+            _setIsOwner: function(user, lecture) {
+                if (user === undefined || lecture === undefined) {
+                    this.set('isOwner', false);
+                    return;
+                }
+                var isOwner = user.getEmail() === lecture.author.email;
+                this.set('isOwner', isOwner);
             },
-            lecturesResponse: function() {
-                var last = this.$.firebase.data;
-                var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author);
-                this.set('hiddenEditButton', hidden);
+            _authStateChange: function(e, data) {
+                this._setIsOwner(data.user, this.lecture);
+            },
+            lectureChanged: function(lecture) {
                 var self = this;
 
-                gapi.client.load('youtube', 'v3', function() {
-                    console.log("Youtube API loaded");
-                    gapi.client.youtube.videos.list({
-                        'part': 'snippet,contentDetails,statistics',
-                        'key': GoogleConfig.developerKey,
-                        'id': last.videoId
-                    }).then(function(response){
-                        console.log("Youtube API response:", response);
-                        var stats = response.result.items[0].statistics;
-                        self.set('statistics' , stats);
+                function loadStatistics() {
+                    gapi.client.load('youtube', 'v3', function() {
+                        gapi.client.youtube.videos.list({
+                            'part': 'snippet,contentDetails,statistics',
+                            'key': GoogleConfig.developerKey,
+                            'id': lecture.videoId
+                        }).then(function(response){
+                            console.log("Youtube API response:", response);
+                            var stats = response.result.items[0].statistics;
+                            self.set('statistics' , stats);
+                        });
                     });
-                });
+                }
+
+                function loadAuthorImage() {
+                    var url = "https://www.googleapis.com/plus/v1/people/" + lecture.author.id + "?fields=image&key=" + GoogleConfig.developerKey;
+                    var defaultImage = "../../images/default-avatar.png"
+                    self.set('authorImageUrl', defaultImage);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function(response) {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            self.set('authorImageUrl', JSON.parse(xhr.responseText).image.url);
+                        }
+                        if (xhr.status == 404) {
+                            self.set('authorImageUrl', defaultImage);
+                        }
+                    };
+                    xhr.open("GET", url, true);
+                    xhr.send();
+                }
+
+
+                loadAuthorImage();
+                loadStatistics();
+                this._setIsOwner(this.$.meta.byKey('user'), lecture);
             }
         });
     </script>

@@ -35,6 +35,8 @@
                 equal-to="true"
                 order-value-type="boolean"
                 data="{{lectures}}"></firebase-collection>
+        <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
+        <iron-meta id="meta"></iron-meta>
 
         <h2 class="paper-font-display2">Prezentacje</h2>
 
@@ -60,7 +62,7 @@
             </paper-menu>
         </paper-header-panel>
 
-        <div hidden$="{{hiddenLectureAddButton}}">
+        <div hidden$="{{!isSignedIn}}">
             <paper-button on-tap="addLecture" style="margin-top: 30px;" raised>Add</paper-button>
         </div>
     </template>
@@ -73,12 +75,9 @@
                     type: String,
                     observer: 'search'
                 },
-                hiddenLectureAddButton: {
+                isSignedIn: {
                     type: Boolean,
-                    value: true
-                },
-                author: {
-                    type: String
+                    value: false
                 },
                 backend: String
             },
@@ -95,26 +94,20 @@
             lecturesChanged: function() {
                 this.set('hasResults', ArrayUtils.isEmpty(this.$.firebase.data));
             },
-            showLectureAddButton: function() {
-                this.set('hiddenLectureAddButton', false);
-            },
-            hideLectureAddButton: function() {
-                this.set('hiddenLectureAddButton', true);
-            },
             addLecture: function() {
+                var user = this.$.meta.byKey('user');
                 var response = this.$.firebase.add({
-                    author: this.author,
+                    author: {
+                        id: user.getId(),
+                        email: user.getEmail(),
+                        name: user.getName()
+                    },
                     published: false
                 });
                 page('/lecture/' + response.key() + '/edit');
             },
-            setAuthor: function(author) {
-                this.set('author', author);
-                if (author === undefined) {
-                    this.hideLectureAddButton();
-                } else {
-                    this.showLectureAddButton();
-                }
+            _authStateChange: function(e, data) {
+                this.set('isSignedIn', data.isSigned);
             }
         });
     </script>
