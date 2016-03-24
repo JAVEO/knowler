@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 (function(document) {
   'use strict';
 
+
   // Grab a reference to our auto-binding template
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
@@ -72,14 +73,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
   };
   app.userLogged = function(e) {
-      var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-      console.log('Logged user: ', user.getName());
-      app.$.lecturesList.setAuthor(user.getEmail());
-      app.$.lectureView.setLoggedUser(user.getEmail());
+    var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+    app.$.authMeta.userLoggedIn(user);
   };
   app.userLoggedOut = function(e) {
-    app.$.lecturesList.setAuthor(undefined);
-    app.$.lectureView.setLoggedUser(undefined);
+    app.$.authMeta.userLoggedOut();
   };
 
 })(document);

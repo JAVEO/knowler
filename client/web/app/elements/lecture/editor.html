@@ -64,14 +64,14 @@
         </div>
 
         <div class="tool-bar">
-            <form on-submit="timeFromChanged">
+            <form on-submit="_timeFromChanged">
                 <paper-input class="flex-none" label="Start time" value="{{timeFrom}}">
-                    <paper-icon-button on-tap="timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    <paper-icon-button on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
-            <form on-submit="timeToChanged">
+            <form on-submit="_timeToChanged">
                 <paper-input class="flex-none" label="End time" value="{{timeTo}}">
-                    <paper-icon-button on-tap="timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    <paper-icon-button on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
             <div class="self-end">
@@ -87,6 +87,7 @@
                 id="firebase"
                 location="{{backendDocument}}"
                 data="{{lecture}}"></firebase-document>
+        <iron-meta id="meta"></iron-meta>
     </template>
     <script>
         Polymer({
@@ -217,12 +218,12 @@
                 this.set('lecture.mappings.' + index + '.time', hoursSec + minutesSec + parseInt(splitted[2]));
                 this.$.timeGrider.mappingChanged();
             },
-            timeFromChanged: function(e) {
+            _timeFromChanged: function(e) {
                 e.preventDefault();
                 this.updateMappingTime(this.timeFrom, this.selectedIndex);
                 this.$.timeGrider.select(this.selectedIndex);
             },
-            timeToChanged: function(e) {
+            _timeToChanged: function(e) {
                 e.preventDefault();
                 this.updateMappingTime(this.timeTo, this.selectedIndex + 1);
                 this.$.timeGrider.select(this.selectedIndex);
