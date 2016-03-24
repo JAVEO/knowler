@@ -32,7 +32,8 @@ UrlUtils.isValidUrl = function(value) {
     var regex = new RegExp("(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})");
     return regex.test(value);
 };
-UrlUtils.backendUrl = "http://localhost:9000";
+UrlUtils.backendUrl = "https://knowler.firebaseio.com/lectures-dev";
+UrlUtils.googleDriveCorsProxy = "https://crossorigin.me/https://drive.google.com/uc?id=";
 
 function GoogleConfig() {}
 GoogleConfig.developerKey = "AIzaSyClNyjcMSqAOtECy0NU5jIXJe1_jNoWNP8";

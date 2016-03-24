@@ -92,7 +92,7 @@ gulp.task('copy', function () {
   }).pipe(gulp.dest('dist'));
 
   var envVariables = gulp.src(['app/scripts/main.js'])
-    .pipe(replace('http://localhost:9000', 'https://mighty-meadow-52740.herokuapp.com'))
+    .pipe(replace('https://knowler.firebaseio.com/lectures-dev', 'https://knowler.firebaseio.com/lectures'))
     .pipe(gulp.dest('dist/scripts'))
 
   var bower = gulp.src([

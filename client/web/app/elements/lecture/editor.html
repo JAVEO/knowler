@@ -64,14 +64,14 @@
         </div>
 
         <div class="tool-bar">
-            <form on-submit="timeFromChanged">
+            <form on-submit="_timeFromChanged">
                 <paper-input class="flex-none" label="Start time" value="{{timeFrom}}">
-                    <paper-icon-button on-tap="timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    <paper-icon-button on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
-            <form on-submit="timeToChanged">
+            <form on-submit="_timeToChanged">
                 <paper-input class="flex-none" label="End time" value="{{timeTo}}">
-                    <paper-icon-button on-tap="timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    <paper-icon-button on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
             <div class="self-end">
@@ -83,7 +83,12 @@
             <paper-button on-tap="save" class="success" raised>Save</paper-button>
         </div>
 
+        <firebase-document
+                id="firebase"
+                location="{{backendDocument}}"
+                data="{{lecture}}"></firebase-document>
         <lectures-service id="lectures" on-response="lecturesResponse" last-response="{{lecture}}"></lectures-service>
+        <iron-meta id="meta"></iron-meta>
     </template>
     <script>
         Polymer({
@@ -95,14 +100,10 @@
                 selectedIndex: Number,
                 timeFrom: Number,
                 timeTo: Number,
-                lecture: {
-                    type: Object,
-                    notify: true
-                },
                 lectureId: {
                     type: String,
                     notify: true,
-                    observer: "_loadNewLecture"
+                    observer: 'lectureIdChanged'
                 },
                 duration: {
                     type: Number
@@ -113,13 +114,17 @@
                 pagesCount: {
                     type: Number
                 },
-                author: {
-                    type: String
-                }
+                backendDocument: String
             },
             observers: [
                 'generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
+            lectureIdChanged: function() {
+                if (this.lectureId === undefined) {
+                    return;
+                }
+                this.set('backendDocument', UrlUtils.backendUrl + '/' + this.lectureId);
+            },
             pdfChanged: function(e) {
                 this.$.slideList.set('pdf', e.detail.value);
                 this.set('pagesCount', e.detail.value.numPages);
@@ -167,9 +172,6 @@
                     this.set('duration', newDuration);
                 }
             },
-            _loadNewLecture: function() {
-                this.$.lectures.get(this.lectureId);
-            },
             generateNewMappings: function(videoUrl, duration, pagesCount) {
                 if (duration === 0) {
                     console.log("Mappings will not be generated, duration: " + duration + " is not valid");
@@ -192,37 +194,21 @@
             },
             ready: function() {
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
-
                 var self = this;
-                if (this.lectureId === undefined) {
-                    console.log("lectureId not found. Creating new object");
-                    this.lecture = {
-                        videoUrl: undefined,
-                        fileId: undefined,
-                        title: undefined,
-                        description: undefined,
-                        mappings: []
-                    };
-                }
-
                 page.exit('/lecture/:id/edit', function(ctx, next) {
                     self.$.presentation.pause();
                     next();
                 });
             },
             save: function() {
-                if (this.lectureId === undefined) {
-                    this.set('lecture.author', this.author);
-                    this.$.lectures.create(this.lecture);
-                } else {
-                    this.$.lectures.update(this.lectureId, this.lecture);
-                }
+                this.set('lecture.published', true);
+                page('/lecture/' + this.lectureId);
             },
             delete: function() {
                 this.lecture.mappings.splice(this.selectedIndex, 1);
                 this.$.timeGrider.mappingChanged();
             },
-            updateMappingTime: function(str, mapping) {
+            updateMappingTime: function(str, index) {
                 var splitted = str.split(":");
                 if (splitted.length !== 3) {
                     console.error("Invalid time format. Expected: HH:MM:SS, was: " + this);
@@ -230,29 +216,18 @@
                 }
                 var hoursSec = parseInt(splitted[0]) * 3600;
                 var minutesSec = parseInt(splitted[1]) * 60;
-                mapping.time = hoursSec + minutesSec + parseInt(splitted[2]);
+                this.set('lecture.mappings.' + index + '.time', hoursSec + minutesSec + parseInt(splitted[2]));
                 this.$.timeGrider.mappingChanged();
             },
-            timeFromChanged: function(e) {
+            _timeFromChanged: function(e) {
                 e.preventDefault();
-                this.updateMappingTime(this.timeFrom, this.lecture.mappings[this.selectedIndex]);
+                this.updateMappingTime(this.timeFrom, this.selectedIndex);
                 this.$.timeGrider.select(this.selectedIndex);
             },
-            timeToChanged: function(e) {
+            _timeToChanged: function(e) {
                 e.preventDefault();
-                this.updateMappingTime(this.timeTo, this.lecture.mappings[this.selectedIndex + 1]);
+                this.updateMappingTime(this.timeTo, this.selectedIndex + 1);
                 this.$.timeGrider.select(this.selectedIndex);
-            },
-            lecturesResponse: function() {
-                var last = this.$.lectures.lastResponse;
-                if (last.$oid !== undefined) {
-                    page('/lecture/' + last.$oid);
-                } else if (last.status !== undefined && this.lectureId !== undefined) {
-                    page('/lecture/' + this.lectureId);
-                }
-            },
-            setAuthor: function(author) {
-                this.set('author', author);
             }
         });
     </script>
