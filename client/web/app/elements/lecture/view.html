@@ -23,7 +23,15 @@
 
     <template>
         <h2>{{lecture.title}}</h2>
-        <lectures-service id="lectures" last-response="{{lecture}}" on-response="lecturesResponse"></lectures-service>
+        <firebase-collection
+                id="firebaseCollection"
+                location="{{backend}}"></firebase-collection>
+        <firebase-document
+                id="firebase"
+                location="{{backendDocument}}"
+                on-location-changed="lecturesResponse"
+                data="{{lecture}}"></firebase-document>
+
         <fullscreen-api id="fsapi"></fullscreen-api>
 
         <div id="presentationContent" class="row">
@@ -105,7 +113,9 @@
                 },
                 statistics: {
                     type: Object
-                }
+                },
+                backend: String,
+                backendDocument: String
             },
             setCurrentSlide: function(slide) {
                 this.set('currentSlide', slide);
@@ -156,10 +166,11 @@
                 if (StringUtils.isEmpty(this.lectureId)) {
                     return;
                 }
-                this.$.lectures.get(this.lectureId);
+                this.set('backendDocument', this.backend + '/' + this.lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){
+                this.set('backend', UrlUtils.backendUrl);
                 var fsapi = this.$.fsapi;
                 fsapi.target = this.$.presentationContent;
                 this.fsapi = fsapi;
@@ -173,14 +184,14 @@
                 });
             },
             delete: function(){
-                this.$.lectures.delete(this.lectureId);
+                this.$.firebaseCollection.removeByKey(this.lectureId);
                 page('/lecture-search');
             },
             setLoggedUser: function(user) {
                 this.set('loggedUser', user);
             },
             lecturesResponse: function() {
-                var last = this.$.lectures.lastResponse;
+                var last = this.$.firebase.data;
                 var hidden = !(this.loggedUser !== undefined && this.loggedUser === last.author);
                 this.set('hiddenEditButton', hidden);
                 var self = this;

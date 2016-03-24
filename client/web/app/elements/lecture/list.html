@@ -27,14 +27,21 @@
         }
     </style>
     <template>
-        <lectures-service id="lectures" last-response="{{lectures}}"></lectures-service>
+        <firebase-collection
+                id="firebase"
+                location="{{backend}}"
+                on-data-changed="lecturesChanged"
+                order-by-child="published"
+                equal-to="true"
+                order-value-type="boolean"
+                data="{{lectures}}"></firebase-collection>
 
         <h2 class="paper-font-display2">Prezentacje</h2>
 
         <paper-header-panel class="list-panel">
             <paper-menu class="list" on-iron-activate="_listTap" selectable="none">
                 <div class="row horizontal">
-                    <template is="dom-if" if="{{hasResults(lectures)}}">
+                    <template is="dom-if" if="{{hasResults}}">
                         <div class="text-center">
                             <h3 class="blue">No results were found</h3>
                         </div>
@@ -54,16 +61,14 @@
         </paper-header-panel>
 
         <div hidden$="{{hiddenLectureAddButton}}">
-            <a href="/lecture/add">
-                <paper-button style="margin-top: 30px;" raised>Add</paper-button>
-            </a>
+            <paper-button on-tap="addLecture" style="margin-top: 30px;" raised>Add</paper-button>
         </div>
     </template>
     <script>
         Polymer({
             is: 'lectures-list',
             properties: {
-                lectures: Object,
+                hasResults: Boolean,
                 searchPhrase: {
                     type: String,
                     observer: 'search'
@@ -71,24 +76,24 @@
                 hiddenLectureAddButton: {
                     type: Boolean,
                     value: true
-                }
+                },
+                author: {
+                    type: String
+                },
+                backend: String
             },
             ready: function() {
+                this.set('backend', UrlUtils.backendUrl);
                 this.search();
             },
             search: function() {
                 var searchPhrase = this.searchPhrase;
-                if (StringUtils.isEmpty(searchPhrase) || searchPhrase === "#taehc[]") {
-                    this.$.lectures.query(undefined);
-                } else {
-                    this.$.lectures.query(searchPhrase);
-                }
             },
             viewDetails: function(e) {
-                page('/lecture/' + e.model.item.id);
+                page('/lecture/' + e.model.item.__firebaseKey__);
             },
-            hasResults: function(lectures) {
-                return ArrayUtils.isEmpty(lectures);
+            lecturesChanged: function() {
+                this.set('hasResults', ArrayUtils.isEmpty(this.$.firebase.data));
             },
             showLectureAddButton: function() {
                 this.set('hiddenLectureAddButton', false);
@@ -96,6 +101,21 @@
             hideLectureAddButton: function() {
                 this.set('hiddenLectureAddButton', true);
             },
+            addLecture: function() {
+                var response = this.$.firebase.add({
+                    author: this.author,
+                    published: false
+                });
+                page('/lecture/' + response.key() + '/edit');
+            },
+            setAuthor: function(author) {
+                this.set('author', author);
+                if (author === undefined) {
+                    this.hideLectureAddButton();
+                } else {
+                    this.showLectureAddButton();
+                }
+            }
         });
     </script>
 </dom-module>

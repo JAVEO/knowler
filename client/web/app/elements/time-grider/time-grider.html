@@ -145,7 +145,7 @@
 
                 function updateTime(track, index) {
                     if (index < self.mappings.length) {
-                        self.mappings[index].time = Math.round(calculateNewTime(track, index));
+                        self.set('mappings.' + index + '.time', Math.round(calculateNewTime(track, index)));
                     }
                 }
 

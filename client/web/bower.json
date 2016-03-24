@@ -23,7 +23,8 @@
     "paper-spinner": "PolymerElements/paper-spinner#^1.1.1",
     "youtube-search": "^1.0.0",
     "iron-dropdown": "PolymerElements/iron-dropdown#^1.3.0",
-    "iron-list": "PolymerElements/iron-list#^1.2.8"
+    "iron-list": "PolymerElements/iron-list#^1.2.8",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12"
   },
   "devDependencies": {
     "web-component-tester": "*",
