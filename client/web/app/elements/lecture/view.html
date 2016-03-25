@@ -28,11 +28,10 @@
     <template>
         <firebase-collection
                 id="firebaseCollection"
-                location="{{backend}}"></firebase-collection>
+                location="[[config.urls.backend]]"></firebase-collection>
         <firebase-document
                 id="firebase"
                 location="{{backendDocument}}"
-                on-location-changed="lecturesResponse"
                 data="{{lecture}}"></firebase-document>
 
         <fullscreen-api id="fsapi"></fullscreen-api>
@@ -44,6 +43,10 @@
         <p>
             <img class="img-rounded author-image" src="{{authorImageUrl}}">
             {{lecture.author.name}}
+        </p>
+
+        <p>
+            Category: {{lecture.categories}}
         </p>
 
         <div id="presentationContent" class="row">
@@ -90,14 +93,14 @@
             <iron-icon icon="icons:thumb-down"></iron-icon>
             {{statistics.dislikeCount}}
         </div>
-
-        <disqus-comments id="knowlerComments" shortname="knowler" identifier="{{lectureId}}" https="true"></disqus-comments>
+        <disqus-comments id="knowlerComments" shortname="[[config.disqus.shortname]]" identifier="{{lectureId}}" https="[[config.disqus.https]]" title="{{lecture.title}}" url="[[config.urls.frontend]]/{{lectureId}}"></disqus-comments>
     </template>
 
     <script>
         Polymer({
             is: "lecture-view",
             properties: {
+                config: Object,
                 videoHeight: {
                     type: Number,
                 },
@@ -127,7 +130,6 @@
                 statistics: {
                     type: Object
                 },
-                backend: String,
                 backendDocument: String,
                 authorImageUrl: {
                     type: String
@@ -182,11 +184,12 @@
                 if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.set('backendDocument', this.backend + '/' + lectureId);
+                this.set('backendDocument', Config.urls.backend + '/' + lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){
-                this.set('backend', UrlUtils.backendUrl);
+                this.set('config', Config);
+
                 var fsapi = this.$.fsapi;
                 fsapi.target = this.$.presentationContent;
                 this.fsapi = fsapi;
@@ -221,7 +224,7 @@
                     gapi.client.load('youtube', 'v3', function() {
                         gapi.client.youtube.videos.list({
                             'part': 'snippet,contentDetails,statistics',
-                            'key': GoogleConfig.developerKey,
+                            'key': Config.google.developerKey,
                             'id': lecture.videoId
                         }).then(function(response){
                             console.log("Youtube API response:", response);
@@ -232,17 +235,18 @@
                 }
 
                 function loadAuthorImage() {
-                    var url = "https://www.googleapis.com/plus/v1/people/" + lecture.author.id + "?fields=image&key=" + GoogleConfig.developerKey;
+                    var url = "https://www.googleapis.com/plus/v1/people/" + lecture.author.id + "?fields=image&key=" + Config.google.developerKey;
                     var defaultImage = "../../images/default-avatar.png";
                     self.set('authorImageUrl', defaultImage);
 
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function(response) {
-                        if (xhr.readyState == XMLHttpRequest.DONE) {
-                            self.set('authorImageUrl', JSON.parse(xhr.responseText).image.url);
-                        }
                         if (xhr.status == 404) {
                             self.set('authorImageUrl', defaultImage);
+                            return;
+                        }
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            self.set('authorImageUrl', JSON.parse(xhr.responseText).image.url);
                         }
                     };
                     xhr.open("GET", url, true);

@@ -33,7 +33,7 @@
                     	addView(google.picker.ViewId.PDFS).
                     	setLocale('en').
                     	setOAuthToken(gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token).
-                    	setDeveloperKey(GoogleConfig.developerKey).
+                    	setDeveloperKey(Config.google.developerKey).
                     	setCallback(pickerCallback).
                     	build();
                     self.picker = picker;
