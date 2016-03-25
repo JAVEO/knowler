@@ -79,4 +79,4 @@ Config = {
         googleDriveCorsProxy: "https://crossorigin.me/https://drive.google.com/uc?id="
     },
     categories: ["programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
-}
+};

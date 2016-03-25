@@ -113,7 +113,7 @@
                         if (xhr.readyState == XMLHttpRequest.DONE) {
                             var jsonResponse = JSON.parse(xhr.responseText);
                             self.set('url', jsonResponse.id);
-                            self.set('encodedUrl', encodeURIComponent(jsonResponse.id))
+                            self.set('encodedUrl', encodeURIComponent(jsonResponse.id));
                         }
                     };
                     xhr.open("POST", url, true);
