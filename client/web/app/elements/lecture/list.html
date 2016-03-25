@@ -27,15 +27,6 @@
         }
     </style>
     <template>
-        <firebase-collection
-                id="firebase"
-                location="[[config.urls.backend]]"
-                on-data-changed="lecturesChanged"
-                order-by-child="published"
-                equal-to="true"
-                order-value-type="boolean"
-                data="{{lectures}}"></firebase-collection>
-        <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
         <iron-meta id="meta"></iron-meta>
 
         <h2 class="paper-font-display2">Prezentacje</h2>
@@ -49,7 +40,7 @@
                         </div>
                     </template>
                     <template is="dom-repeat" items="{{lectures}}">
-                        <div class="col-md-3 col-sm-6 col-xs-12 presentation-card">
+                        <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
                             <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
                                 <div class="card-content">
                                     <div class="title">{{item.title}}</div>
@@ -61,10 +52,6 @@
                 </div>
             </paper-menu>
         </paper-header-panel>
-
-        <div hidden$="{{!isSignedIn}}">
-            <paper-button on-tap="addLecture" style="margin-top: 30px;" raised>Add</paper-button>
-        </div>
     </template>
     <script>
         Polymer({
@@ -75,11 +62,11 @@
                     type: String,
                     observer: 'search'
                 },
-                isSignedIn: {
-                    type: Boolean,
-                    value: false
-                },
-                config: Object
+                config: Object,
+                lectures: {
+                    type: Object,
+                    observer: 'lecturesChanged'
+                }
             },
             ready: function() {
                 this.set('config', Config);
@@ -92,22 +79,7 @@
                 page('/lecture/' + e.model.item.__firebaseKey__);
             },
             lecturesChanged: function() {
-                this.set('hasResults', ArrayUtils.isEmpty(this.$.firebase.data));
-            },
-            addLecture: function() {
-                var user = this.$.meta.byKey('user');
-                var response = this.$.firebase.add({
-                    author: {
-                        id: user.getId(),
-                        email: user.getEmail(),
-                        name: user.getName()
-                    },
-                    published: false
-                });
-                page('/lecture/' + response.key() + '/edit');
-            },
-            _authStateChange: function(e, data) {
-                this.set('isSignedIn', data.isSigned);
+                this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
             }
         });
     </script>

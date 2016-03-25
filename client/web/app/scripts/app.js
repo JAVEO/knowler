@@ -16,6 +16,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
 
+  app.set('config', Config);
+
   app.displayInstalledToast = function() {
     document.querySelector('#caching-complete').show();
   };
@@ -75,9 +77,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.userLogged = function(e) {
     var user = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
     app.$.authMeta.userLoggedIn(user);
+    app.set('isLogged', true);
   };
   app.userLoggedOut = function(e) {
     app.$.authMeta.userLoggedOut();
+    app.set('isLogged', false);
+  };
+
+  app.addLecture = function() {
+    var user = this.$.meta.byKey('user');
+    var response = this.$.firebase.add({
+        author: {
+            id: user.getId(),
+            email: user.getEmail(),
+            name: user.getName()
+        },
+        published: false
+    });
+    page('/lecture/' + response.key() + '/edit');
+  };
+
+  app.deleteLecture = function(e) {
+    this.$.firebase.removeByKey(e.detail.id);
   };
 
 })(document);
