@@ -74,7 +74,7 @@ Config = {
         https: true
     },
     urls: {
-        frontend: "https://localhost:3000/",
+        frontend: "http://localhost:3000",
         backend: "https://knowler.firebaseio.com/lectures-dev",
         googleDriveCorsProxy: "https://crossorigin.me/https://drive.google.com/uc?id="
     },

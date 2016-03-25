@@ -32,7 +32,9 @@
     </style>
 
     <template>
-        <button id="facebookShare" class="share-service-button" on-tap="fbShare">
+        <!-- <google-url-shortener on-google-url-shortener-ready="testa" id="shortener" ></google-url-shortener> -->
+
+        <button id="facebookShare" class="share-service-button" on-tap="_fbShare">
             <span class="share-service-icon share-service-icon-facebook yt-sprite"></span>
         </button>
 
@@ -94,16 +96,35 @@
             is: "social-share",
             properties: {
                 text: String,
-                url: {
+                url: String,
+                encodedUrl: String,
+                lectureId: { 
                     type: String,
-                    observer: 'urlChanged'
+                    observer: '_lectureIdChanged'
                 },
-                encodedUrl: String
             },
-            urlChanged: function(val) {
-                this.set('encodedUrl', encodeURIComponent(this.url));
+            _lectureIdChanged: function(lectureId) {
+                var self = this;
+
+                function shortenUrl() {
+                    var url = "https://www.googleapis.com/urlshortener/v1/url?key=" + Config.google.developerKey;
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function(response) {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            var jsonResponse = JSON.parse(xhr.responseText);
+                            self.set('url', jsonResponse.id);
+                            self.set('encodedUrl', encodeURIComponent(jsonResponse.id))
+                        }
+                    };
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                    xhr.send(JSON.stringify({ 'longUrl': Config.urls.frontend + "/#!/lecture/" + lectureId}));
+                }
+
+                shortenUrl();
+
             },
-            fbShare: function() {
+            _fbShare: function() {
                 var self = this;
                 FB.ui({
                     method: 'share',
