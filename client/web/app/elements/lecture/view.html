@@ -26,9 +26,6 @@
     </style>
 
     <template>
-        <firebase-collection
-                id="firebaseCollection"
-                location="[[config.urls.backend]]"></firebase-collection>
         <firebase-document
                 id="firebase"
                 location="{{backendDocument}}"
@@ -203,7 +200,7 @@
                 });
             },
             delete: function(){
-                this.$.firebaseCollection.removeByKey(this.lectureId);
+                this.fire('delete-lecture', {id: this.lectureId});
                 page('/lecture-search');
             },
             _setIsOwner: function(user, lecture) {

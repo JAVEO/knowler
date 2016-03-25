@@ -13,8 +13,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Kowler - system prezentacji" />
-  <title>Kowler - Prezentacje</title>
+  <meta name="generator" content="Knowler" />
+  <title>Knowler</title>
 
   <meta name="theme-color" content="#303F9F">
   <link rel="manifest" href="manifest.json">
@@ -42,74 +42,104 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
-    <paper-drawer-panel id="navDrawerPanel" responsive-width="1280px">
-      <div class="nav" drawer>
 
-          <paper-toolbar id="drawerToolbar">
-            <img src="images/logo_knowler_02.png" alt="Logo">
-          </paper-toolbar>
-          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
-            <a data-route="home" href="/">
-              <iron-icon icon="home"></iron-icon>
-              <span>Home</span>
-            </a>
-            <a data-route="lecture-search" href="/lecture-search">
-              <iron-icon icon="mail"></iron-icon>
-              <span>Prezentacje</span>
-            </a>
-          </paper-menu>
-      </div>
-      <paper-header-panel class="content-panel" main>
-        <paper-toolbar>
-          <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-          <paper-icon-button icon="arrow-back" list-toggle on-tap="goBack"></paper-icon-button>
-          <paper-input class="searchBox"
-                       label="Wyszukaj prezentację"
-                       no-label-float="true"
-                       value="{{searchPhrase}}"
-                       on-keydown="searchPhraseChange"
-                       style="width: 100%;"></paper-input>
-          <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon> Szukaj</paper-button>
-          <google-signin
-                  style="margin-left: 25px;"
-                  client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
-                  scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
-                  on-google-signin-success="userLogged"
-                  on-google-signed-out="userLoggedOut">
-          </google-signin>
-          <auth-meta id="authMeta"></auth-meta>
+    <!-- `keepCondensedHeader` makes the condensed header to not scroll away -->
+    <paper-scroll-header-panel condenses keep-condensed-header header-height="256" condensed-header-height="140">
 
-        </paper-toolbar>
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-            <section data-route="home">
-              <paper-material elevation="1">
-                <h2 >Cześć, miło Cię poznać.</h2>
-                <h3 >Może obejrzymy prezentację?</h3>
-              </paper-material>
-            </section>
-            <section data-route="view-lecture">
-              <paper-material elevation="1">
-                <lecture-view id="lectureView" lecture-id="{{params.id}}"></lecture-view>
-              </paper-material>
-            </section>
+      <paper-toolbar>
 
-            <section data-route="lecture-search">
-              <paper-material elevation="1">
-                <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}"></lectures-list>
-              </paper-material>
-            </section>
+        <paper-icon-button icon="menu"></paper-icon-button>
+        <a data-route="home" href="/">
+          <img src="images/logo_knowler_nowe.png" alt="Logo">
+        </a>
+        <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
+        <paper-input class="searchBox"
+                     label="Search"
+                     no-label-float="true"
+                     value="{{searchPhrase}}"
+                     on-keydown="searchPhraseChange"
+                     style="width: 100%;"></paper-input>
+        <google-signin
+                style="margin-left: 25px;"
+                client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
+                scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
+                on-google-signin-success="userLogged"
+                on-google-signed-out="userLoggedOut">
+        </google-signin>
+        <auth-meta id="authMeta"></auth-meta>
+        <iron-meta id="meta"></iron-meta>
 
-            <section data-route="edit-lecture">
-              <paper-material elevation="1" class="row">
-                <lecture-editor id="lectureEditor" lecture-id="{{params.editId}}"></lecture-editor>
-              </paper-material>
-            </section>
-
-          </iron-pages>
+        <div class="bottom indent bottom-text" self-end>
+          <h3>Presentations</h3>
+          <paper-dropdown-menu label="Category" class="custom">
+            <paper-menu class="dropdown-content">
+              <paper-item>allosaurus</paper-item>
+              <paper-item>brontosaurus</paper-item>
+              <paper-item>carcharodontosaurus</paper-item>
+              <paper-item>diplodocus</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
+          <paper-dropdown-menu label="Event" class="custom">
+            <paper-menu class="dropdown-content">
+              <paper-item>allosaurus</paper-item>
+              <paper-item>brontosaurus</paper-item>
+              <paper-item>carcharodontosaurus</paper-item>
+              <paper-item>diplodocus</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
+          <paper-dropdown-menu label="Speaker" class="custom">
+            <paper-menu class="dropdown-content">
+              <paper-item>allosaurus</paper-item>
+              <paper-item>brontosaurus</paper-item>
+              <paper-item>carcharodontosaurus</paper-item>
+              <paper-item>diplodocus</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
         </div>
-      </paper-header-panel>
-    </paper-drawer-panel>
+        <template is="dom-if" if="{{isLogged}}">
+          <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
+        </template>
+
+      </paper-toolbar>
+
+      <div class="content">
+
+        <firebase-collection
+                id="firebase"
+                location="[[config.urls.backend]]"
+                order-by-child="published"
+                equal-to="true"
+                order-value-type="boolean"
+                data="{{lectures}}"></firebase-collection>
+
+        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+          <section data-route="view-lecture">
+            <paper-material elevation="1">
+              <lecture-view id="lectureView" lecture-id="{{params.id}}" on-delete-lecture="deleteLecture"></lecture-view>
+            </paper-material>
+          </section>
+
+          <section data-route="lecture-search">
+            <paper-material elevation="1">
+              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
+              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
+              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
+              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
+            </paper-material>
+          </section>
+
+          <section data-route="edit-lecture">
+            <paper-material elevation="1" class="row">
+              <lecture-editor id="lectureEditor" lecture-id="{{params.editId}}"></lecture-editor>
+            </paper-material>
+          </section>
+
+        </iron-pages>
+
+      </div>
+
+    </paper-scroll-header-panel>
 
   </template>
   <!-- build:js scripts/app.js -->
