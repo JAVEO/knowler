@@ -17,6 +17,12 @@
         h2 {
             color: var(--paper-blue-600);
         }
+        paper-input, paper-dropdown-menu {
+            width: 100%;
+        }
+        .capitalize {
+            text-transform: capitalize;
+        }
     </style>
     <template>
         <h2>{{lecture.title}}</h2>
@@ -26,6 +32,15 @@
             </div>
             <div class="col-sm-6">
                 <paper-input value="{{lecture.description}}" label="Description"></paper-input>
+            </div>
+            <div class="col-sm-6">
+                <paper-dropdown-menu horizontal-align="left" label="Category">
+                    <paper-menu class="dropdown-content" attr-for-selected="data-value" selected="{{lecture.categories.0}}">
+                        <template is="dom-repeat" items="[[config.categories]]">
+                            <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
             </div>
         </div>
         <div class="row layout horizontal">
@@ -93,6 +108,7 @@
         Polymer({
             is: 'lecture-editor',
             properties: {
+                config: Object,
                 videoHeight: {
                     type: Number
                 },
@@ -122,7 +138,7 @@
                 if (this.lectureId === undefined) {
                     return;
                 }
-                this.set('backendDocument', UrlUtils.backendUrl + '/' + this.lectureId);
+                this.set('backendDocument', Config.urls.backend + '/' + this.lectureId);
             },
             pdfChanged: function(e) {
                 this.$.slideList.set('pdf', e.detail.value);
@@ -192,6 +208,8 @@
                 this.set('lecture.mappings', mappings);
             },
             ready: function() {
+                this.set('config', Config);
+
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
                 var self = this;
                 page.exit('/lecture/:id/edit', function(ctx, next) {

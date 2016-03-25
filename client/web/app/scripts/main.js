@@ -32,11 +32,6 @@ UrlUtils.isValidUrl = function(value) {
     var regex = new RegExp("(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})");
     return regex.test(value);
 };
-UrlUtils.backendUrl = "https://knowler.firebaseio.com/lectures-dev";
-UrlUtils.googleDriveCorsProxy = "https://crossorigin.me/https://drive.google.com/uc?id=";
-
-function GoogleConfig() {}
-GoogleConfig.developerKey = "AIzaSyClNyjcMSqAOtECy0NU5jIXJe1_jNoWNP8";
 
 function ArrayUtils() {}
 ArrayUtils.getOrElse = function(array, index, other) {
@@ -69,3 +64,19 @@ StringUtils.isEmpty = function(str) {
 StringUtils.isNotEmpty = function(str) {
     return !StringUtils.isEmpty(str);
 };
+
+Config = {
+    google: {
+        developerKey: "AIzaSyClNyjcMSqAOtECy0NU5jIXJe1_jNoWNP8"
+    },
+    disqus: {
+        shortname: "knowler",
+        https: true
+    },
+    urls: {
+        frontend: "https://localhost:3000/",
+        backend: "https://knowler.firebaseio.com/lectures-dev",
+        googleDriveCorsProxy: "https://crossorigin.me/https://drive.google.com/uc?id="
+    },
+    categories: ["programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
+}

@@ -121,7 +121,7 @@
                 gapi.client.load('youtube', 'v3', function() {
                     gapi.client.youtube.search.list({
                         'part': 'snippet',
-                        'key': GoogleConfig.developerKey,
+                        'key': Config.google.developerKey,
                         'q': query,
                         'type': 'video',
                         'maxResults': 5

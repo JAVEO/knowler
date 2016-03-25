@@ -29,7 +29,7 @@
     <template>
         <firebase-collection
                 id="firebase"
-                location="{{backend}}"
+                location="[[config.urls.backend]]"
                 on-data-changed="lecturesChanged"
                 order-by-child="published"
                 equal-to="true"
@@ -79,10 +79,10 @@
                     type: Boolean,
                     value: false
                 },
-                backend: String
+                config: Object
             },
             ready: function() {
-                this.set('backend', UrlUtils.backendUrl);
+                this.set('config', Config);
                 this.search();
             },
             search: function() {
