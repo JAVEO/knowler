@@ -60,8 +60,7 @@
     <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
 
   <paper-header-panel condenses keep-condensed-header>
-    <paper-toolbar class="secondary-toolbar">
-       <div class="bottom indent bottom-text" self-end>
+    <paper-toolbar class="primary-toolbar additional-toolbar">
           <paper-dropdown-menu label="Category" class="custom">
             <paper-menu class="dropdown-content">
               <paper-item>allosaurus</paper-item>
@@ -73,7 +72,6 @@
           <template is="dom-if" if="{{isSigned}}">
             <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
           </template>
-        </div>
     </paper-toolbar>
     <div>
         <paper-material elevation="1" class="page-content">
