@@ -243,18 +243,21 @@
                 }
                 var hoursSec = parseInt(splitted[0]) * 3600;
                 var minutesSec = parseInt(splitted[1]) * 60;
-                this.set('lecture.mappings.' + index + '.time', hoursSec + minutesSec + parseInt(splitted[2]));
-                this.$.timeGrider.mappingChanged();
+                var newTime = hoursSec + minutesSec + parseInt(splitted[2]);
+                return this.$.timeGrider.changeMapping(index, newTime);
+
             },
             _timeFromChanged: function(e) {
                 e.preventDefault();
-                this.updateMappingTime(this.timeFrom, this.selectedIndex);
-                this.$.timeGrider.select(this.selectedIndex);
+                var newTime = this.updateMappingTime(this.timeFrom, this.selectedIndex);
+                this.set('timeFrom', newTime.toHHMMSS());
+                this.$.timeGrider.markAsSelected(this.selectedIndex);
             },
             _timeToChanged: function(e) {
                 e.preventDefault();
-                this.updateMappingTime(this.timeTo, this.selectedIndex + 1);
-                this.$.timeGrider.select(this.selectedIndex);
+                var newTime = this.updateMappingTime(this.timeTo, this.selectedIndex + 1);
+                this.set('timeTo', newTime.toHHMMSS());
+                this.$.timeGrider.markAsSelected(this.selectedIndex);
             }
         });
     </script>
