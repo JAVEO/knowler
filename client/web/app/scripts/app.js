@@ -84,21 +84,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.set('isLogged', false);
   };
 
-  app.addLecture = function() {
-    var user = this.$.meta.byKey('user');
-    var response = this.$.firebase.add({
-        author: {
-            id: user.getId(),
-            email: user.getEmail(),
-            name: user.getName()
-        },
-        published: false
-    });
-    page('/lecture/' + response.key() + '/edit');
-  };
-
-  app.deleteLecture = function(e) {
-    this.$.firebase.removeByKey(e.detail.id);
-  };
-
 })(document);

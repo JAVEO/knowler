@@ -27,9 +27,15 @@
 
     <template>
         <firebase-document
-                id="firebase"
-                location="{{backendDocument}}"
-                data="{{lecture}}"></firebase-document>
+            id="firebase"
+            location="{{backendDocument}}"
+            data="{{lecture}}"></firebase-document>
+        <firebase-collection
+            id="firebaseCollection"
+            location="[[config.urls.backend]]"
+            order-by-child="published"
+            equal-to="true"
+            order-value-type="boolean"></firebase-collection>
 
         <fullscreen-api id="fsapi"></fullscreen-api>
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
@@ -143,8 +149,6 @@
                 this.setCurrentSlide(e.detail.slide);
             },
             playerChanged: function(time){
-                console.log("playerChanged");
-
                 if (time.detail.value === 0) {
                     return;
                 }
@@ -199,9 +203,9 @@
                     next();
                 });
             },
-            delete: function(){
-                this.fire('delete-lecture', {id: this.lectureId});
-                page('/lecture-search');
+            delete: function() {
+                this.$.firebaseCollection.removeByKey(this.lectureId);
+                page('/lecture-search/#taehc[]');
             },
             _setIsOwner: function(user, lecture) {
                 if (user === undefined || lecture === undefined) {

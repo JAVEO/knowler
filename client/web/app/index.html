@@ -33,6 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/app-theme.css">
 
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <script src=" https://apis.google.com/js/client.js"></script>
@@ -42,23 +43,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
+    <auth-meta id="authMeta"></auth-meta>
+    <iron-meta id="meta"></iron-meta>
 
-    <!-- `keepCondensedHeader` makes the condensed header to not scroll away -->
-    <paper-scroll-header-panel condenses keep-condensed-header header-height="256" condensed-header-height="140">
-
-      <paper-toolbar>
-
-        <paper-icon-button icon="menu"></paper-icon-button>
+    <paper-header-panel>
+    
+      <paper-toolbar class="primary-toolbar">
         <a data-route="home" href="/">
           <img src="images/logo_knowler_nowe.png" alt="Logo">
         </a>
-        <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
         <paper-input class="searchBox"
                      label="Search"
                      no-label-float="true"
                      value="{{searchPhrase}}"
                      on-keydown="searchPhraseChange"
                      style="width: 100%;"></paper-input>
+        <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
         <google-signin
                 style="margin-left: 25px;"
                 client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
@@ -66,81 +66,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 on-google-signin-success="userLogged"
                 on-google-signed-out="userLoggedOut">
         </google-signin>
-        <auth-meta id="authMeta"></auth-meta>
-        <iron-meta id="meta"></iron-meta>
-
-        <div class="bottom indent bottom-text" self-end>
-          <h3>Presentations</h3>
-          <paper-dropdown-menu label="Category" class="custom">
-            <paper-menu class="dropdown-content">
-              <paper-item>allosaurus</paper-item>
-              <paper-item>brontosaurus</paper-item>
-              <paper-item>carcharodontosaurus</paper-item>
-              <paper-item>diplodocus</paper-item>
-            </paper-menu>
-          </paper-dropdown-menu>
-          <paper-dropdown-menu label="Event" class="custom">
-            <paper-menu class="dropdown-content">
-              <paper-item>allosaurus</paper-item>
-              <paper-item>brontosaurus</paper-item>
-              <paper-item>carcharodontosaurus</paper-item>
-              <paper-item>diplodocus</paper-item>
-            </paper-menu>
-          </paper-dropdown-menu>
-          <paper-dropdown-menu label="Speaker" class="custom">
-            <paper-menu class="dropdown-content">
-              <paper-item>allosaurus</paper-item>
-              <paper-item>brontosaurus</paper-item>
-              <paper-item>carcharodontosaurus</paper-item>
-              <paper-item>diplodocus</paper-item>
-            </paper-menu>
-          </paper-dropdown-menu>
-        </div>
-        <template is="dom-if" if="{{isLogged}}">
-          <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
-        </template>
-
       </paper-toolbar>
 
+
       <div class="content">
-
-        <firebase-collection
-                id="firebase"
-                location="[[config.urls.backend]]"
-                order-by-child="published"
-                equal-to="true"
-                order-value-type="boolean"
-                data="{{lectures}}"></firebase-collection>
-
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
           <section data-route="view-lecture">
-            <paper-material elevation="1">
+            <paper-material elevation="1" class="page-content">
               <lecture-view id="lectureView" lecture-id="{{params.id}}" on-delete-lecture="deleteLecture"></lecture-view>
             </paper-material>
           </section>
 
           <section data-route="lecture-search">
-            <paper-material elevation="1">
-              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
-              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
-              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
-              <lectures-list id="lecturesList" search-phrase="{{params.searchPhrase}}" lectures="{{lectures}}"></lectures-list>
-            </paper-material>
+            <lectures-list id="lecturesList" search-phrase="{{searchPhrase}}" lectures="{{lectures}}"></lectures-list>
           </section>
 
           <section data-route="edit-lecture">
-            <paper-material elevation="1" class="row">
+            <paper-material elevation="1" class="page-content">
               <lecture-editor id="lectureEditor" lecture-id="{{params.editId}}"></lecture-editor>
             </paper-material>
           </section>
 
         </iron-pages>
-
       </div>
 
-    </paper-scroll-header-panel>
-
+    </paper-header-panel>
   </template>
   <!-- build:js scripts/app.js -->
   <script src="scripts/main.js"></script>

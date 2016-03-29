@@ -25,33 +25,79 @@
         .blue {
             color: var(--paper-light-blue-400);;
         }
+        paper-fab.add-lecture {
+            z-index: 20;
+            position: absolute;
+            bottom: -30px;
+            right: 30px;
+            height: 60px;
+            width: 60px;
+            --paper-fab-background: #13E4FF;
+        }
+        paper-dropdown-menu.custom {
+            --paper-input-container-label: {
+                color: white;
+            }
+            --paper-input-container-input: {
+                color: white;
+                font-style: normal;
+            }
+            paper-input-container-underline: {
+                display: none;
+            }
+        }
     </style>
     <template>
-        <iron-meta id="meta"></iron-meta>
 
-        <h2 class="paper-font-display2">Prezentacje</h2>
+    <firebase-collection
+      id="firebase"
+      location="[[config.urls.backend]]"
+      order-by-child="published"
+      equal-to="true"
+      order-value-type="boolean"
+      data="{{lectures}}"></firebase-collection>
+    <iron-meta id="meta"></iron-meta>
+    <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
 
-        <paper-header-panel class="list-panel">
-            <paper-menu class="list" on-iron-activate="_listTap" selectable="none">
-                <div class="row horizontal">
-                    <template is="dom-if" if="{{hasResults}}">
-                        <div class="text-center">
-                            <h3 class="blue">No results were found</h3>
-                        </div>
-                    </template>
-                    <template is="dom-repeat" items="{{lectures}}">
-                        <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
-                            <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
-                                <div class="card-content">
-                                    <div class="title">{{item.title}}</div>
-                                    <div class="description">{{item.description}}</div>
-                                </div>
-                            </paper-card>
-                        </div>
-                    </template>
-                </div>
+  <paper-header-panel condenses keep-condensed-header>
+    <paper-toolbar class="secondary-toolbar">
+       <div class="bottom indent bottom-text" self-end>
+          <paper-dropdown-menu label="Category" class="custom">
+            <paper-menu class="dropdown-content">
+              <paper-item>allosaurus</paper-item>
+              <paper-item>brontosaurus</paper-item>
+              <paper-item>carcharodontosaurus</paper-item>
+              <paper-item>diplodocus</paper-item>
             </paper-menu>
-        </paper-header-panel>
+          </paper-dropdown-menu>
+          <template is="dom-if" if="{{isSigned}}">
+            <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
+          </template>
+        </div>
+    </paper-toolbar>
+    <div>
+        <paper-material elevation="1" class="page-content">
+            <div class="row horizontal">
+                <template is="dom-if" if="{{hasResults}}">
+                    <div class="text-center">
+                        <h3 class="blue">No results were found</h3>
+                    </div>
+                </template>
+                <template is="dom-repeat" items="{{lectures}}">
+                    <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
+                        <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
+                            <div class="card-content">
+                                <div class="title">{{item.title}}</div>
+                                <div class="description">{{item.description}}</div>
+                            </div>
+                        </paper-card>
+                    </div>
+                </template>
+            </div>
+        </paper-material>
+    </div>
+  </paper-header-panel>
+
     </template>
     <script>
         Polymer({
@@ -63,6 +109,7 @@
                     observer: 'search'
                 },
                 config: Object,
+                isSigned: Boolean,
                 lectures: {
                     type: Object,
                     observer: 'lecturesChanged'
@@ -80,6 +127,21 @@
             },
             lecturesChanged: function() {
                 this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
+            },
+            _authStateChange: function(e, data) {
+                this.set('isSigned', data.isSigned);
+            },
+            addLecture: function() {
+                var user = this.$.meta.byKey('user');
+                var response = this.$.firebase.add({
+                    author: {
+                        id: user.getId(),
+                        email: user.getEmail(),
+                        name: user.getName()
+                    },
+                    published: false
+                });
+                page('/lecture/' + response.key() + '/edit');
             }
         });
     </script>
