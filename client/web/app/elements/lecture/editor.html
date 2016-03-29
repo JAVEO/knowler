@@ -20,9 +20,6 @@
         paper-input, paper-dropdown-menu {
             width: 100%;
         }
-        .capitalize {
-            text-transform: capitalize;
-        }
     </style>
     <template>
         <h2>{{lecture.title}}</h2>
@@ -35,7 +32,7 @@
             </div>
             <div class="col-sm-6">
                 <paper-dropdown-menu horizontal-align="left" label="Category">
-                    <paper-menu class="dropdown-content" attr-for-selected="data-value" selected="{{lecture.categories.0}}">
+                    <paper-menu class="dropdown-content" attr-for-selected="data-value" selected="{{selectedCategory}}" on-iron-select="_categorySelected">
                         <template is="dom-repeat" items="[[config.categories]]">
                             <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                         </template>
@@ -80,13 +77,13 @@
 
         <div class="tool-bar">
             <form on-submit="_timeFromChanged">
-                <paper-input class="flex-none" label="Start time" value="{{timeFrom}}">
-                    <paper-icon-button on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                <paper-input id="fromInput" class="flex-none" label="Start time" value="{{timeFrom}}">
+                    <paper-icon-button id="fromButton" on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
             <form on-submit="_timeToChanged">
-                <paper-input class="flex-none" label="End time" value="{{timeTo}}">
-                    <paper-icon-button on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                <paper-input id="toInput" class="flex-none" label="End time" value="{{timeTo}}">
+                    <paper-icon-button id="toButton" on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
                 </paper-input>
             </form>
             <div class="self-end">
@@ -108,6 +105,7 @@
         Polymer({
             is: 'lecture-editor',
             properties: {
+                selectedCategory: String,
                 config: Object,
                 videoHeight: {
                     type: Number
@@ -119,6 +117,10 @@
                     type: String,
                     notify: true,
                     observer: 'lectureIdChanged'
+                },
+                lecture: {
+                    type: Object,
+                    observer: '_lectureChanged'
                 },
                 duration: {
                     type: Number
@@ -139,6 +141,14 @@
                     return;
                 }
                 this.set('backendDocument', Config.urls.backend + '/' + this.lectureId);
+            },
+            _lectureChanged: function(lecture) {
+                if (this.lecture.categories !== undefined && this.lecture.categories.length !== 0) {
+                    this.set('selectedCategory', this.lecture.categories[0]);
+                }
+            },
+            _categorySelected: function(e, data) {
+                this.set('lecture.categories', [this.selectedCategory]);
             },
             pdfChanged: function(e) {
                 this.$.slideList.set('pdf', e.detail.value);

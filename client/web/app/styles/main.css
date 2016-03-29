@@ -40,3 +40,6 @@ paper-button.danger:hover {
 .img-rounded {
   border-radius: 100%;
 }
+.capitalize {
+  text-transform: capitalize;
+}
