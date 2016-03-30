@@ -83,19 +83,24 @@
             <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
             <paper-button on-tap="goFullscreen" raised>
                 <iron-icon icon="icons:fullscreen"></iron-icon>
-            </paper-button></a>
+            </paper-button>
         </div>
 
-        <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
 
-        <div class="row text-right" style="display:block;">
-            <iron-icon icon="icons:visibility"></iron-icon>
-            {{statistics.viewCount}}
-            <iron-icon icon="icons:thumb-up"></iron-icon>
-            {{statistics.likeCount}}
-            <iron-icon icon="icons:thumb-down"></iron-icon>
-            {{statistics.dislikeCount}}
+        <div class="layout horizontal justified">
+            <div>
+                <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
+            </div>
+            <div>
+                <iron-icon icon="icons:visibility"></iron-icon>
+                {{statistics.viewCount}}
+                <iron-icon icon="icons:thumb-up"></iron-icon>
+                {{statistics.likeCount}}
+                <iron-icon icon="icons:thumb-down"></iron-icon>
+                {{statistics.dislikeCount}}
+            </div>
         </div>
+
         <disqus-comments id="knowlerComments" shortname="[[config.disqus.shortname]]" identifier="{{lectureId}}" https="[[config.disqus.https]]" title="{{lecture.title}}" url="[[config.urls.frontend]]/{{lectureId}}"></disqus-comments>
     </template>
 

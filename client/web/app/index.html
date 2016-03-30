@@ -46,9 +46,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <auth-meta id="authMeta"></auth-meta>
     <iron-meta id="meta"></iron-meta>
 
-    <paper-header-panel>
-    
-      <paper-toolbar class="primary-toolbar">
+    <paper-header-panel condenses keep-condensed-header>
+
+      <paper-toolbar class="primary-toolbar main-toolbar" >
         <a data-route="home" href="/">
           <img src="images/logo_knowler_nowe.png" alt="Logo">
         </a>
@@ -57,7 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                      no-label-float="true"
                      value="{{searchPhrase}}"
                      on-keydown="searchPhraseChange"
-                     style="width: 100%;"></paper-input>
+                     style="width: 100%; min-width: 150px;"></paper-input>
         <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
         <google-signin
                 style="margin-left: 25px;"
