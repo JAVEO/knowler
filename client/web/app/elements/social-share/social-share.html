@@ -98,16 +98,20 @@
                 text: String,
                 url: String,
                 encodedUrl: String,
+                config: Object,
                 lectureId: { 
                     type: String,
                     observer: '_lectureIdChanged'
                 },
             },
+            ready: function() {
+                this.set('config', Config);
+            },
             _lectureIdChanged: function(lectureId) {
                 var self = this;
 
                 function shortenUrl() {
-                    var url = "https://www.googleapis.com/urlshortener/v1/url?key=" + Config.google.developerKey;
+                    var url = "https://www.googleapis.com/urlshortener/v1/url?key=" + self.config.google.developerKey;
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function(response) {
                         if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -118,7 +122,7 @@
                     };
                     xhr.open("POST", url, true);
                     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                    xhr.send(JSON.stringify({ 'longUrl': Config.urls.frontend + "/#!/lecture/" + lectureId}));
+                    xhr.send(JSON.stringify({ 'longUrl': self.config.urls.frontend + "/#!/lecture/" + lectureId}));
                 }
 
                 shortenUrl();
