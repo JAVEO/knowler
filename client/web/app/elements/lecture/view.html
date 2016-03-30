@@ -18,10 +18,15 @@
         }
         .title {
             color: var(--paper-blue-600);
+            font-size: 2em;
         }
         .author-image {
             width: 50px;
             height: 50px;
+        }
+        .card-presentation {
+            padding: 0px;
+            background: black;
         }
     </style>
 
@@ -37,61 +42,31 @@
             equal-to="true"
             order-value-type="boolean"></firebase-collection>
 
-        <fullscreen-api id="fsapi"></fullscreen-api>
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
         <iron-meta id="meta"></iron-meta>
 
 
         <div class="layout vertical">
-            <paper-material elevation="1" class="card-default flex">
-               
-
-            <div id="presentationContent" class="row">
-                <div class="col-md-6 col-sm-12">
-                    <google-youtube
-                            id="googleYouTube"
-                            video-id="{{lecture.videoId}}"
-                            rel="0"
-                            start="0"
-                            autoplay="0"
-                            on-currenttime-changed="playerChanged"
-                            on-google-youtube-ready="_youtubeReady"
-                            on-google-youtube-state-change="_youtubeStateChanged"
-                            width="100%"
-                            height="{{videoHeight}}px"
-                            style="margin: auto;">
-                    </google-youtube>
-                </div>
-                <div class="col-md-6 col-sm-12">
-                    <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
-                </div>
-            </div>
-            <div class="row">
-                <div class="slider">
-                    <time-grider id="timeGrider" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
-                </div>
-            </div>
-
-            <div class="row text-center" style="display:block;">
-                <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
-                <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
-                <paper-button on-tap="goFullscreen" raised>
-                    <iron-icon icon="icons:fullscreen"></iron-icon>
-                </paper-button>
-            </div>
-
+            <paper-material elevation="1" class="card-default card-presentation flex">
+               <presentation-player lecture="{{lecture}}"></presentation-player>
             </paper-material>
 
             <paper-material elevation="1" class="card-default flex">
-                <h2 class="title">{{lecture.title}}</h2>
+                <div class="row text-center" style="display:block;">
+                    <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
+                    <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
+                </div>
+                <span>
+                <p class="title">{{lecture.title}}</p>
+                    <span class="capitalize">{{lecture.category}}</span>
                 <p>
                     <img class="img-rounded author-image" src="{{authorImageUrl}}">
                     {{lecture.author.name}}
                 </p>
-
                 <p>
-                    Category: <span class="capitalize">{{lecture.category}}</span>
+                    Category: 
                 </p>
+                <p>{{lecture.description}}</p>
             </paper-material>
         </div>
 
@@ -119,10 +94,6 @@
                 </paper-material>
             </div>
         </div>
-
-        
-
-        
     </template>
 
     <script>
@@ -130,14 +101,8 @@
             is: "lecture-view",
             properties: {
                 config: Object,
-                videoHeight: {
-                    type: Number,
-                },
                 currentSlide: {
                     type: Number,
-                },
-                duration:{
-                    type: Number
                 },
                 lecture: {
                     type: Object,
@@ -153,9 +118,6 @@
                     type: Boolean,
                     value: false
                 },
-                fsapi: {
-                    type: Object
-                },
                 statistics: {
                     type: Object
                 },
@@ -163,47 +125,6 @@
                 authorImageUrl: {
                     type: String
                 }
-            },
-            setCurrentSlide: function(slide) {
-                this.set('currentSlide', slide);
-            },
-            clickedSlide: function(e){
-                e.detail = e.detail.element;
-                console.log("To time: ", e.detail.time);
-
-                this.async(function(){this.$.googleYouTube.seekTo(e.detail.time);}, 10);
-                this.setCurrentSlide(e.detail.slide);
-            },
-            playerChanged: function(time){
-                if (time.detail.value === 0) {
-                    return;
-                }
-                var slideId = this.findCurrentImage(time);
-                this.setCurrentSlide(slideId);
-                this.$.timeGrider.markAsSelected(slideId);
-            },
-            _youtubeReady: function(e) {
-                this.set('duration', GoogleYouTubeUtils.getVideoDuration(e));
-            },
-            _youtubeStateChanged: function(e) {
-                var newDuration = GoogleYouTubeUtils.getVideoDuration(e);
-                if (newDuration !== 0 && this.duration !== newDuration) {
-                    this.set('duration', newDuration);
-                }
-            },
-            findCurrentImage: function(time){
-                var secToSlides = this.lecture.mappings;
-                var id = 0;
-                for(var i = 0; i< secToSlides.length; i++){
-                    if(i>0 && secToSlides[i].time > time.detail.value){
-                        id = secToSlides[i-1].slide;
-                        break;
-                    }
-                }
-                return id;
-            },
-            goFullscreen: function () {
-                this.fsapi.toggleFullscreen();
             },
             lectureIdChanged: function(lectureId) {
                 if (StringUtils.isEmpty(lectureId)) {
@@ -215,13 +136,6 @@
             ready: function(){
                 this.set('config', Config);
 
-                var fsapi = this.$.fsapi;
-                fsapi.target = this.$.presentationContent;
-                this.fsapi = fsapi;
-
-                this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
-
-                var googleYouTube  = this.$.googleYouTube;
                 page.exit('/lecture/:id', function(ctx, next) {
                     googleYouTube.pause();
                     next();
@@ -252,7 +166,6 @@
                             'key': Config.google.developerKey,
                             'id': lecture.videoId
                         }).then(function(response){
-                            console.log("Youtube API response:", response);
                             var stats = response.result.items[0].statistics;
                             self.set('statistics' , stats);
                         });

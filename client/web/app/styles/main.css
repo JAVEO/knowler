@@ -56,6 +56,10 @@ paper-material {
   background: white;
 }
 
+.text-white {
+  color: white;
+}
+
 .card-default {
   background: white;
   margin: 8px;

@@ -21,6 +21,10 @@
                 display: none;
             }
         }
+        .presentation-list-card {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
     </style>
     <template>
 
@@ -44,7 +48,7 @@
         <div class="layout vertical">
             <template is="dom-repeat" items="[[categories]]">
                 <template is="dom-if" if="{{item.show}}")>
-                    <paper-material elevation="1" class="card-default" style="width: 100%;">
+                    <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
                         <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}"></lectures-list-by-category>
                     </paper-material>
                 </template>
