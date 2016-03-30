@@ -52,9 +52,6 @@
     <firebase-collection
       id="firebase"
       location="[[config.urls.backend]]"
-      order-by-child="published"
-      equal-to="true"
-      order-value-type="boolean"
       data="{{lectures}}"></firebase-collection>
     <iron-meta id="meta"></iron-meta>
     <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
@@ -129,16 +126,7 @@
                 this.set('isSigned', data.isSigned);
             },
             addLecture: function() {
-                var user = this.$.meta.byKey('user');
-                var response = this.$.firebase.add({
-                    author: {
-                        id: user.getId(),
-                        email: user.getEmail(),
-                        name: user.getName()
-                    },
-                    published: false
-                });
-                page('/lecture/' + response.key() + '/edit');
+                page('/lecture/add');
             }
         });
     </script>
