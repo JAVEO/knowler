@@ -76,7 +76,7 @@ Config = {
     urls: {
         frontend: "http://localhost:3000",
         backend: "https://knowler.firebaseio.com/lectures-dev",
-        googleDriveCorsProxy: "https://crossorigin.me/https://drive.google.com/uc?id="
+        googleDriveCorsProxy: "https://stark-eyrie-26143.herokuapp.com/pdf/"
     },
     categories: [undefined, "programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
 };
