@@ -64,10 +64,9 @@
        <div class="bottom indent bottom-text" self-end>
           <paper-dropdown-menu label="Category" class="custom">
             <paper-menu class="dropdown-content">
-              <paper-item>allosaurus</paper-item>
-              <paper-item>brontosaurus</paper-item>
-              <paper-item>carcharodontosaurus</paper-item>
-              <paper-item>diplodocus</paper-item>
+                <template is="dom-repeat" items="[[config.categories]]">
+                    <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
+                </template>
             </paper-menu>
           </paper-dropdown-menu>
           <template is="dom-if" if="{{isSigned}}">
