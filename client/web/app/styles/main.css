@@ -47,3 +47,38 @@ paper-button.danger:hover {
 .capitalize {
   text-transform: capitalize;
 }
+
+paper-material {
+  padding: 16px;
+}
+
+.bg-white {
+  background: white;
+}
+
+.card-default {
+  background: white;
+  margin: 8px;
+}
+
+.mt-0 {
+  margin-top: 0px;
+}
+
+@media (max-width: 600px) {
+  .k-col-sm-6 {
+    width: 50%;
+  }
+  .k-col-sm-12 {
+    width: 100%;
+  }
+}
+
+@media (min-width: 601px) {
+  .k-col-md-6 {
+    width: 50%;
+  }
+  .k-col-md-12 {
+    width: 100%;
+  }
+}

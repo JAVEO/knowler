@@ -36,13 +36,13 @@
           limit-to-first="{{limitTo}}"
           data="{{lectures}}"></firebase-collection>
 
-        <div class="row horizontal">
-            <h3>{{category}}</h3>
-            <template is="dom-if" if="{{hasResults}}">
-                <div class="text-center">
-                    <h3 class="blue">No results were found</h3>
-                </div>
-            </template>
+        <h4 class="capitalize mt-0">{{category}}</h4>
+        <template is="dom-if" if="{{hasResults}}">
+            <div class="text-center">
+                <h3 class="blue">No results were found</h3>
+            </div>
+        </template>
+        <div class="row">
             <template is="dom-repeat" items="{{lectures}}">
                 <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
                     <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">

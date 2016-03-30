@@ -42,66 +42,87 @@
         <iron-meta id="meta"></iron-meta>
 
 
-        <h2 class="title">{{lecture.title}}</h2>
-        <p>
-            <img class="img-rounded author-image" src="{{authorImageUrl}}">
-            {{lecture.author.name}}
-        </p>
+        <div class="layout vertical">
+            <paper-material elevation="1" class="card-default flex">
+               
 
-        <p>
-            Category: <span class="capitalize">{{lecture.category}}</span>
-        </p>
+            <div id="presentationContent" class="row">
+                <div class="col-md-6 col-sm-12">
+                    <google-youtube
+                            id="googleYouTube"
+                            video-id="{{lecture.videoId}}"
+                            rel="0"
+                            start="0"
+                            autoplay="0"
+                            on-currenttime-changed="playerChanged"
+                            on-google-youtube-ready="_youtubeReady"
+                            on-google-youtube-state-change="_youtubeStateChanged"
+                            width="100%"
+                            height="{{videoHeight}}px"
+                            style="margin: auto;">
+                    </google-youtube>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                </div>
+            </div>
+            <div class="row">
+                <div class="slider">
+                    <time-grider id="timeGrider" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
+                </div>
+            </div>
 
-        <div id="presentationContent" class="row">
-            <div class="col-md-6 col-sm-12">
-                <google-youtube
-                        id="googleYouTube"
-                        video-id="{{lecture.videoId}}"
-                        rel="0"
-                        start="0"
-                        autoplay="0"
-                        on-currenttime-changed="playerChanged"
-                        on-google-youtube-ready="_youtubeReady"
-                        on-google-youtube-state-change="_youtubeStateChanged"
-                        width="100%"
-                        height="{{videoHeight}}px"
-                        style="margin: auto;">
-                </google-youtube>
+            <div class="row text-center" style="display:block;">
+                <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
+                <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
+                <paper-button on-tap="goFullscreen" raised>
+                    <iron-icon icon="icons:fullscreen"></iron-icon>
+                </paper-button>
             </div>
-            <div class="col-md-6 col-sm-12">
-                <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
-            </div>
-        </div>
-        <div class="row">
-            <div class="slider">
-                <time-grider id="timeGrider" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
-            </div>
-        </div>
 
-        <div class="row text-center" style="display:block;">
-            <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
-            <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
-            <paper-button on-tap="goFullscreen" raised>
-                <iron-icon icon="icons:fullscreen"></iron-icon>
-            </paper-button>
-        </div>
+            </paper-material>
 
+            <paper-material elevation="1" class="card-default flex">
+                <h2 class="title">{{lecture.title}}</h2>
+                <p>
+                    <img class="img-rounded author-image" src="{{authorImageUrl}}">
+                    {{lecture.author.name}}
+                </p>
 
-        <div class="layout horizontal justified">
-            <div>
-                <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
-            </div>
-            <div>
-                <iron-icon icon="icons:visibility"></iron-icon>
-                {{statistics.viewCount}}
-                <iron-icon icon="icons:thumb-up"></iron-icon>
-                {{statistics.likeCount}}
-                <iron-icon icon="icons:thumb-down"></iron-icon>
-                {{statistics.dislikeCount}}
-            </div>
+                <p>
+                    Category: <span class="capitalize">{{lecture.category}}</span>
+                </p>
+            </paper-material>
         </div>
 
-        <disqus-comments id="knowlerComments" shortname="[[config.disqus.shortname]]" identifier="{{lectureId}}" https="[[config.disqus.https]]" title="{{lecture.title}}" url="[[config.urls.frontend]]/{{lectureId}}"></disqus-comments>
+        <div class="layout horizontal wrap"> 
+            <div class="k-col-md-6 k-col-sm-12">
+                <paper-material elevation="1" class="card-default">
+                    <disqus-comments id="knowlerComments" shortname="[[config.disqus.shortname]]" identifier="{{lectureId}}" https="[[config.disqus.https]]" title="{{lecture.title}}" url="[[config.urls.frontend]]/{{lectureId}}"></disqus-comments>
+               </paper-material>
+            </div>
+            <div class="k-col-md-6 k-col-sm-12">
+                <paper-material elevation="1" class="card-default">
+                    <div class="layout horizontal justified">
+                        <div>
+                            <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
+                        </div>
+                        <div>
+                            <iron-icon icon="icons:visibility"></iron-icon>
+                            {{statistics.viewCount}}
+                            <iron-icon icon="icons:thumb-up"></iron-icon>
+                            {{statistics.likeCount}}
+                            <iron-icon icon="icons:thumb-down"></iron-icon>
+                            {{statistics.dislikeCount}}
+                        </div>
+                    </div>
+                </paper-material>
+            </div>
+        </div>
+
+        
+
+        
     </template>
 
     <script>
