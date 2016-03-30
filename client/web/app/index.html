@@ -74,17 +74,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <section data-route="view-lecture">
             <paper-material elevation="1" class="page-content">
-              <lecture-view id="lectureView" lecture-id="{{params.id}}" on-delete-lecture="deleteLecture"></lecture-view>
+              <lecture-view id="lectureView" lecture-id="{{viewId}}" on-delete-lecture="deleteLecture"></lecture-view>
             </paper-material>
           </section>
 
           <section data-route="lecture-search">
-            <lectures-list id="lecturesList" search-phrase="{{searchPhrase}}" lectures="{{lectures}}"></lectures-list>
+            <lectures-list id="lecturesList" search-phrase="{{searchPhrase}}"></lectures-list>
           </section>
 
           <section data-route="edit-lecture">
             <paper-material elevation="1" class="page-content">
-              <lecture-editor id="lectureEditor" lecture-id="{{params.editId}}"></lecture-editor>
+              <lecture-editor id="lectureEditor" lecture-id="{{editId}}"></lecture-editor>
             </paper-material>
           </section>
 

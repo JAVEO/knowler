@@ -95,10 +95,10 @@
             <paper-button on-tap="save" class="success" raised>Save</paper-button>
         </div>
 
-        <firebase-document
-                id="firebase"
-                location="{{backendDocument}}"
-                data="{{lecture}}"></firebase-document>
+        <firebase-collection id="firebaseCollection"
+                             location="[[config.urls.backend]]"></firebase-collection>
+        <firebase-document id="firebase"></firebase-document>
+
         <iron-meta id="meta"></iron-meta>
     </template>
     <script>
@@ -118,7 +118,8 @@
                     observer: 'lectureIdChanged'
                 },
                 lecture: {
-                    type: Object
+                    type: Object,
+                    notify: true
                 },
                 duration: {
                     type: Number
@@ -128,17 +129,30 @@
                 },
                 pagesCount: {
                     type: Number
-                },
-                backendDocument: String
+                }
             },
             observers: [
                 'generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
             lectureIdChanged: function() {
                 if (this.lectureId === undefined) {
+                    this.lecture = this.createLecture();
                     return;
+                } else {
+                    this.$.firebase.set('location', Config.urls.backend + '/' + this.lectureId);
+                    var data = this.$.firebase.data;
+                    this.lecture = data;
                 }
-                this.set('backendDocument', Config.urls.backend + '/' + this.lectureId);
+            },
+            createLecture: function() {
+                return {
+                         fileId: undefined,
+                         videoId: undefined,
+                         category: undefined,
+                         title: undefined,
+                         description: undefined,
+                         mappings: []
+                     };
             },
             _categorySelected: function(e, data) {
                 this.set('lecture.category', data.item.dataValue);
@@ -212,6 +226,7 @@
             },
             ready: function() {
                 this.set('config', Config);
+                this.lecture = this.createLecture();
 
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
                 var self = this;
@@ -221,8 +236,26 @@
                 });
             },
             save: function() {
-                this.set('lecture.published', true);
-                page('/lecture/' + this.lectureId);
+                if (this.lectureId === undefined) {
+                    var user = this.$.meta.byKey('user');
+                    this.set('lecture.author', {
+                                id: user.getId(),
+                                email: user.getEmail(),
+                                name: user.getName()
+                             });
+
+                    var response = this.$.firebaseCollection.add(this.lecture);
+                    page('/lecture/' + response.key());
+                } else {
+                    this.$.firebase.set('data.title', this.lecture.title);
+                    this.$.firebase.set('data.description', this.lecture.description);
+                    this.$.firebase.set('data.fileId', this.lecture.fileId);
+                    this.$.firebase.set('data.videoId', this.lecture.videoId);
+                    this.$.firebase.set('data.mappings', this.lecture.mappings);
+                    this.$.firebase.set('data.category', this.lecture.category);
+                    page('/lecture/' + this.lectureId);
+                }
+                this.lecture = this.createLecture();
             },
             delete: function() {
                 this.lecture.mappings.splice(this.selectedIndex, 1);

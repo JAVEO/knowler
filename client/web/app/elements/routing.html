@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     page('/lecture-search/:searchPhrase', function (data) {
       app.route = 'lecture-search';
-      app.params = data.params;
+      app.searchPhrase = data.params.searchPhrase;
     });
 
     page('/lecture-search', function () {
@@ -30,16 +30,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     page('/lecture/add', function () {
       app.route = 'edit-lecture';
+      app.editId = undefined;
     });
 
-    page('/lecture/:editId/edit', function (data) {
+    page('/lecture/:id/edit', function (data) {
       app.route = 'edit-lecture';
-      app.params = data.params;
+      app.editId = data.params.id;
     });
 
     page('/lecture/:id', function (data) {
       app.route = 'view-lecture';
-      app.params = data.params;
+      app.viewId = data.params.id;
     });
 
     // add #! before urls

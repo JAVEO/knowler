@@ -1,0 +1,99 @@
+<dom-module id="lectures-list-by-category">
+    <style>
+        .presentation-card {
+            padding-left: 7px;
+            padding-right: 7px;
+            margin-top: 7px;
+            margin-bottom: 7px;
+        }
+        .presentation-card paper-card {
+            background-color: transparent;
+            cursor: pointer;
+            width: 100%;
+        }
+        .presentation-card .card-content {
+            padding-top: 4px;
+            padding-bottom: 7px;
+        }
+        .presentation-card .title {
+            font-weight: 700;
+        }
+
+        .presentation-card .content {
+            padding-top: 5px !important;
+        }
+        .blue {
+            color: var(--paper-light-blue-400);;
+        }
+    </style>
+    <template>
+
+        <firebase-collection
+          id="firebase"
+          location="[[config.urls.backend]]"
+          order-by-child="category"
+          equal-to="{{category}}"
+          limit-to-first="{{limitTo}}"
+          data="{{lectures}}"></firebase-collection>
+
+        <div class="row horizontal">
+            <h3>{{category}}</h3>
+            <template is="dom-if" if="{{hasResults}}">
+                <div class="text-center">
+                    <h3 class="blue">No results were found</h3>
+                </div>
+            </template>
+            <template is="dom-repeat" items="{{lectures}}">
+                <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
+                    <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
+                        <div class="card-content">
+                            <div class="title">{{item.title}}</div>
+                            <div class="description">{{item.description}}</div>
+                        </div>
+                    </paper-card>
+                </div>
+            </template>
+        </div>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'lectures-list-by-category',
+            properties: {
+                category: String,
+                showMore: {
+                    type: Boolean,
+                    observer: '_showMoreChanged'
+                },
+                limitTo: Number,
+                hasResults: Boolean,
+                searchPhrase: {
+                    type: String,
+                    observer: 'search'
+                },
+                config: Object,
+                lectures: {
+                    type: Object,
+                    observer: 'lecturesChanged'
+                }
+            },
+            ready: function() {
+                this.set('config', Config);
+                this.search();
+                this.set('limitTo', this.showMore ? 100 : 6);
+            },
+            search: function() {
+                var searchPhrase = this.searchPhrase;
+            },
+            viewDetails: function(e) {
+                page('/lecture/' + e.model.item.__firebaseKey__);
+            },
+            lecturesChanged: function() {
+                this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
+            },
+            _showMoreChanged: function() {
+                this.set('limitTo', this.showMore ? 100 : 6);
+            }
+        });
+    </script>
+</dom-module>
