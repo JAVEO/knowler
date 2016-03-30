@@ -78,5 +78,5 @@ Config = {
         backend: "https://knowler.firebaseio.com/lectures-dev",
         googleDriveCorsProxy: "https://crossorigin.me/https://drive.google.com/uc?id="
     },
-    categories: ["programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
+    categories: [undefined, "programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
 };
