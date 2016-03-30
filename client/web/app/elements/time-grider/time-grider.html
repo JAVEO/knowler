@@ -75,9 +75,9 @@
                 });
             },
             changeMapping: function(index, newTime) {
-                var newTime = this._getTimeInBounds(index, newTime);
-                this.set('mappings.' + index + '.time', newTime);
-                return newTime;
+                var timeInBounds = this._getTimeInBounds(index, newTime);
+                this.set('mappings.' + index + '.time', timeInBounds);
+                return timeInBounds;
             },
             trackHandler: function(e) {
                 var self = this;
