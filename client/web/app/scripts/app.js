@@ -16,8 +16,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
 
-  app.set('config', Config);
-
   app.displayInstalledToast = function() {
     document.querySelector('#caching-complete').show();
   };
@@ -30,6 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
+      app.set('config', Config);
     // imports are loaded and elements have been registered
   });
 
@@ -83,5 +82,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.authMeta.userLoggedOut();
     app.set('isLogged', false);
   };
+
 
 })(document);
