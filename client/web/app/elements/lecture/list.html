@@ -1,30 +1,5 @@
 <dom-module id="lectures-list">
     <style>
-        .presentation-card {
-            padding-left: 7px;
-            padding-right: 7px;
-            margin-top: 7px;
-            margin-bottom: 7px;
-        }
-        .presentation-card paper-card {
-            background-color: transparent;
-            cursor: pointer;
-            width: 100%;
-        }
-        .presentation-card .card-content {
-            padding-top: 4px;
-            padding-bottom: 7px;
-        }
-        .presentation-card .title {
-            font-weight: 700;
-        }
-
-        .presentation-card .content {
-            padding-top: 5px !important;
-        }
-        .blue {
-            color: var(--paper-light-blue-400);;
-        }
         paper-fab.add-lecture {
             z-index: 20;
             position: absolute;
@@ -49,17 +24,13 @@
     </style>
     <template>
 
-    <firebase-collection
-      id="firebase"
-      location="[[config.urls.backend]]"
-      data="{{lectures}}"></firebase-collection>
     <iron-meta id="meta"></iron-meta>
     <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
 
   <paper-header-panel condenses keep-condensed-header>
     <paper-toolbar class="primary-toolbar additional-toolbar">
           <paper-dropdown-menu label="Category" class="custom">
-            <paper-menu class="dropdown-content">
+            <paper-menu class="dropdown-content" on-iron-select="_categorySelected">
                 <template is="dom-repeat" items="[[config.categories]]">
                     <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                 </template>
@@ -71,23 +42,11 @@
     </paper-toolbar>
     <div>
         <paper-material elevation="1" class="page-content">
-            <div class="row horizontal">
-                <template is="dom-if" if="{{hasResults}}">
-                    <div class="text-center">
-                        <h3 class="blue">No results were found</h3>
-                    </div>
+            <template is="dom-repeat" items="[[categories]]">
+                <template is="dom-if" if="{{item.show}}")>
+                    <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}"></lectures-list-by-category>
                 </template>
-                <template is="dom-repeat" items="{{lectures}}">
-                    <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
-                        <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
-                            <div class="card-content">
-                                <div class="title">{{item.title}}</div>
-                                <div class="description">{{item.description}}</div>
-                            </div>
-                        </paper-card>
-                    </div>
-                </template>
-            </div>
+            </template>
         </paper-material>
     </div>
   </paper-header-panel>
@@ -97,36 +56,47 @@
         Polymer({
             is: 'lectures-list',
             properties: {
-                hasResults: Boolean,
                 searchPhrase: {
                     type: String,
                     observer: 'search'
                 },
                 config: Object,
                 isSigned: Boolean,
-                lectures: {
-                    type: Object,
-                    observer: 'lecturesChanged'
-                }
+                selectedCategory: String,
+                categories: Object
             },
             ready: function() {
                 this.set('config', Config);
                 this.search();
+                this.categories = Config.categories.map(function (item) {
+                    return {
+                        name: item,
+                        show: true,
+                        showMore: false
+                    };
+                });
             },
             search: function() {
                 var searchPhrase = this.searchPhrase;
-            },
-            viewDetails: function(e) {
-                page('/lecture/' + e.model.item.__firebaseKey__);
-            },
-            lecturesChanged: function() {
-                this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
             },
             _authStateChange: function(e, data) {
                 this.set('isSigned', data.isSigned);
             },
             addLecture: function() {
                 page('/lecture/add');
+            },
+            _categorySelected: function(e, data) {
+                this.set('selectedCategory', data.item.dataValue);
+                for (var i = 0; i < this.categories.length; i++) {
+                    if (this.selectedCategory === undefined) {
+                        this.set('categories.' + i + '.show', true);
+                        this.set('categories.' + i + '.showMore', false);
+                    } else {
+                        var isSelected = this.categories[i].name === this.selectedCategory;
+                        this.set('categories.' + i + '.show', isSelected);
+                        this.set('categories.' + i + '.showMore', isSelected);
+                    }
+                }
             }
         });
     </script>
