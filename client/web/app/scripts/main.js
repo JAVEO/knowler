@@ -13,6 +13,7 @@ Number.prototype.toHHMMSS = function() {
 
     return [hours, minutes, seconds].map(appendZero).join(":");
 };
+
 Array.prototype.contains = function(val) {
     return this.indexOf(val) !== -1;
 };
@@ -66,6 +67,17 @@ StringUtils.isEmpty = function(str) {
 };
 StringUtils.isNotEmpty = function(str) {
     return !StringUtils.isEmpty(str);
+};
+
+function DateUtils() {}
+DateUtils.timestampToHumanDate = function (timestamp) {
+    if (timestamp === undefined) {
+        console.error("Failed to convert timestamp to human date. Timestamp was undefined.");
+        return undefined;
+    } 
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var date = new Date(timestamp);
+    return "" + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
 };
 
 Config = {
