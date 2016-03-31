@@ -73,9 +73,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
           <section data-route="view-lecture">
-            <paper-material elevation="1" class="page-content">
+            <div class="page-content">
               <lecture-view id="lectureView" lecture-id="{{viewId}}" on-delete-lecture="deleteLecture"></lecture-view>
-            </paper-material>
+            </div>
           </section>
 
           <section data-route="lecture-search">
@@ -83,9 +83,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </section>
 
           <section data-route="edit-lecture">
-            <paper-material elevation="1" class="page-content">
+            <div class="page-content">
               <lecture-editor id="lectureEditor" lecture-id="{{editId}}"></lecture-editor>
-            </paper-material>
+            </div>
           </section>
 
         </iron-pages>

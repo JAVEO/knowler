@@ -21,6 +21,10 @@
                 display: none;
             }
         }
+        .presentation-list-card {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
     </style>
     <template>
 
@@ -40,14 +44,16 @@
             <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
           </template>
     </paper-toolbar>
-    <div>
-        <paper-material elevation="1" class="page-content">
+    <div class="page-content">
+        <div class="layout vertical">
             <template is="dom-repeat" items="[[categories]]">
                 <template is="dom-if" if="{{item.show}}")>
-                    <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}"></lectures-list-by-category>
+                    <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
+                        <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}"></lectures-list-by-category>
+                    </paper-material>
                 </template>
             </template>
-        </paper-material>
+      </div>
     </div>
   </paper-header-panel>
 
@@ -68,7 +74,9 @@
             ready: function() {
                 this.set('config', Config);
                 this.search();
-                this.categories = Config.categories.map(function (item) {
+                this.categories = Config.categories.filter(function(item) {
+                    return item !== undefined;
+                }).map(function (item) {
                     return {
                         name: item,
                         show: true,

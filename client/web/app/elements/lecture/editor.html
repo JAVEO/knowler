@@ -22,83 +22,87 @@
         }
     </style>
     <template>
-        <h2>{{lecture.title}}</h2>
-        <div class="row">
-            <div class="col-sm-6">
-                <paper-input value="{{lecture.title}}" label="Title"></paper-input>
-            </div>
-            <div class="col-sm-6">
-                <paper-input value="{{lecture.description}}" label="Description"></paper-input>
-            </div>
-            <div class="col-sm-6">
-                <paper-dropdown-menu horizontal-align="left" label="Category">
-                    <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected">
-                        <template is="dom-repeat" items="[[config.categories]]">
-                            <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
-                        </template>
-                    </paper-menu>
-                </paper-dropdown-menu>
-            </div>
-        </div>
-        <div class="row layout horizontal">
 
-            <div class="col-md-6 col-sm-12">
-                <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
-                <google-youtube
-                        id="presentation"
-                        autoplay="1"
-                        video-id="{{lecture.videoId}}"
-                        height="{{videoHeight}}px"
-                        width="100%"
-                        rel="0"
-                        start="0"
-                        autoplay="0"
-                        on-google-youtube-ready="_youtubeReady"
-                        on-google-youtube-state-change="_youtubeStateChanged"
-                        style="margin: auto;">
-                </google-youtube>
+        <paper-material elevation="1" class="card-default">
+            <h2>{{lecture.title}}</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <paper-input value="{{lecture.title}}" label="Title"></paper-input>
+                </div>
+                <div class="col-sm-6">
+                    <paper-input value="{{lecture.description}}" label="Description"></paper-input>
+                </div>
+                <div class="col-sm-6">
+                    <paper-dropdown-menu horizontal-align="left" label="Category">
+                        <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected">
+                            <template is="dom-repeat" items="[[config.categories]]">
+                                <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
+                            </template>
+                        </paper-menu>
+                    </paper-dropdown-menu>
+                </div>
             </div>
-            <div class="col-md-6 col-sm-12">
-                <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
-                <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
-                            current-slide="{{currentSlide}}"
-                            slide-height="{{videoHeight}}"
-                            on-pdf-changed="pdfChanged"></pdf-viewer>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 slider">
-                <time-grider id="timeGrider" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_updateSelectedSection"></time-grider>
-            </div>
-            <div class="col-sm-12">
-                <slide-list id="slideList"></slide-list>
-            </div>
-        </div>
+            <div class="row layout horizontal">
 
-        <div class="tool-bar">
-            <form on-submit="_timeFromChanged">
-                <paper-input id="fromInput" class="flex-none" label="Start time" value="{{timeFrom}}">
-                    <paper-icon-button id="fromButton" on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
-                </paper-input>
-            </form>
-            <form on-submit="_timeToChanged">
-                <paper-input id="toInput" class="flex-none" label="End time" value="{{timeTo}}">
-                    <paper-icon-button id="toButton" on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
-                </paper-input>
-            </form>
-            <div class="self-end">
-                <paper-button class="flex-none" toggles raised on-tap="delete"><iron-icon icon="delete"></iron-icon> Delete</paper-button>
+                <div class="col-md-6 col-sm-12">
+                    <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
+                    <google-youtube
+                            id="presentation"
+                            autoplay="1"
+                            video-id="{{lecture.videoId}}"
+                            height="{{videoHeight}}px"
+                            width="100%"
+                            rel="0"
+                            start="0"
+                            autoplay="0"
+                            on-google-youtube-ready="_youtubeReady"
+                            on-google-youtube-state-change="_youtubeStateChanged"
+                            style="margin: auto;">
+                    </google-youtube>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
+                    <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
+                                current-slide="{{currentSlide}}"
+                                slide-height="{{videoHeight}}"
+                                on-pdf-changed="pdfChanged"></pdf-viewer>
+                </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-sm-12 slider">
+                    <time-grider id="timeGrider" selected="{{currentSlide}}" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_updateSelectedSection"></time-grider>
+                </div>
+                <div class="col-sm-12">
+                    <slide-list id="slideList"></slide-list>
+                </div>
+            </div>
 
-        <div class="text-center mt-50" style="display:block;">
-            <paper-button on-tap="save" class="success" raised>Save</paper-button>
-        </div>
+            <div class="tool-bar">
+                <form on-submit="_timeFromChanged">
+                    <paper-input id="fromInput" class="flex-none" label="Start time" value="{{timeFrom}}">
+                        <paper-icon-button id="fromButton" on-tap="_timeFromChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    </paper-input>
+                </form>
+                <form on-submit="_timeToChanged">
+                    <paper-input id="toInput" class="flex-none" label="End time" value="{{timeTo}}">
+                        <paper-icon-button id="toButton" on-tap="_timeToChanged" class="self-end green" suffix icon="check"></paper-icon-button>
+                    </paper-input>
+                </form>
+                <div class="self-end">
+                    <paper-button class="flex-none" toggles raised on-tap="delete"><iron-icon icon="delete"></iron-icon> Delete</paper-button>
+                </div>
+            </div>
 
-        <firebase-collection id="firebaseCollection"
-                             location="[[config.urls.backend]]"></firebase-collection>
-        <firebase-document id="firebase"></firebase-document>
+            <div class="text-center mt-50" style="display:block;">
+                <paper-button on-tap="save" class="success" raised>Save</paper-button>
+            </div>
 
+        </paper-material>
+
+        <firebase-document
+                id="firebase"
+                location="{{backendDocument}}"
+                data="{{lecture}}"></firebase-document>
         <iron-meta id="meta"></iron-meta>
     </template>
     <script>
@@ -118,8 +122,7 @@
                     observer: 'lectureIdChanged'
                 },
                 lecture: {
-                    type: Object,
-                    notify: true
+                    type: Object
                 },
                 duration: {
                     type: Number
@@ -129,30 +132,17 @@
                 },
                 pagesCount: {
                     type: Number
-                }
+                },
+                backendDocument: String
             },
             observers: [
                 'generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
             lectureIdChanged: function() {
                 if (this.lectureId === undefined) {
-                    this.lecture = this.createLecture();
                     return;
-                } else {
-                    this.$.firebase.set('location', Config.urls.backend + '/' + this.lectureId);
-                    var data = this.$.firebase.data;
-                    this.lecture = data;
                 }
-            },
-            createLecture: function() {
-                return {
-                         fileId: undefined,
-                         videoId: undefined,
-                         category: undefined,
-                         title: undefined,
-                         description: undefined,
-                         mappings: []
-                     };
+                this.set('backendDocument', Config.urls.backend + '/' + this.lectureId);
             },
             _categorySelected: function(e, data) {
                 this.set('lecture.category', data.item.dataValue);
@@ -226,7 +216,6 @@
             },
             ready: function() {
                 this.set('config', Config);
-                this.lecture = this.createLecture();
 
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
                 var self = this;
@@ -236,32 +225,14 @@
                 });
             },
             save: function() {
-                if (this.lectureId === undefined) {
-                    var user = this.$.meta.byKey('user');
-                    this.set('lecture.author', {
-                                id: user.getId(),
-                                email: user.getEmail(),
-                                name: user.getName()
-                             });
-
-                    var response = this.$.firebaseCollection.add(this.lecture);
-                    page('/lecture/' + response.key());
-                } else {
-                    this.$.firebase.set('data.title', this.lecture.title);
-                    this.$.firebase.set('data.description', this.lecture.description);
-                    this.$.firebase.set('data.fileId', this.lecture.fileId);
-                    this.$.firebase.set('data.videoId', this.lecture.videoId);
-                    this.$.firebase.set('data.mappings', this.lecture.mappings);
-                    this.$.firebase.set('data.category', this.lecture.category);
-                    page('/lecture/' + this.lectureId);
-                }
-                this.lecture = this.createLecture();
+                this.set('lecture.published', true);
+                page('/lecture/' + this.lectureId);
             },
             delete: function() {
                 this.lecture.mappings.splice(this.selectedIndex, 1);
                 this.$.timeGrider.mappingChanged();
             },
-            updateMappingTime: function(str, index) {
+            _updateMappingTime: function(str, index) {
                 var splitted = str.split(":");
                 if (splitted.length !== 3) {
                     console.error("Invalid time format. Expected: HH:MM:SS, was: " + this);
@@ -275,15 +246,13 @@
             },
             _timeFromChanged: function(e) {
                 e.preventDefault();
-                var newTime = this.updateMappingTime(this.timeFrom, this.selectedIndex);
+                var newTime = this._updateMappingTime(this.timeFrom, this.selectedIndex);
                 this.set('timeFrom', newTime.toHHMMSS());
-                this.$.timeGrider.markAsSelected(this.selectedIndex);
             },
             _timeToChanged: function(e) {
                 e.preventDefault();
-                var newTime = this.updateMappingTime(this.timeTo, this.selectedIndex + 1);
+                var newTime = this._updateMappingTime(this.timeTo, this.selectedIndex + 1);
                 this.set('timeTo', newTime.toHHMMSS());
-                this.$.timeGrider.markAsSelected(this.selectedIndex);
             }
         });
     </script>
