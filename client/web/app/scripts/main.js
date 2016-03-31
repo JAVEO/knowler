@@ -93,5 +93,5 @@ Config = {
         backend: "https://knowler.firebaseio.com/lectures-dev",
         googleDriveCorsProxy: "https://stark-eyrie-26143.herokuapp.com/pdf/"
     },
-    categories: [undefined, "programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
+    categories: ["all", "programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]
 };
