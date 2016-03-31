@@ -60,16 +60,13 @@
                 selected: {
                     type: Number,
                     value: 0,
-                    observer: "_selectedChanged"
+                    observer: "markAsSelected"
                 }
             },
             observers: [
                 'mappingChanged(mappings, duration)'
             ],
             ready: function() {},
-            _selectedChanged: function(selected) {
-                this.markAsSelected(selected);
-            },
             markAsSelected: function(mappingIndex) {
                 while (this.$$(".selected") !== null) {
                     this.$$(".selected").classList.remove('selected');
@@ -220,7 +217,6 @@
 
                 var click = function(i) {
                     return function(e) {
-                        self.markAsSelected(i);
                         self.fireSelectionChanged(i);
                     };
                 };
@@ -234,7 +230,6 @@
                     createGridCell(i, (secToSlides[i + 1].time - secToSlides[i].time), createDraggable(i));
                 }
                 createGridCell(secToSlides.length - 1, (this.duration - secToSlides[secToSlides.length - 1].time));
-
                 this.markAsSelected(this.selected);
             }
         });
