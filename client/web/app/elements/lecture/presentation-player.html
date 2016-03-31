@@ -56,17 +56,17 @@
                                 duration="{{duration}}"
                                 durationformatted="{{durationformatted}}"
                                 currenttimeformatted="{{currenttimeformatted}}"
-                                on-currenttime-changed="_playerChanged"
+                                on-currenttime-changed="_currentTimeChanged"
                                 on-google-youtube-state-change="_youtubeStateChanged"
                                 fluid="true">
                         </google-youtube>
                     </div>
                     <div class="k-col-md-6 k-col-sm-12">
-                        <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                        <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}"></pdf-viewer>
                     </div>
                 </div>
                 <div class="slider">
-                    <time-grider id="timeGrider" duration="[[duration]]" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
+                    <time-grider id="timeGrider" selected="{{currentSlide}}" duration="[[duration]]" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
                 </div>
                 <div class="video-control-panel layout horizontal center">
                     <div class="layout horizontal center">
@@ -102,7 +102,6 @@
         Polymer({
             is: "presentation-player",
             properties: {
-                videoHeight: Number,
                 currentSlide: Number,
                 duration: Number,
                 fsapi: Object,
@@ -129,21 +128,17 @@
                 lecture: Object
             },
             openSlide: function(elem) {
-                this.async(function() { 
-                    this.$.googleYouTube.seekTo(elem.time);
-                }, 10);
-                this.set('currentSlide', elem.slide);
+                this.$.googleYouTube.seekTo(elem.time);
                 this.$.googleYouTube.play();
             },
             clickedSlide: function(e){
                 this.openSlide(e.detail.element);
             },
-            _playerChanged: function(time){
+            _currentTimeChanged: function(time){
                 if (time.detail.value === 0) {
                     return;
                 }
                 var slideId = this.findCurrentImage(time);
-                this.$.timeGrider.markAsSelected(slideId);
                 this.set('currentSlide', slideId);
             },
             _youtubeStateChanged: function(e) {
@@ -156,7 +151,6 @@
                 for(var i = 1; i < slides.length && slides[i].time < time; i++) {
                     id = slides[i].slide;
                 }
-
                 return id;
             },
             goFullscreen: function () {
@@ -194,14 +188,13 @@
                 var maxIndex = this.lecture.mappings.length - 1;
                 this.openSlide((index > maxIndex) ? this.lecture.mappings[maxIndex] : this.lecture.mappings[index]);
             },
+            pause: function() {
+                this.$.googleYouTube.pause();
+            },
             ready: function(){
                 var fsapi = this.$.fsapi;
                 fsapi.target = this.$.presentationContent;
                 this.fsapi = fsapi;
-
-                this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
-
-                var googleYouTube  = this.$.googleYouTube;
             }
         });
     </script>

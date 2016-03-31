@@ -49,9 +49,6 @@
                     notify: true,
                     observer: "downloadPdf"
                 },
-                slideHeight: {
-                    type: Number
-                },
                 currentSlide: {
                     type: Number,
                     value: 0
@@ -70,7 +67,7 @@
                 }
             },
             observers: [
-                'renderPdf(pdf, slideHeight, currentSlide)'
+                'renderPdf(pdf, currentSlide)'
             ],
             downloadPdf: function() {
                 var self = this;
@@ -94,7 +91,7 @@
                   setVisibility(false, true, false);
                 });
             },
-            renderPdf: function(pdf, slideHeight, currentSlide) {
+            renderPdf: function(pdf, currentSlide) {
                 var self = this;
                 var pageId = currentSlide + 1;
 

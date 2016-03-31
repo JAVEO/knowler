@@ -60,7 +60,7 @@
 
         <div class="layout vertical">
             <paper-material elevation="1" class="card-default card-presentation flex">
-               <presentation-player lecture="{{lecture}}"></presentation-player>
+               <presentation-player id="presentationPlayer" lecture="{{lecture}}"></presentation-player>
             </paper-material>
 
             <paper-material elevation="1" class="card-default flex">
@@ -141,14 +141,18 @@
                 this.$.knowlerComments.reset();
             },
             ready: function(){
+                var self = this;
                 this.set('config', Config);
 
                 page.exit('/lecture/:id', function(ctx, next) {
-                    googleYouTube.pause();
+                    self.$.presentationPlayer.pause();
                     next();
                 });
             },
             _formatDate: function(timestamp) {
+                if (timestamp === undefined) {
+                    return "unknown"
+                }
                 return DateUtils.timestampToHumanDate(timestamp);
             },
             delete: function() {

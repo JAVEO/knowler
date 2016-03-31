@@ -74,7 +74,7 @@ DateUtils.timestampToHumanDate = function (timestamp) {
     if (timestamp === undefined) {
         console.error("Failed to convert timestamp to human date. Timestamp was undefined.");
         return undefined;
-    } 
+    }
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var date = new Date(timestamp);
     return "" + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();

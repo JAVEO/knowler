@@ -70,7 +70,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12 slider">
-                    <time-grider id="timeGrider" selected="{{currentSlide}}" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_updateSelectedSection"></time-grider>
+                    <time-grider id="timeGrider" selected="{{currentSlide}}" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_slideChosen"></time-grider>
                 </div>
                 <div class="col-sm-12">
                     <slide-list id="slideList"></slide-list>
@@ -112,7 +112,10 @@
                 videoHeight: {
                     type: Number
                 },
-                selectedIndex: Number,
+                selectedIndex: {
+                    type: Number,
+                    number: 0
+                },
                 timeFrom: Number,
                 timeTo: Number,
                 lectureId: {
@@ -132,15 +135,19 @@
                 },
                 pagesCount: {
                     type: Number
+                },
+                isFirstEdit: {
+                    type: Boolean
                 }
             },
             observers: [
-                'generateNewMappings(lecture.videoId, duration, pagesCount)'
+               '_generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
             lectureIdChanged: function() {
-                if (this.lectureId === undefined) {
+                var isNew = this.lectureId === undefined; 
+                this.set('isFirstEdit', !isNew)
+                if (isNew) {
                     this.lecture = this.createLecture();
-                    return;
                 } else {
                     this.$.firebase.set('location', Config.urls.backend + '/' + this.lectureId);
                     var data = this.$.firebase.data;
@@ -165,7 +172,10 @@
                 this.$.slideList.set('pdf', e.detail.value);
                 this.set('pagesCount', e.detail.value.numPages);
             },
-            _updateSelectedSection: function(e) {
+            _slideChosen: function(e) {
+                this._updateSelectedSection(e.detail.index);
+            },
+            _updateSelectedSection: function(selectedIndex) {
                 var self = this;
 
                 function getNextTime(index) {
@@ -175,22 +185,20 @@
                     return self.duration;
                 }
 
-                this.selectedIndex = e.detail.index;
-
                 console.log("Updating form");
-                this.timeFrom = this.lecture.mappings[this.selectedIndex].time.toHHMMSS();
-                this.timeTo = getNextTime(this.selectedIndex).toHHMMSS();
+                this.timeFrom = this.lecture.mappings[selectedIndex].time.toHHMMSS();
+                this.timeTo = getNextTime(selectedIndex).toHHMMSS();
 
-                var isFirst = this.selectedIndex === 0;
+                var isFirst = selectedIndex === 0;
                 this.$.fromButton.disabled = isFirst;
                 this.$.fromInput.disabled = isFirst;
 
-                var isLast = this.selectedIndex === this.lecture.mappings.length - 1;
+                var isLast = selectedIndex === this.lecture.mappings.length - 1;
                 this.$.toButton.disabled = isLast;
                 this.$.toInput.disabled = isLast;
 
                 console.log("Updating video and presentation view");
-                var selectedMapping = this.lecture.mappings[this.selectedIndex];
+                var selectedMapping = this.lecture.mappings[selectedIndex];
                 this.async(function() {
                     this.$.presentation.seekTo(selectedMapping.time);
                 }, 10);
@@ -208,19 +216,24 @@
                     this.set('duration', newDuration);
                 }
             },
-            generateNewMappings: function(videoUrl, duration, pagesCount) {
-                if (duration === 0) {
-                    console.log("Mappings will not be generated, duration: " + duration + " is not valid");
+            _generateNewMappings: function() {
+                if (!this.lecture.videoId || !this.pagesCount || this.duration === 0) {
+                    console.log("Mappings will not be generated");
                     return;
                 }
 
-                if (ArrayUtils.isNotEmpty(this.lecture.mappings)) {
+                this._updateSelectedSection(0);
+
+                if (this.isFirstEdit) {
+                    this.set('isFirstEdit', false);
                     return;
                 }
+
+
                 console.log("Generating default mappings");
                 var mappings = [];
-                var singleDur = this.duration / pagesCount;
-                for (var i = 0; i < pagesCount; i++) {
+                var singleDur = this.duration / this.pagesCount;
+                for (var i = 0; i < this.pagesCount; i++) {
                     mappings.push({
                         time: Math.round(singleDur * i),
                         slide: i
