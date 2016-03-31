@@ -154,6 +154,7 @@
                          category: undefined,
                          title: undefined,
                          description: undefined,
+                         createdDate: undefined,
                          mappings: []
                      };
             },
@@ -246,7 +247,7 @@
                                 email: user.getEmail(),
                                 name: user.getName()
                              });
-
+                    this.set('lecture.createdDate', Date.now());
                     var response = this.$.firebaseCollection.add(this.lecture);
                     page('/lecture/' + response.key());
                 } else {

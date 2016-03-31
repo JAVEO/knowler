@@ -16,13 +16,25 @@
                 width: 100%;
             }
         }
+        .text-blue {
+            color: var(--paper-blue-800);
+        }
+        .text-grey {
+            color: var(--paper-grey-700);
+        }
         .title {
-            color: var(--paper-blue-600);
             font-size: 2em;
         }
+        .description {
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+        .views-count {
+            font-size: 1.25em;
+        }
         .author-image {
-            width: 50px;
-            height: 50px;
+            width: 25px;
+            height: 25px;
         }
         .card-presentation {
             padding: 0px;
@@ -52,21 +64,29 @@
             </paper-material>
 
             <paper-material elevation="1" class="card-default flex">
-                <div class="row text-center" style="display:block;">
+                <div class="layout horizontal end">
+                    <p class="flex title text-blue mb-0">{{lecture.title}}</p>
+                    <p class="views-count text-blue mb-0">{{statistics.viewCount}} views</p>
+                </div>
+                <div class="layout horizontal end">
+                    <div class="flex text-grey">
+                        <img class="img-rounded author-image" src="{{authorImageUrl}}">
+                        {{lecture.author.name}}
+                    </div>
+                    <div class="text-grey">
+                        <p class="mb-0">Published on {{_formatDate(lecture.createdDate)}}</p>
+                    </div>
+                </div>
+                <p class="description">{{lecture.description}}</p>
+
+                <div class="text-right">
+                    <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
+                </div>
+
+                <div class="text-center">
                     <paper-button hidden$="{{!isOwner}}" on-tap="delete" class="danger" raised>Delete</paper-button></a>
                     <a hidden$="{{!isOwner}}" href$="/lecture/{{lectureId}}/edit"><paper-button raised>Edit</paper-button></a>
                 </div>
-                <span>
-                <p class="title">{{lecture.title}}</p>
-                    <span class="capitalize">{{lecture.category}}</span>
-                <p>
-                    <img class="img-rounded author-image" src="{{authorImageUrl}}">
-                    {{lecture.author.name}}
-                </p>
-                <p>
-                    Category: 
-                </p>
-                <p>{{lecture.description}}</p>
             </paper-material>
         </div>
 
@@ -78,19 +98,6 @@
             </div>
             <div class="k-col-md-6 k-col-sm-12">
                 <paper-material elevation="1" class="card-default">
-                    <div class="layout horizontal justified">
-                        <div>
-                            <social-share lecture-id="{{lectureId}}" text="{{lecture.title}}"></social-share>
-                        </div>
-                        <div>
-                            <iron-icon icon="icons:visibility"></iron-icon>
-                            {{statistics.viewCount}}
-                            <iron-icon icon="icons:thumb-up"></iron-icon>
-                            {{statistics.likeCount}}
-                            <iron-icon icon="icons:thumb-down"></iron-icon>
-                            {{statistics.dislikeCount}}
-                        </div>
-                    </div>
                 </paper-material>
             </div>
         </div>
@@ -140,6 +147,9 @@
                     googleYouTube.pause();
                     next();
                 });
+            },
+            _formatDate: function(timestamp) {
+                return DateUtils.timestampToHumanDate(timestamp);
             },
             delete: function() {
                 this.$.firebaseCollection.removeByKey(this.lectureId);
