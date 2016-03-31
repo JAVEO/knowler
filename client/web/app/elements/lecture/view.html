@@ -66,7 +66,7 @@
             <paper-material elevation="1" class="card-default flex">
                 <div class="layout horizontal end">
                     <p class="flex title text-blue mb-0">{{lecture.title}}</p>
-                    <p class="views-count text-blue mb-0">{{statistics.viewCount}} views</p>
+                    <p class="views-count text-blue mb-0">{{lecture.viewCount}} views</p>
                 </div>
                 <div class="layout horizontal end">
                     <div class="flex text-grey">
@@ -125,9 +125,6 @@
                     type: Boolean,
                     value: false
                 },
-                statistics: {
-                    type: Object
-                },
                 backendDocument: String,
                 authorImageUrl: {
                     type: String
@@ -139,6 +136,11 @@
                 }
                 this.set('backendDocument', Config.urls.backend + '/' + lectureId);
                 this.$.knowlerComments.reset();
+
+                var viewCountRef = new Firebase(this.backendDocument + '/viewCount');
+                viewCountRef.transaction(function(viewCount) {
+                  return viewCount + 1;
+                });
             },
             ready: function(){
                 this.set('config', Config);
@@ -169,19 +171,6 @@
             lectureChanged: function(lecture) {
                 var self = this;
 
-                function loadStatistics() {
-                    gapi.client.load('youtube', 'v3', function() {
-                        gapi.client.youtube.videos.list({
-                            'part': 'snippet,contentDetails,statistics',
-                            'key': Config.google.developerKey,
-                            'id': lecture.videoId
-                        }).then(function(response){
-                            var stats = response.result.items[0].statistics;
-                            self.set('statistics' , stats);
-                        });
-                    });
-                }
-
                 function loadAuthorImage() {
                     var url = "https://www.googleapis.com/plus/v1/people/" + lecture.author.id + "?fields=image&key=" + Config.google.developerKey;
                     var defaultImage = "../../images/default-avatar.png";
@@ -203,7 +192,6 @@
 
 
                 loadAuthorImage();
-                loadStatistics();
                 this._setIsOwner(this.$.meta.byKey('user'), lecture);
             }
         });
