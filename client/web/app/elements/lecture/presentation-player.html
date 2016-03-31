@@ -1,0 +1,209 @@
+<dom-module id="presentation-player">
+    <style>
+        .slider{
+            padding: 5px 8px 5px 8px;
+            width: 100%;
+        }
+        .row{
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            width: 100%;
+        }
+        @media screen and (max-width: 1280px) {
+            .row{
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                width: 100%;
+            }
+        }
+        .title {
+            color: var(--paper-blue-600);
+        }
+        .author-image {
+            width: 50px;
+            height: 50px;
+        }
+        .card-presentation {
+            padding: 0px;
+            background: black;
+            margin: 0px;
+        }
+        .video-control-panel paper-button {
+            color: white;
+            margin: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            min-width: 3.5em;
+        }
+        .video-control-panel .volume {
+            width: 125px;
+        }
+    </style>
+
+    <template>
+        <fullscreen-api id="fsapi"></fullscreen-api>
+
+        <paper-material elevation="1" class="card-default card-presentation flex">
+                <div id="presentationContent" class="layout horizontal center wrap">
+                    <div class="k-col-md-6 k-col-sm-12">
+                        <google-youtube
+                                id="googleYouTube"
+                                video-id="{{lecture.videoId}}"
+                                rel="0"
+                                start="0"
+                                autoplay="1"
+                                chromeless="true"
+                                duration="{{duration}}"
+                                durationformatted="{{durationformatted}}"
+                                currenttimeformatted="{{currenttimeformatted}}"
+                                on-currenttime-changed="_playerChanged"
+                                on-google-youtube-state-change="_youtubeStateChanged"
+                                fluid="true">
+                        </google-youtube>
+                    </div>
+                    <div class="k-col-md-6 k-col-sm-12">
+                        <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}" slide-height="{{videoHeight}}"></pdf-viewer>
+                    </div>
+                </div>
+                <div class="slider">
+                    <time-grider id="timeGrider" duration="[[duration]]" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
+                </div>
+                <div class="video-control-panel layout horizontal center">
+                    <div class="layout horizontal center">
+                        <paper-button on-tap="_previouseSlide"><iron-icon icon="av:skip-previous"></iron-icon></paper-button>
+                        <paper-button on-tap="_playStop">
+                            <iron-icon hidden$="{{isPlaying}}" icon="av:play-arrow"></iron-icon>
+                            <iron-icon hidden$="{{!isPlaying}}" icon="av:pause"></iron-icon>
+                        </paper-button>
+                        <paper-button on-tap="_nextSlide"><iron-icon icon="av:skip-next"></iron-icon></paper-button>
+
+                        <paper-button on-tap="_mute">
+                            <iron-icon hidden$="{{isMuted}}" icon="av:volume-up"></iron-icon>
+                            <iron-icon hidden$="{{!isMuted}}" icon="av:volume-off"></iron-icon>
+                        </paper-button>
+
+                        <paper-slider id="volumeSlider" on-immediate-value-change="_volumeChanged" class="volume" value="{{volume.current}}"></paper-slider>
+                        
+                        <div class="text-white">
+                            {{currenttimeformatted}} / {{durationformatted}}
+                        </div>
+                    </div>
+                    <div class="flex"></div>
+                    <div>
+                       <paper-button on-tap="goFullscreen" raised>
+                            <iron-icon icon="icons:fullscreen"></iron-icon>
+                        </paper-button>
+                    </div>
+                </div>
+        </paper-material>
+    </template>
+
+    <script>
+        Polymer({
+            is: "presentation-player",
+            properties: {
+                videoHeight: Number,
+                currentSlide: Number,
+                duration: Number,
+                fsapi: Object,
+                volume: {
+                    type: Number,
+                    value: function() { return {
+                            previous: 50,
+                            current: 50
+                        };
+                    }
+                },
+                isPlaying: {
+                    type: Boolean,
+                    value: false
+                },
+                isMuted: {
+                    type: Boolean,
+                    value: false
+                },
+                notPlayingStateValues: {
+                    type: Object,
+                    value: [-1,0,2] //-1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
+                },
+                lecture: Object
+            },
+            openSlide: function(elem) {
+                this.async(function() { 
+                    this.$.googleYouTube.seekTo(elem.time);
+                }, 10);
+                this.set('currentSlide', elem.slide);
+                this.$.googleYouTube.play();
+            },
+            clickedSlide: function(e){
+                this.openSlide(e.detail.element);
+            },
+            _playerChanged: function(time){
+                if (time.detail.value === 0) {
+                    return;
+                }
+                var slideId = this.findCurrentImage(time);
+                this.$.timeGrider.markAsSelected(slideId);
+                this.set('currentSlide', slideId);
+            },
+            _youtubeStateChanged: function(e) {
+                this.set('isPlaying', !this.notPlayingStateValues.contains(e.detail.data));
+            },
+            findCurrentImage: function(e){
+                var slides = this.lecture.mappings;
+                var id = 0;
+                var time = e.detail.value;
+                for(var i = 1; i < slides.length && slides[i].time < time; i++) {
+                    id = slides[i].slide;
+                }
+
+                return id;
+            },
+            goFullscreen: function () {
+                this.fsapi.toggleFullscreen();
+            },
+            _volumeChanged: function(data) {
+                this._setVolume(this.$.volumeSlider.immediateValue);
+            },
+            _setVolume: function(volume) {
+                this.set('volume.previous', this.volume.current);
+                this.$.googleYouTube.setVolume(volume);
+                this.set('isMuted', volume === 0);
+                this.set('volume.current', volume);
+            },
+            _playStop: function() {
+                var player = this.$.googleYouTube;
+                (this.notPlayingStateValues.contains(player.state)) ? player.play() : player.pause();
+            },
+            _mute: function() {
+                var player = this.$.googleYouTube;
+                if (this.isMuted) {
+                    player.unMute();
+                    this._setVolume(this.volume.previous);
+                } else {
+                    player.mute();
+                    this._setVolume(0);
+                }
+            },
+            _previouseSlide: function() {
+                var index = this.currentSlide - 1;
+                this.openSlide((index < 0) ? this.lecture.mappings[0] : this.lecture.mappings[index]);
+            },
+            _nextSlide: function() {
+                var index = this.currentSlide + 1;
+                var maxIndex = this.lecture.mappings.length - 1;
+                this.openSlide((index > maxIndex) ? this.lecture.mappings[maxIndex] : this.lecture.mappings[index]);
+            },
+            ready: function(){
+                var fsapi = this.$.fsapi;
+                fsapi.target = this.$.presentationContent;
+                this.fsapi = fsapi;
+
+                this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
+
+                var googleYouTube  = this.$.googleYouTube;
+            }
+        });
+    </script>
+
+</dom-module>

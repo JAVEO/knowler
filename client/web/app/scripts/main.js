@@ -13,6 +13,9 @@ Number.prototype.toHHMMSS = function() {
 
     return [hours, minutes, seconds].map(appendZero).join(":");
 };
+Array.prototype.contains = function(val) {
+    return this.indexOf(val) !== -1;
+};
 
 function UrlUtils() {}
 UrlUtils.getParam = function(url, param) {
