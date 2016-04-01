@@ -1,7 +1,7 @@
 <dom-module id="presentation-player">
     <style>
         .slider{
-            padding: 5px 8px 5px 8px;
+            padding: 5px 16px 5px 16px;
             width: 100%;
         }
         .row{
@@ -27,6 +27,9 @@
             padding: 0px;
             background: black;
             margin: 0px;
+            width: 100%;
+            max-height: 100%;
+            height: 100%;
         }
         .video-control-panel paper-button {
             color: white;
@@ -60,13 +63,16 @@
             -webkit-transition: width 2s; /* Safari */
             transition: width 2s;
         }
+        .video-slider {
+            width: 100%;
+        }
     </style>
 
     <template>
         <fullscreen-api id="fsapi"></fullscreen-api>
 
-        <paper-material elevation="1" class="card-default card-presentation flex">
-                <div id="presentationContent" class="layout horizontal center wrap">
+        <paper-material id="presentationContent" elevation="1" class="card-default card-presentation layout vertical">
+                <div class="layout horizontal center wrap flex">
                     <div class="k-col-md-dynamic-video k-col-sm-12 width-transition">
                         <google-youtube
                                 id="googleYouTube"
@@ -90,8 +96,9 @@
                 <div class="slider">
                     <time-grider id="timeGrider" selected="{{currentSlide}}" duration="[[duration]]" mappings="{{lecture.mappings}}" on-choose-slide="clickedSlide"></time-grider>
                 </div>
+                <paper-slider id="videoProgressSlider" class="video-slider" fluid="true" on-change="_videoProgressDragged" value="{{videoProgress}}" max="{{duration}}"></paper-slider>
                 <div class="video-control-panel layout horizontal center">
-                    <div class="layout horizontal center">
+                    <div class="layout horizontal center flex">
                         <paper-button on-tap="_previouseSlide"><iron-icon icon="av:skip-previous"></iron-icon></paper-button>
                         <paper-button on-tap="_playStop">
                             <iron-icon hidden$="{{isPlaying}}" icon="av:play-arrow"></iron-icon>
@@ -110,7 +117,6 @@
                             {{currenttimeformatted}} / {{durationformatted}}
                         </div>
                     </div>
-                    <div class="flex"></div>
                     <div>
                        <paper-button on-tap="goFullscreen" raised>
                             <iron-icon icon="icons:fullscreen"></iron-icon>
@@ -166,6 +172,10 @@
                         {mode: 'Slides only', videoWidth: 0}
                     ];
                     }
+                },
+                videoProgress: {
+                    type: Number,
+                    value: 0
                 }
             },
             openSlide: function(elem) {
@@ -175,20 +185,28 @@
             clickedSlide: function(e){
                 this.openSlide(e.detail.element);
             },
-            _currentTimeChanged: function(time){
-                if (time.detail.value === 0) {
-                    return;
-                }
-                var slideId = this.findCurrentImage(time);
-                this.set('currentSlide', slideId);
+            _videoProgressDragged: function() {
+                var newValue = this.$.videoProgressSlider.value;
+                this.set('videoProgress', newValue);
+                this.$.googleYouTube.seekTo(newValue);
             },
+            _currentTimeChanged: function(e) {
+                var value = e.detail.value;
+                if (!this.$.videoProgressSlider.dragging) {
+                    this.set('videoProgress', value);
+                }
+                if (value === 0) {
+                     return;
+                 }
+                var slideId = this.findCurrentImage(value);
+                this.set('currentSlide', slideId);
+             },
             _youtubeStateChanged: function(e) {
                 this.set('isPlaying', !this.notPlayingStateValues.contains(e.detail.data));
             },
-            findCurrentImage: function(e){
+            findCurrentImage: function(time) {
                 var slides = this.lecture.mappings;
                 var id = 0;
-                var time = e.detail.value;
                 for(var i = 1; i < slides.length && slides[i].time < time; i++) {
                     id = slides[i].slide;
                 }
