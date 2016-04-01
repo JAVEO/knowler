@@ -81,6 +81,7 @@
                     index: mappingIndex,
                     element: this.mappings[mappingIndex]
                 });
+                this.markAsSelected(mappingIndex);
             },
             changeMapping: function(index, newTime) {
                 var timeInBounds = this._getTimeInBounds(index, newTime);
