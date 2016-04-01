@@ -145,7 +145,7 @@
             ],
             lectureIdChanged: function() {
                 var isNew = this.lectureId === undefined; 
-                this.set('isFirstEdit', !isNew)
+                this.set('isFirstEdit', !isNew);
                 if (isNew) {
                     this.lecture = this.createLecture();
                 } else {

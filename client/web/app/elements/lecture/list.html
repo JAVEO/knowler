@@ -75,7 +75,7 @@
                 this.set('config', Config);
                 this.search();
                 this.categories = Config.categories.filter(function(item) {
-                    return item !== undefined;
+                    return item !== 'all';
                 }).map(function (item) {
                     return {
                         name: item,
@@ -96,7 +96,7 @@
             _categorySelected: function(e, data) {
                 this.set('selectedCategory', data.item.dataValue);
                 for (var i = 0; i < this.categories.length; i++) {
-                    if (this.selectedCategory === undefined) {
+                    if (this.selectedCategory === 'all') {
                         this.set('categories.' + i + '.show', true);
                         this.set('categories.' + i + '.showMore', false);
                     } else {
