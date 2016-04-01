@@ -38,6 +38,28 @@
         .video-control-panel .volume {
             width: 125px;
         }
+        paper-dropdown-menu.custom {
+            --paper-input-container-label: {
+                color: white;
+            }
+            --paper-input-container-input: {
+                color: white;
+                font-style: normal;
+            }
+            paper-input-container-underline: {
+                display: none;
+            }
+        }
+        .k-col-md-dynamic-video {
+            width: var(--col-md-video-width, 50)%;
+        }
+        .k-col-md-dynamic-slides {
+            width: var(--col-md-slides-width, 50)%;
+        }
+        .width-transition {
+            -webkit-transition: width 2s; /* Safari */
+            transition: width 2s;
+        }
     </style>
 
     <template>
@@ -45,7 +67,7 @@
 
         <paper-material elevation="1" class="card-default card-presentation flex">
                 <div id="presentationContent" class="layout horizontal center wrap">
-                    <div class="k-col-md-6 k-col-sm-12">
+                    <div class="k-col-md-dynamic-video k-col-sm-12 width-transition">
                         <google-youtube
                                 id="googleYouTube"
                                 video-id="{{lecture.videoId}}"
@@ -61,7 +83,7 @@
                                 fluid="true">
                         </google-youtube>
                     </div>
-                    <div class="k-col-md-6 k-col-sm-12">
+                    <div class="k-col-md-dynamic-slides k-col-sm-12 width-transition">
                         <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}" current-slide="{{currentSlide}}"></pdf-viewer>
                     </div>
                 </div>
@@ -92,7 +114,15 @@
                     <div>
                        <paper-button on-tap="goFullscreen" raised>
                             <iron-icon icon="icons:fullscreen"></iron-icon>
-                        </paper-button>
+                       </paper-button>
+
+                        <paper-dropdown-menu label="Display" class="custom" vertical-align="bottom">
+                            <paper-menu class="dropdown-content" on-iron-select="_setDisplayMode">
+                                <template is="dom-repeat" items="[[displayModes]]">
+                                    <paper-item data-value="{{item}}" class="capitalize">{{item.mode}}</paper-item>
+                                </template>
+                            </paper-menu>
+                        </paper-dropdown-menu>
                     </div>
                 </div>
         </paper-material>
@@ -125,7 +155,18 @@
                     type: Object,
                     value: [-1,0,2] //-1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
                 },
-                lecture: Object
+                lecture: Object,
+                displayModes: {
+                    type: Array,
+                    value: function() { return [
+                        {mode: 'Video and slides', videoWidth: 50},
+                        {mode: 'Video focused', videoWidth: 75},
+                        {mode: 'Video only', videoWidth: 100},
+                        {mode: 'Slides focused', videoWidth: 25},
+                        {mode: 'Slides only', videoWidth: 0}
+                    ];
+                    }
+                }
             },
             openSlide: function(elem) {
                 this.$.googleYouTube.seekTo(elem.time);
@@ -195,6 +236,13 @@
                 var fsapi = this.$.fsapi;
                 fsapi.target = this.$.presentationContent;
                 this.fsapi = fsapi;
+            },
+            _setDisplayMode: function(e, data) {
+                var videoWidth = data.item.dataValue.videoWidth;
+                var slidesWidth = 100 - videoWidth;
+                this.customStyle['--col-md-video-width'] = videoWidth.toString();
+                this.customStyle['--col-md-slides-width'] = slidesWidth.toString();
+                this.updateStyles();
             }
         });
     </script>
