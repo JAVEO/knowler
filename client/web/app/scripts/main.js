@@ -90,6 +90,7 @@ Config = {
     },
     urls: {
         frontend: "http://localhost:3000",
+        firebase: "https://knowler.firebaseio.com",
         backend: "https://knowler.firebaseio.com/lectures-dev",
         googleDriveCorsProxy: "https://stark-eyrie-26143.herokuapp.com/pdf/"
     },
