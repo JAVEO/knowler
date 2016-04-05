@@ -1,7 +1,12 @@
 <dom-module id="google-picker">
+    <style>
+        .blue {
+            color: var(--paper-blue-900);
+        }
+    </style>
     <template>
         <paper-input value="{{presentationUrl}}" label="Pdf file URL">
-            <paper-icon-button suffix icon="attachment" on-tap="openPicker"></paper-icon-button>
+            <paper-icon-button class="blue" suffix icon="attachment" on-tap="openPicker"></paper-icon-button>
         </paper-input>
     </template>
     <script>

@@ -74,7 +74,7 @@
             location="[[config.urls.backend]]"
             order-by-child="author/id"
             equal-to="{{lecture.author.id}}"
-            limit-to-first="10"
+            limit-to-first="5"
             data="{{lectures}}"></firebase-collection>
 
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>

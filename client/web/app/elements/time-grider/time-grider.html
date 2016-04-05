@@ -1,9 +1,7 @@
 <dom-module id="time-grider">
     <style is="custom-style">
         #grids{
-            width: 100%;
             height: 40px;
-
             @apply(--layout-horizontal);
         }
         .section-parent{
@@ -54,8 +52,7 @@
                     notify: true
                 },
                 duration: {
-                    type: Number,
-                    notify: true
+                    type: Number
                 },
                 selected: {
                     type: Number,
@@ -81,11 +78,13 @@
                     index: mappingIndex,
                     element: this.mappings[mappingIndex]
                 });
+                this.set('selected', mappingIndex);
                 this.markAsSelected(mappingIndex);
             },
             changeMapping: function(index, newTime) {
                 var timeInBounds = this._getTimeInBounds(index, newTime);
                 this.set('mappings.' + index + '.time', timeInBounds);
+                this.mappingChanged();
                 return timeInBounds;
             },
             trackHandler: function(e) {

@@ -2,19 +2,6 @@
     <style>
         .slider{
             padding: 5px 16px 5px 16px;
-            width: 100%;
-        }
-        .row{
-            @apply(--layout-horizontal);
-            @apply(--layout-center);
-            width: 100%;
-        }
-        @media screen and (max-width: 1280px) {
-            .row{
-                @apply(--layout-vertical);
-                @apply(--layout-center);
-                width: 100%;
-            }
         }
         .title {
             color: var(--paper-blue-600);
@@ -127,12 +114,12 @@
                             {{currenttimeformatted}} / {{durationformatted}}
                         </div>
                     </div>
-                    <div>
+                    <div class="layout horizontal center">
                        <paper-button on-tap="goFullscreen" raised>
                             <iron-icon icon="icons:fullscreen"></iron-icon>
                        </paper-button>
 
-                        <paper-dropdown-menu label="Display" class="custom" vertical-align="bottom">
+                        <paper-dropdown-menu class="custom" label="Display" no-label-float vertical-align="bottom">
                             <paper-menu class="dropdown-content" on-iron-select="_setDisplayMode">
                                 <template is="dom-repeat" items="[[displayModes]]">
                                     <paper-item data-value="{{item}}" class="capitalize">{{item.mode}}</paper-item>

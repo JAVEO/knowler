@@ -14,26 +14,46 @@
         .mt-50 {
             margin-top: 50px;
         }
-        h2 {
-            color: var(--paper-blue-600);
-        }
         paper-input, paper-dropdown-menu {
             width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .input-custom {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 601px) {
+            .input-custom {
+                width: 68%;
+            }
+        }
+        .upload-empty-space {
+            min-height: 350px;
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+            @apply(--layout-center);
+        }
+        .blue {
+            color: var(--paper-blue-600);
+        }
+        .upload-empty-space iron-icon {
+            height: 35px;
+            width: 35px;
+            color: var(--paper-light-blue-200);
+        }
+        .upload-container {
+            @apply(--layout-horizontal);
         }
     </style>
     <template>
 
-        <paper-material elevation="1" class="card-default">
-            <h2>{{lecture.title}}</h2>
-            <div class="row">
-                <div class="col-sm-6">
-                    <paper-input value="{{lecture.title}}" label="Title"></paper-input>
-                </div>
-                <div class="col-sm-6">
-                    <paper-input value="{{lecture.description}}" label="Description"></paper-input>
-                </div>
-                <div class="col-sm-6">
-                    <paper-dropdown-menu horizontal-align="left" label="Category">
+        <div class="layout vertical">
+            <paper-material elevation="1" class="card-default layout horizontal wrap">
+                <div class="k-col-sm-12 k-col-md-6">
+                    <paper-input class="input-custom" value="{{lecture.title}}" label="Title"></paper-input>
+                    <paper-dropdown-menu class="input-custom" horizontal-align="left" label="Category">
                         <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected">
                             <template is="dom-repeat" items="[[config.categories]]">
                                 <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
@@ -41,12 +61,20 @@
                         </paper-menu>
                     </paper-dropdown-menu>
                 </div>
-            </div>
-            <div class="row layout horizontal">
+                <div class="k-col-sm-12 k-col-md-6">
+                    <paper-input class="input-custom" value="{{lecture.description}}" label="Description"></paper-input>
+                </div>
+            </paper-material>
 
-                <div class="col-md-6 col-sm-12">
-                    <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
-                    <google-youtube
+            <div class="layout horizontal wrap"> 
+                <div class="k-col-md-6 k-col-sm-12 upload-container">
+                    <paper-material elevation="1" class="card-default" style="width: 100%;">
+                        <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
+                        <div hidden$="{{_isDefined(lecture.videoId)}}" class="upload-empty-space">
+                            <iron-icon icon="file-upload"></iron-icon>
+                        </div>
+                        <google-youtube
+                            hidden$="{{!_isDefined(lecture.videoId)}}" 
                             id="presentation"
                             autoplay="1"
                             video-id="{{lecture.videoId}}"
@@ -58,19 +86,30 @@
                             on-google-youtube-ready="_youtubeReady"
                             on-google-youtube-state-change="_youtubeStateChanged"
                             style="margin: auto;">
-                    </google-youtube>
+                        </google-youtube>
+                    </paper-material>
                 </div>
-                <div class="col-md-6 col-sm-12">
-                    <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
-                    <pdf-viewer id="pdfViewer" file-id="{{lecture.fileId}}"
-                                current-slide="{{currentSlide}}"
-                                slide-height="{{videoHeight}}"
-                                on-pdf-changed="pdfChanged"></pdf-viewer>
+                <div class="k-col-md-6 k-col-sm-12 upload-container">
+                    <paper-material elevation="1" class="card-default layout vertical" style="width: 100%;">
+                        <google-picker id="googlePicker" file-id="{{lecture.fileId}}"></google-picker>
+                        <div hidden$="{{_isDefined(lecture.fileId)}}" class="upload-empty-space">
+                            <iron-icon icon="file-upload"></iron-icon>
+                        </div>
+                        <pdf-viewer id="pdfViewer" class="flex" file-id="{{lecture.fileId}}"
+                            hidden$="{{!_isDefined(lecture.fileId)}}" 
+                            current-slide="{{currentSlide}}"
+                            slide-height="{{videoHeight}}"
+                            on-pdf-changed="pdfChanged"></pdf-viewer>
+                    </paper-material>
                 </div>
             </div>
+        </div>
+
+        <paper-material elevation="1" class="card-default">
+           
             <div class="row">
                 <div class="col-sm-12 slider">
-                    <time-grider id="timeGrider" selected="{{currentSlide}}" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_slideChosen"></time-grider>
+                    <time-grider id="timeGrider" editable="true" duration="{{duration}}" mappings="{{lecture.mappings}}" on-choose-slide="_slideChosen"></time-grider>
                 </div>
                 <div class="col-sm-12">
                     <slide-list id="slideList"></slide-list>
@@ -173,11 +212,18 @@
                 this.$.slideList.set('pdf', e.detail.value);
                 this.set('pagesCount', e.detail.value.numPages);
             },
+            _isDefined: function(obj) {
+                return obj !== undefined; 
+            },
             _slideChosen: function(e) {
                 this._updateSelectedSection(e.detail.index);
             },
             _updateSelectedSection: function(selectedIndex) {
                 var self = this;
+
+                if (ArrayUtils.isEmpty(this.lecture.mappings)) {
+                    return;
+                }
 
                 function getNextTime(index) {
                     if (index < self.lecture.mappings.length - 1) {
@@ -186,6 +232,7 @@
                     return self.duration;
                 }
 
+                self.set('selectedIndex', selectedIndex);
                 console.log("Updating form");
                 this.timeFrom = this.lecture.mappings[selectedIndex].time.toHHMMSS();
                 this.timeTo = getNextTime(selectedIndex).toHHMMSS();
@@ -224,7 +271,6 @@
                 }
 
                 this._updateSelectedSection(0);
-
                 if (this.isFirstEdit) {
                     this.set('isFirstEdit', false);
                     return;
@@ -279,7 +325,7 @@
                 this.lecture.mappings.splice(this.selectedIndex, 1);
                 this.$.timeGrider.mappingChanged();
             },
-            _updateMappingTime: function(str, index) {
+            _updateMappingTime: function(index, str) {
                 var splitted = str.split(":");
                 if (splitted.length !== 3) {
                     console.error("Invalid time format. Expected: HH:MM:SS, was: " + this);
@@ -293,12 +339,12 @@
             },
             _timeFromChanged: function(e) {
                 e.preventDefault();
-                var newTime = this._updateMappingTime(this.timeFrom, this.selectedIndex);
+                var newTime = this._updateMappingTime(this.selectedIndex, this.timeFrom);
                 this.set('timeFrom', newTime.toHHMMSS());
             },
             _timeToChanged: function(e) {
                 e.preventDefault();
-                var newTime = this._updateMappingTime(this.timeTo, this.selectedIndex + 1);
+                var newTime = this._updateMappingTime(this.selectedIndex + 1, this.timeTo);
                 this.set('timeTo', newTime.toHHMMSS());
             }
         });
