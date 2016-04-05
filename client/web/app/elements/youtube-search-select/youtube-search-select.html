@@ -1,9 +1,13 @@
 <dom-module id="youtube-search-select">
     <style>
+        .youtube-dropdown-container {
+            position: relative;
+        }
         .youtube-dropdown {
             position: absolute !important;
-            left: 0px;
-            right: 0px;
+            top: 0px !important;
+            left: 0px !important;
+            right: 0px !important;
         }
         .youtube-dropdown .dropdown-content {
             background-color: white;
@@ -59,7 +63,7 @@
         <paper-input value="{{inputValue}}" label="YouTube URL or search query">
             <paper-icon-button class="blue" suffix icon="search" on-tap="openDropdown"></paper-icon-button>
         </paper-input>
-        <div>
+        <div class="youtube-dropdown-container">
             <iron-dropdown id="dropdownElement" class="youtube-dropdown">
                 <div class="dropdown-content">
                     <iron-list items="{{videos}}" as="item" on-selected-item-changed="selectedVideoChanged" selection-enabled class="iron-list">
@@ -140,8 +144,6 @@
                     this.set('videoId', e.detail.value.id.videoId);
                     this.$.dropdownElement.close();
                 }
-            },
-            ready: function(){
             }
         });
 
