@@ -108,7 +108,7 @@
 
   /* Height of the scroll area */
   .content {
-    height: 900px;
+    height: 100%;
   }
 
   /* Breakpoints */
@@ -157,14 +157,11 @@
 
     div.page-content {
       width: calc(98% - 46px);
+      padding-bottom: 68px;
     }
 
     #drawer.paper-drawer-panel > [drawer] {
       border-right: 1px solid rgba(0, 0, 0, 0.14);
-    }
-
-    iron-page {
-      padding: 48px 62px;
     }
 
   }

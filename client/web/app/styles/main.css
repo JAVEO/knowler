@@ -11,10 +11,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   box-sizing: border-box;
 }
 
-html {
-    overflow-y: scroll;
-}
-
 body {
   background: #fafafa;
   font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -70,6 +66,15 @@ paper-material {
 }
 .mb-0 {
   margin-bottom: 0px;
+}
+
+.menu-toggle-button {
+  padding: 0px;
+  padding-top: 5px;
+}
+.menu-toggle-button iron-icon {
+  width: 30px;
+  height: 30px;
 }
 
 @media (max-width: 600px) {
