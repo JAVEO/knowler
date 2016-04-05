@@ -40,6 +40,28 @@
             padding: 0px;
             background: black;
         }
+        paper-card.rate {
+            @apply(--layout-horizontal);
+        }
+        .card-img {
+            padding: 20px;
+        }
+        .rate-content {
+            @apply(--layout-flex);
+            float: left;
+            cursor: pointer;
+        }
+        .rate-header {
+            @apply(--paper-font-headline);
+        }
+        .rate-name {
+            color: var(--paper-grey-600);
+            margin: 10px 0;
+        }
+        paper-icon-button.rate-icon {
+            --iron-icon-fill-color: white;
+            --iron-icon-stroke-color: var(--paper-grey-600);
+        }
     </style>
 
     <template>
@@ -50,15 +72,16 @@
         <firebase-collection
             id="firebaseCollection"
             location="[[config.urls.backend]]"
-            order-by-child="published"
-            equal-to="true"
-            order-value-type="boolean"></firebase-collection>
+            order-by-child="author/id"
+            equal-to="{{lecture.author.id}}"
+            limit-to-first="10"
+            data="{{lectures}}"></firebase-collection>
 
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
         <iron-meta id="meta"></iron-meta>
 
 
-        <div class="layout vertical">
+        <div id="view-container" class="layout vertical">
             <paper-material elevation="1" class="card-default card-presentation flex">
                <presentation-player id="presentationPlayer" lecture="{{lecture}}"></presentation-player>
             </paper-material>
@@ -98,6 +121,22 @@
             </div>
             <div class="k-col-md-6 k-col-sm-12">
                 <paper-material elevation="1" class="card-default">
+                    <h4>Recommended</h4>
+                    <template is="dom-repeat" items="{{lectures}}">
+                        <paper-card class="rate" on-tap="viewDetails">
+                            <div class="rate-content">
+                                <p>
+                                    <img src="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg" align="left" class="card-img">
+                                    <div class="card-content">
+                                        <div class="rate-header">{{item.title}}</div>
+                                        <div class="rate-name">{{item.author.name}}</div>
+                                        <div>{{item.viewCount}} views</div>
+                                    </div>
+                                </p>
+                            </div>
+                        </paper-card>
+                    </template>
+
                 </paper-material>
             </div>
         </div>
@@ -197,6 +236,10 @@
 
                 loadAuthorImage();
                 this._setIsOwner(this.$.meta.byKey('user'), lecture);
+            },
+            viewDetails: function(e) {
+                window.scrollTo(0, 0);
+                page('/lecture/' + e.model.item.__firebaseKey__);
             }
         });
     </script>

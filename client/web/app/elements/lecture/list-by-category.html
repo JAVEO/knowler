@@ -36,7 +36,7 @@
           limit-to-first="{{limitTo}}"
           data="{{lectures}}"></firebase-collection>
 
-        <h4 class="capitalize mt-0">{{category}}</h4>
+        <h4 class="capitalize mt-0"><paper-button on-tap="viewCategory">{{category}}</paper-button></h4>
         <template is="dom-if" if="{{hasResults}}">
             <div class="text-center">
                 <h3 class="blue">No results were found</h3>
@@ -48,7 +48,8 @@
                     <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
                         <div class="card-content">
                             <div class="title">{{item.title}}</div>
-                            <div class="description">{{item.description}}</div>
+                            <div class="description">{{item.author.name}}</div>
+                            <div class="description">{{item.viewCount}} views</div>
                         </div>
                     </paper-card>
                 </div>
@@ -87,6 +88,9 @@
             },
             viewDetails: function(e) {
                 page('/lecture/' + e.model.item.__firebaseKey__);
+            },
+            viewCategory: function(e) {
+                this.fire('category-selected', this.category);
             },
             lecturesChanged: function() {
                 this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
