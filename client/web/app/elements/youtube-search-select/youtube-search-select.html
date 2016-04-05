@@ -51,10 +51,13 @@
             font-size: 14px;
             color: gray;
         }
+        .blue {
+            color: var(--paper-blue-900);
+        }
     </style>
     <template>
         <paper-input value="{{inputValue}}" label="YouTube URL or search query">
-            <paper-icon-button suffix icon="search" on-tap="openDropdown"></paper-icon-button>
+            <paper-icon-button class="blue" suffix icon="search" on-tap="openDropdown"></paper-icon-button>
         </paper-input>
         <div>
             <iron-dropdown id="dropdownElement" class="youtube-dropdown">
