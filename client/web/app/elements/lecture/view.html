@@ -40,7 +40,9 @@
             padding: 0px;
             background: black;
         }
-        paper-card.rate { @apply(--layout-horizontal); }
+        paper-card.rate {
+            @apply(--layout-horizontal);
+        }
         .card-img {
             padding: 20px;
         }
@@ -49,8 +51,13 @@
             float: left;
             cursor: pointer;
         }
-        .rate-header { @apply(--paper-font-headline); }
-        .rate-name { color: var(--paper-grey-600); margin: 10px 0; }
+        .rate-header {
+            @apply(--paper-font-headline);
+        }
+        .rate-name {
+            color: var(--paper-grey-600);
+            margin: 10px 0;
+        }
         paper-icon-button.rate-icon {
             --iron-icon-fill-color: white;
             --iron-icon-stroke-color: var(--paper-grey-600);

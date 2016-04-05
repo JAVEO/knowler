@@ -34,7 +34,7 @@
   <paper-header-panel condenses keep-condensed-header>
     <paper-toolbar class="primary-toolbar additional-toolbar">
           <paper-dropdown-menu label="Category" class="custom">
-            <paper-menu class="dropdown-content" on-iron-select="_categorySelected">
+            <paper-menu class="dropdown-content" on-iron-select="_categorySelectedFromDropdown">
                 <template is="dom-repeat" items="[[config.categories]]">
                     <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                 </template>
@@ -49,7 +49,7 @@
             <template is="dom-repeat" items="[[categories]]">
                 <template is="dom-if" if="{{item.show}}")>
                     <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
-                        <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}"></lectures-list-by-category>
+                        <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}" on-category-selected="_categorySelected"></lectures-list-by-category>
                     </paper-material>
                 </template>
             </template>
@@ -93,8 +93,11 @@
             addLecture: function() {
                 page('/lecture/add');
             },
+            _categorySelectedFromDropdown: function(e, data) {
+                this._categorySelected(e, data.item.dataValue);
+            },
             _categorySelected: function(e, data) {
-                this.set('selectedCategory', data.item.dataValue);
+                this.set('selectedCategory', data);
                 for (var i = 0; i < this.categories.length; i++) {
                     if (this.selectedCategory === 'all') {
                         this.set('categories.' + i + '.show', true);

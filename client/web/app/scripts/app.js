@@ -85,10 +85,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("Login Failed!", error);
       } else {
         console.log("Authenticated successfully with payload:", authData.uid);
+        app.$.authMeta.userLoggedIn(user);
+        app.set('isLogged', true);
       }
     });
-    app.$.authMeta.userLoggedIn(user);
-    app.set('isLogged', true);
   };
   app.userLoggedOut = function(e) {
     app.$.authMeta.userLoggedOut();
