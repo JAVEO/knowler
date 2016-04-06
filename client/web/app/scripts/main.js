@@ -91,7 +91,8 @@ Config = {
     urls: {
         frontend: "http://localhost:3000",
         firebase: "https://knowler.firebaseio.com",
-        backend: "https://knowler.firebaseio.com/lectures-dev",
+        backend: "https://knowler.firebaseio.com/lectures-dev1",
+        elasticsearch: "http://localhost:9200",
         googleDriveCorsProxy: "https://stark-eyrie-26143.herokuapp.com/pdf/"
     },
     categories: ["all", "programming", "maths", "biology", "physics", "technics", "chemistry", "socjology", "marketing"]

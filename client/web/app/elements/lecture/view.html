@@ -76,7 +76,7 @@
             equal-to="{{lecture.author.id}}"
             limit-to-first="5"
             data="{{lectures}}"></firebase-collection>
-
+        <eleastic-search id="elasticSearch"></eleastic-search>
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
         <iron-meta id="meta"></iron-meta>
 
@@ -197,8 +197,9 @@
                 return DateUtils.timestampToHumanDate(timestamp);
             },
             delete: function() {
+                this.$.elasticSearch.delete(this.lecture.category, this.lectureId);
                 this.$.firebaseCollection.removeByKey(this.lectureId);
-                page('/lecture-search/#taehc[]');
+                page('/lectures');
             },
             _setIsOwner: function(user, lecture) {
                 if (user === undefined || lecture === undefined) {

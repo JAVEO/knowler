@@ -62,10 +62,6 @@
         Polymer({
             is: 'lectures-list',
             properties: {
-                searchPhrase: {
-                    type: String,
-                    observer: 'search'
-                },
                 config: Object,
                 isSigned: Boolean,
                 selectedCategory: String,
@@ -73,7 +69,6 @@
             },
             ready: function() {
                 this.set('config', Config);
-                this.search();
                 this.categories = Config.categories.filter(function(item) {
                     return item !== 'all';
                 }).map(function (item) {
@@ -83,9 +78,6 @@
                         showMore: false
                     };
                 });
-            },
-            search: function() {
-                var searchPhrase = this.searchPhrase;
             },
             _authStateChange: function(e, data) {
                 this.set('isSigned', data.isSigned);
