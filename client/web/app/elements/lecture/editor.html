@@ -143,6 +143,7 @@
                              location="[[config.urls.backend]]"></firebase-collection>
         <firebase-document id="firebase"></firebase-document>
         <iron-meta id="meta"></iron-meta>
+        <eleastic-search id="elasticSearch"></eleastic-search>
     </template>
     <script>
         Polymer({
@@ -309,6 +310,7 @@
                              });
                     this.set('lecture.createdDate', Date.now());
                     var response = this.$.firebaseCollection.add(this.lecture);
+                    this.$.elasticSearch.createOrUpdate(response.key(), this.lecture);
                     page('/lecture/' + response.key());
                 } else {
                     this.$.firebase.set('data.title', this.lecture.title);
@@ -317,6 +319,7 @@
                     this.$.firebase.set('data.videoId', this.lecture.videoId);
                     this.$.firebase.set('data.mappings', this.lecture.mappings);
                     this.$.firebase.set('data.category', this.lecture.category);
+                    this.$.elasticSearch.createOrUpdate(this.lectureId, this.lecture);
                     page('/lecture/' + this.lectureId);
                 }
                 this.lecture = this.createLecture();

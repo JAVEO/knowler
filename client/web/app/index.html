@@ -84,8 +84,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </section>
 
+            <section data-route="lectures">
+              <lectures-list id="lecturesList"></lectures-list>
+            </section>
+
             <section data-route="lecture-search">
-              <lectures-list id="lecturesList" search-phrase="{{searchPhrase}}"></lectures-list>
+              <lectures-list-by-search id="lecturesSearch" search-phrase="{{searchPhrase}}"></lectures-list-by-search>
             </section>
 
             <section data-route="edit-lecture">

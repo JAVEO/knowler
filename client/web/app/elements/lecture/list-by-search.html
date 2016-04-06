@@ -1,0 +1,101 @@
+<dom-module id="lectures-list-by-search">
+    <style>
+        .presentation-card {
+            padding-left: 7px;
+            padding-right: 7px;
+            margin-top: 7px;
+            margin-bottom: 7px;
+        }
+        .presentation-card paper-card {
+            background-color: transparent;
+            cursor: pointer;
+            width: 100%;
+        }
+        .presentation-card .card-content {
+            padding-top: 4px;
+            padding-bottom: 7px;
+        }
+        .presentation-card .title {
+            font-weight: 700;
+        }
+
+        .presentation-card .content {
+            padding-top: 5px !important;
+        }
+        .blue {
+            color: var(--paper-light-blue-400);;
+        }
+    </style>
+    <template>
+        <eleastic-search id="elasticSearch" on-last-response-changed="lecturesResponse"></eleastic-search>
+
+        <div class="page-content">
+            <div class="layout vertical">
+                <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
+                    <h4 class="capitalize mt-0">Search result</h4>
+                    <template is="dom-if" if="{{!hasResults}}">
+                        <div class="text-center">
+                            <h3 class="blue">No results were found</h3>
+                        </div>
+                    </template>
+                    <div class="row">
+                        <template is="dom-repeat" items="{{lectures}}">
+                            <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
+                                <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
+                                    <div class="card-content">
+                                        <div class="title">{{item.title}}</div>
+                                        <div class="description">{{item.author.name}}</div>
+                                        <div class="description">{{item.viewCount}} views</div>
+                                    </div>
+                                </paper-card>
+                            </div>
+                        </template>
+                    </div>
+                </paper-material>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'lectures-list-by-search',
+            properties: {
+                showMore: {
+                    type: Boolean,
+                    observer: '_showMoreChanged'
+                },
+                limitTo: Number,
+                hasResults: Boolean,
+                searchPhrase: {
+                    type: String,
+                    observer: 'search'
+                },
+                config: Object,
+                lectures: {
+                    type: Object
+                }
+            },
+            ready: function() {
+                this.set('config', Config);
+                this.search();
+                this.set('limitTo', this.showMore ? 100 : 6);
+            },
+            search: function() {
+                var searchPhrase = this.searchPhrase;
+                this.$.elasticSearch.query(searchPhrase);
+            },
+            viewDetails: function(e) {
+                page('/lecture/' + e.model.item.__firebaseKey__);
+            },
+            _showMoreChanged: function() {
+                this.set('limitTo', this.showMore ? 100 : 6);
+            },
+            lecturesResponse: function() {
+                var lectures = this.$.elasticSearch.lastResponse.hits.hits.map(function(e) {
+                    return e._source;
+                });
+                this.set('hasResults', !ArrayUtils.isEmpty(lectures));
+                this.set('lectures', lectures);
+            }
+        });
+    </script>
+</dom-module>

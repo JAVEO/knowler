@@ -68,10 +68,6 @@
                 },
                 limitTo: Number,
                 hasResults: Boolean,
-                searchPhrase: {
-                    type: String,
-                    observer: 'search'
-                },
                 config: Object,
                 lectures: {
                     type: Object,
@@ -80,11 +76,7 @@
             },
             ready: function() {
                 this.set('config', Config);
-                this.search();
                 this.set('limitTo', this.showMore ? 100 : 6);
-            },
-            search: function() {
-                var searchPhrase = this.searchPhrase;
             },
             viewDetails: function(e) {
                 page('/lecture/' + e.model.item.__firebaseKey__);
