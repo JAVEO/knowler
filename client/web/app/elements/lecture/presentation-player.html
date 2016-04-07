@@ -223,7 +223,11 @@
             },
             _playStop: function() {
                 var player = this.$.googleYouTube;
-                (this.notPlayingStateValues.contains(player.state) ? player.play : player.pause)();
+                if (this.notPlayingStateValues.contains(player.state)) {
+                    player.play();
+                } else {
+                    player.pause();
+                }
             },
             _mute: function() {
                 var player = this.$.googleYouTube;
