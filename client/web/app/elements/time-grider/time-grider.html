@@ -169,6 +169,11 @@
                 return (elemDur / this.duration) * 100 + "%";
             },
             mappingChanged: function() {
+                //Remove previous timeline
+                while (this.$$(".grid-elem") !== null) {
+                    Polymer.dom(this.$.grids).removeChild(this.$$(".grid-elem"));
+                }
+
                 if (this.mappings.length === 0) {
                     return;
                 }
@@ -221,10 +226,6 @@
                     };
                 };
 
-                //Remove previous timeline
-                while (this.$$(".grid-elem") !== null) {
-                    Polymer.dom(this.$.grids).removeChild(this.$$(".grid-elem"));
-                }
                 //Create new timeline
                 for (var i = 0; i < secToSlides.length - 1; i++) {
                     createGridCell(i, (secToSlides[i + 1].time - secToSlides[i].time), createDraggable(i));

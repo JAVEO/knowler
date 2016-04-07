@@ -93,6 +93,7 @@ gulp.task('copy', function () {
 
   var envVariables = gulp.src(['app/scripts/main.js'])
     .pipe(replace('https://knowler.firebaseio.com/lectures-dev', 'https://knowler.firebaseio.com/lectures'))
+    .pipe(replace('http://localhost:9200', 'http://elasticsearch.javeo.eu'))
     .pipe(gulp.dest('dist/scripts'))
 
   var bower = gulp.src([

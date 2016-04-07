@@ -34,7 +34,7 @@
   <paper-header-panel condenses keep-condensed-header>
     <paper-toolbar class="primary-toolbar additional-toolbar">
           <paper-dropdown-menu label="Category" class="custom">
-            <paper-menu class="dropdown-content" on-iron-select="_categorySelectedFromDropdown">
+            <paper-menu class="dropdown-content" on-iron-select="_categorySelectedFromDropdown" selected="{{selectedCategory}}" attr-for-selected="dataValue">
                 <template is="dom-repeat" items="[[config.categories]]">
                     <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                 </template>

@@ -29,6 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/lecture/add', function () {
+      app.$.lectureEditor.createLecture();
       app.route = 'edit-lecture';
       app.editId = undefined;
     });
