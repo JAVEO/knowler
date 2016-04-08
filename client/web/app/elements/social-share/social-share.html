@@ -44,13 +44,20 @@
             </button>
         </a>
 
-        <a href="https://plus.google.com/share?url={{encodedUrl}}" 
+        <a href="https://plus.google.com/share?url={{encodedUrl}}"
             onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">
             <button id="googleShare" class="share-service-button">
                 <span class="share-service-icon share-service-icon-google yt-sprite"></span>
             </button>
         </a>
-        
+
+        <paper-icon-button on-tap="openDialog" icon="open-in-new"></paper-icon-button>
+        <paper-dialog id="dialog" class="text-left">
+            <h2>Embed on your site</h2>
+            <p>
+                <input autofocus onFocus="this.select();" value="&lt;iframe width=&quot;800&quot; height=&quot;350&quot; src=&quot;{{embedViewUrl}}&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;" size="120"/>
+            </p>
+        </paper-dialog>
     </template>
 
     <script>
@@ -103,6 +110,7 @@
                     type: String,
                     observer: '_lectureIdChanged'
                 },
+                embedViewUrl: String
             },
             ready: function() {
                 this.set('config', Config);
@@ -126,6 +134,7 @@
                 }
 
                 shortenUrl();
+                this.set('embedViewUrl', window.location.href + '/embed');
 
             },
             _fbShare: function() {
@@ -134,6 +143,9 @@
                     method: 'share',
                     href: self.url,
                 }, function(response) {});
+            },
+            openDialog: function() {
+                this.$.dialog.open();
             }
         });
     </script>
