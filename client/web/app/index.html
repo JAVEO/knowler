@@ -43,66 +43,76 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
-    <auth-meta id="authMeta"></auth-meta>
-    <iron-meta id="meta"></iron-meta>
 
-    <paper-drawer-panel force-narrow="true">
-      <paper-header-panel drawer>
-        <paper-toolbar></paper-toolbar>
-        <div> Drawer content... </div>
-      </paper-header-panel>
-      <paper-header-panel condenses keep-condensed-header main>
+    <iron-pages attr-for-selected="data-parent-route" selected="{{parentRoute}}">
+      <section data-parent-route="embed">
+        <lecture-view-embed lecture-id="{{embedId}}"></lecture-view-embed>
+      </section>
 
-        <paper-toolbar class="primary-toolbar main-toolbar" >
-          <paper-icon-button icon="menu" paper-drawer-toggle class="menu-toggle-button"></paper-icon-button>
-          <a data-route="home" href="/">
-            <img src="images/logo_knowler_nowe.png" alt="Logo">
-          </a>
-          <paper-input class="searchBox"
-                     label="Search"
-                     no-label-float="true"
-                     value="{{searchPhrase}}"
-                     on-keydown="searchPhraseChange"
-                     style="width: 100%; min-width: 150px;"></paper-input>
-          <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
-          <google-signin
-                style="margin-left: 25px;"
-                client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
-                scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
-                on-google-signin-success="userLogged"
-                on-google-signed-out="userLoggedOut">
-          </google-signin>
-        </paper-toolbar>
+      <section data-parent-route="normal">
+        <auth-meta id="authMeta"></auth-meta>
+        <iron-meta id="meta"></iron-meta>
+
+        <paper-drawer-panel force-narrow="true">
+          <paper-header-panel drawer>
+            <paper-toolbar></paper-toolbar>
+            <div> Drawer content... </div>
+          </paper-header-panel>
+          <paper-header-panel condenses keep-condensed-header main>
+
+            <paper-toolbar class="primary-toolbar main-toolbar" >
+              <paper-icon-button icon="menu" paper-drawer-toggle class="menu-toggle-button"></paper-icon-button>
+              <a data-route="home" href="/">
+                <img src="images/logo_knowler_nowe.png" alt="Logo">
+              </a>
+              <paper-input class="searchBox"
+                           label="Search"
+                           no-label-float="true"
+                           value="{{searchPhrase}}"
+                           on-keydown="searchPhraseChange"
+                           style="width: 100%; min-width: 150px;"></paper-input>
+              <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
+              <google-signin
+                      style="margin-left: 25px;"
+                      client-id="831962289480-5a910n0aojgn170fqfspc088d0j8u9mo.apps.googleusercontent.com"
+                      scopes="https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube"
+                      on-google-signin-success="userLogged"
+                      on-google-signed-out="userLoggedOut">
+              </google-signin>
+            </paper-toolbar>
 
 
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+            <div class="content">
+              <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="view-lecture">
-              <div class="page-content">
-                <lecture-view id="lectureView" lecture-id="{{viewId}}" on-delete-lecture="deleteLecture"></lecture-view>
-              </div>
-            </section>
+                <section data-route="view-lecture">
+                  <div class="page-content">
+                    <lecture-view id="lectureView" lecture-id="{{viewId}}" on-delete-lecture="deleteLecture"></lecture-view>
+                  </div>
+                </section>
 
-            <section data-route="lectures">
-              <lectures-list id="lecturesList"></lectures-list>
-            </section>
+                <section data-route="lectures">
+                  <lectures-list id="lecturesList"></lectures-list>
+                </section>
 
-            <section data-route="lecture-search">
-              <lectures-list-by-search id="lecturesSearch" search-phrase="{{searchPhrase}}"></lectures-list-by-search>
-            </section>
+                <section data-route="lecture-search">
+                  <lectures-list-by-search id="lecturesSearch" search-phrase="{{searchPhrase}}"></lectures-list-by-search>
+                </section>
 
-            <section data-route="edit-lecture">
-              <div class="page-content">
-                <lecture-editor id="lectureEditor" lecture-id="{{editId}}"></lecture-editor>
-              </div>
-            </section>
+                <section data-route="edit-lecture">
+                  <div class="page-content">
+                    <lecture-editor id="lectureEditor" lecture-id="{{editId}}"></lecture-editor>
+                  </div>
+                </section>
 
-          </iron-pages>
-        </div>
+              </iron-pages>
+            </div>
 
-      </paper-header-panel>
-    </paper-drawer-panel>
+          </paper-header-panel>
+        </paper-drawer-panel>
+      </section>
+    </iron-pages>
+
   </template>
   <!-- build:js scripts/app.js -->
   <script src="scripts/main.js"></script>

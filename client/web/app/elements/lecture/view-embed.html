@@ -1,0 +1,31 @@
+<dom-module id="lecture-view-embed">
+    <template>
+        <firebase-document
+                id="firebase"
+                location="{{backendDocument}}"
+                data="{{lecture}}"></firebase-document>
+
+        <presentation-player id="presentationPlayer" lecture="{{lecture}}"></presentation-player>
+    </template>
+    <script>
+        Polymer({
+            is: "lecture-view-embed",
+            properties: {
+                lecture: {
+                    type: Object
+                },
+                lectureId: {
+                    type: String,
+                    observer: "lectureIdChanged"
+                },
+                backendDocument: String
+            },
+            lectureIdChanged: function(lectureId) {
+                if (StringUtils.isEmpty(lectureId)) {
+                    return;
+                }
+                this.set('backendDocument', Config.urls.backend + '/' + lectureId);
+            }
+        });
+    </script>
+</dom-module>
