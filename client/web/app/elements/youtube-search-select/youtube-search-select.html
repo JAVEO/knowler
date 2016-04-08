@@ -144,6 +144,9 @@
                     this.set('videoId', e.detail.value.id.videoId);
                     this.$.dropdownElement.close();
                 }
+            },
+            clearInputValue: function() {
+                this.set('inputValue', undefined);
             }
         });
 

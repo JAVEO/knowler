@@ -41,6 +41,10 @@
                     Polymer.dom(self.$.slideSelector).removeChild(children[i]);
                 }
 
+                if (this.pdf === undefined){
+                    return;
+                }
+
                 function getPage(page) {
                   var origViewport = page.getViewport(1);
                   var scale = 150 / origViewport.height;

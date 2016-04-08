@@ -53,23 +53,25 @@
             <paper-material elevation="1" class="card-default layout horizontal wrap">
                 <div class="k-col-sm-12 k-col-md-6">
                     <paper-input class="input-custom" value="{{lecture.title}}" label="Title"></paper-input>
+                </div>
+                <div class="k-col-sm-12 k-col-md-6">
                     <paper-dropdown-menu class="input-custom" horizontal-align="left" label="Category">
-                        <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected">
+                        <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected" attr-for-selected="dataValue">
                             <template is="dom-repeat" items="[[config.categories]]">
                                 <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                             </template>
                         </paper-menu>
                     </paper-dropdown-menu>
                 </div>
-                <div class="k-col-sm-12 k-col-md-6">
-                    <paper-input class="input-custom" value="{{lecture.description}}" label="Description"></paper-input>
+                <div class="k-col-sm-12 k-col-md-12">
+                    <paper-textarea value="{{lecture.description}}" label="Description"></paper-textarea>
                 </div>
             </paper-material>
 
             <div class="layout horizontal wrap"> 
                 <div class="k-col-md-6 k-col-sm-12 upload-container">
                     <paper-material elevation="1" class="card-default" style="width: 100%;">
-                        <youtube-search-select video-id="{{lecture.videoId}}"></youtube-search-select>
+                        <youtube-search-select id="youtubeSearchSelect" video-id="{{lecture.videoId}}"></youtube-search-select>
                         <div hidden$="{{_isDefined(lecture.videoId)}}" class="upload-empty-space">
                             <iron-icon icon="file-upload"></iron-icon>
                         </div>
@@ -188,7 +190,7 @@
                 var isNew = this.lectureId === undefined; 
                 this.set('isFirstEdit', !isNew);
                 if (isNew) {
-                    this.lecture = this.createLecture();
+                    this.createLecture();
                 } else {
                     this.$.firebase.set('location', Config.urls.backend + '/' + this.lectureId);
                     var data = this.$.firebase.data;
@@ -196,7 +198,7 @@
                 }
             },
             createLecture: function() {
-                return {
+                this.lecture = {
                          fileId: undefined,
                          videoId: undefined,
                          category: undefined,
@@ -205,6 +207,11 @@
                          createdDate: undefined,
                          mappings: []
                      };
+                this.$.youtubeSearchSelect.clearInputValue();
+                this.$.googlePicker.clearInputValue();
+                this.$.slideList.set('pdf', undefined);
+                this.set('timeFrom', undefined);
+                this.set('timeTo', undefined);
             },
             _categorySelected: function(e, data) {
                 this.set('lecture.category', data.item.dataValue);
@@ -291,7 +298,7 @@
             },
             ready: function() {
                 this.set('config', Config);
-                this.lecture = this.createLecture();
+                this.createLecture();
 
                 this.videoHeight = GoogleYouTubeUtils.determinePreferredHeight();
                 var self = this;
