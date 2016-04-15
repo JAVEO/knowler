@@ -28,13 +28,7 @@
     </style>
     <template>
 
-        <firebase-collection
-          id="firebase"
-          location="[[config.urls.backend]]"
-          order-by-child="category"
-          equal-to="{{category}}"
-          limit-to-first="{{limitTo}}"
-          data="{{lectures}}"></firebase-collection>
+        <lectures-service id="lecturesService" last-response="{{lectures}}"></lectures-service>
 
         <h4 class="capitalize mt-0"><paper-button on-tap="viewCategory">{{category}}</paper-button></h4>
         <template is="dom-if" if="{{hasResults}}">
@@ -77,18 +71,23 @@
             ready: function() {
                 this.set('config', Config);
                 this.set('limitTo', this.showMore ? 100 : 6);
+                this.refresh();
             },
             viewDetails: function(e) {
-                page('/lecture/' + e.model.item.__firebaseKey__);
+                page('/lecture/' + e.model.item.id);
             },
             viewCategory: function(e) {
                 this.fire('category-selected', this.category);
             },
             lecturesChanged: function() {
-                this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
+                this.set('hasResults', ArrayUtils.isEmpty(this.lectures));
             },
             _showMoreChanged: function() {
                 this.set('limitTo', this.showMore ? 100 : 6);
+                this.refresh();
+            },
+            refresh: function() {
+                this.$.lecturesService.queryByCategory(this.category, this.limitTo);
             }
         });
     </script>

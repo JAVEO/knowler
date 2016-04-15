@@ -1,0 +1,66 @@
+<dom-module id="lectures-service">
+    <template>
+        <iron-ajax
+                id="ajax"
+                last-response="{{lastResponse}}"
+        ></iron-ajax>
+    </template>
+    <script>
+        Polymer({
+            is: "lectures-service",
+            properties:{
+                lastResponse: {
+                    type: Object,
+                    notify: true,
+                    readOnly: false
+                }
+            },
+            queryAll: "/lectures",
+            query: function(search) {
+                var url = Config.urls.backend + this.queryAll;
+                if (StringUtils.isNotEmpty(search)) {
+                    url += "?search=" + search;
+                }
+                this.$.ajax.url = url;
+                this.$.ajax.method = "GET";
+                this.$.ajax.generateRequest();
+            },
+            queryByCategory: function(category, limit) {
+                var url = Config.urls.backend + this.queryAll + "?category=" + category + "&limit=" + limit;
+                this.$.ajax.url = url;
+                this.$.ajax.method = "GET";
+                this.$.ajax.generateRequest();
+            },
+            queryByAuthor: function(author, limit) {
+                var url = Config.urls.backend + this.queryAll + "?author=" + author + "&limit=" + limit;
+                this.$.ajax.url = url;
+                this.$.ajax.method = "GET";
+                this.$.ajax.generateRequest();
+            },
+            create: function(data){
+                this.$.ajax.url = Config.urls.backend + this.queryAll;
+                this.$.ajax.body = data;
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "POST";
+                this.$.ajax.generateRequest();
+            },
+            delete: function(lectureId){
+                this.$.ajax.url = Config.urls.backend + this.queryAll + "/" + lectureId;
+                this.$.ajax.method = "DELETE";
+                this.$.ajax.generateRequest();
+            },
+            get: function(lectureId){
+                this.$.ajax.url = Config.urls.backend + this.queryAll + "/" + lectureId;
+                this.$.ajax.method = "GET";
+                this.$.ajax.generateRequest();
+            },
+            update: function(lectureId, data) {
+                this.$.ajax.url = Config.urls.backend + this.queryAll + "/" + lectureId;
+                this.$.ajax.body = data;
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "PUT";
+                this.$.ajax.generateRequest();
+            }
+        });
+    </script>
+</dom-module>

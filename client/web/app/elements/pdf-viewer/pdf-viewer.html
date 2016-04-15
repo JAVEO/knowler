@@ -71,7 +71,7 @@
             ],
             downloadPdf: function() {
                 var self = this;
-                var url = Config.urls.googleDriveCorsProxy + this.fileId;
+                var url = Config.urls.backend + '/pdf/' + this.fileId;
 
                 function setVisibility(spinner, error, canvas) {
                   self.set("spinnerVisibility", spinner);

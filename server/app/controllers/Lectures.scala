@@ -17,16 +17,26 @@ import scala.concurrent.Future
 class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   extends Controller with MongoController with ReactiveMongoComponents {
 
-  def list(phrase: Option[String]) = Action.async {
-    def query = phrase.map(p =>
-      Json.obj("$or" -> Json.arr(
-        Json.obj("title" -> Json.obj("$regex" -> p)),
-        Json.obj("description" -> Json.obj("$regex" -> p)))
-      )).getOrElse(Json.obj())
+  def list(search: Option[String], category: Option[String], author: Option[String], limit: Int) = Action.async {
+    val categoryQuery = category.map(c =>
+      Json.obj("category" -> c))
+
+    val authorQuery = author.map(a =>
+      Json.obj("author.id" -> a))
+
+    val searchQuery = search.map(p =>
+      Json.obj("$text" -> Json.obj(
+        "$search" -> p)
+      ))
+
+    val query = searchQuery
+      .orElse(categoryQuery)
+      .orElse(authorQuery)
+      .getOrElse(Json.obj())
 
     collection.find(query)
       .cursor[JsObject]()
-      .collect[List]()
+      .collect[List](limit)
       .map(list => list.map(_.transform(idTransformer).get))
       .map(list => Ok(Json.toJson(list)))
   }
@@ -42,11 +52,9 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   }
 
   def details(id: String) = Action.async {
-    findById(id)
-      .map {
-        case head :: Nil => head.transform(idTransformer).map(Ok(_)).get
-        case Nil => NotFound
-        case _ => BadRequest
+    collection.findAndUpdate(idSelector(id), Json.obj("$inc" -> Json.obj("viewCount" -> 1)), fetchNewObject = true)
+      .map { result =>
+        result.value.map(_.transform(idTransformer).get).map(Ok(_)).getOrElse(NotFound)
       }
   }
 

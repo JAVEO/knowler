@@ -140,12 +140,8 @@
 
         </paper-material>
 
-        <firebase-collection id="firebaseCollection"
-                             limit-to-first="1"
-                             location="[[config.urls.backend]]"></firebase-collection>
-        <firebase-document id="firebase"></firebase-document>
         <iron-meta id="meta"></iron-meta>
-        <eleastic-search id="elasticSearch"></eleastic-search>
+        <lectures-service id="lecturesService" on-last-response-changed="lecturesResponse" last-response="{{lecture}}"></lectures-service>
     </template>
     <script>
         Polymer({
@@ -192,9 +188,7 @@
                 if (isNew) {
                     this.createLecture();
                 } else {
-                    this.$.firebase.set('location', Config.urls.backend + '/' + this.lectureId);
-                    var data = this.$.firebase.data;
-                    this.lecture = data;
+                    this.$.lecturesService.get(this.lectureId);
                 }
             },
             createLecture: function() {
@@ -316,18 +310,9 @@
                                 name: user.getName()
                              });
                     this.set('lecture.createdDate', Date.now());
-                    var response = this.$.firebaseCollection.add(this.lecture);
-                    this.$.elasticSearch.createOrUpdate(response.key(), this.lecture);
-                    page('/lecture/' + response.key());
+                    this.$.lecturesService.create(this.lecture);
                 } else {
-                    this.$.firebase.set('data.title', this.lecture.title);
-                    this.$.firebase.set('data.description', this.lecture.description);
-                    this.$.firebase.set('data.fileId', this.lecture.fileId);
-                    this.$.firebase.set('data.videoId', this.lecture.videoId);
-                    this.$.firebase.set('data.mappings', this.lecture.mappings);
-                    this.$.firebase.set('data.category', this.lecture.category);
-                    this.$.elasticSearch.createOrUpdate(this.lectureId, this.lecture);
-                    page('/lecture/' + this.lectureId);
+                    this.$.lecturesService.update(this.lectureId, this.lecture);
                 }
                 this.lecture = this.createLecture();
             },
@@ -356,6 +341,14 @@
                 e.preventDefault();
                 var newTime = this._updateMappingTime(this.selectedIndex + 1, this.timeTo);
                 this.set('timeTo', newTime.toHHMMSS());
+            },
+            lecturesResponse: function() {
+                var last = this.$.lecturesService.lastResponse;
+                if (last.$oid !== undefined) {
+                    page('/lecture/' + last.$oid);
+                } else if (last.status !== undefined && this.lectureId !== undefined) {
+                    page('/lecture/' + this.lectureId);
+                }
             }
         });
     </script>

@@ -1,10 +1,6 @@
 <dom-module id="lecture-view-embed">
     <template>
-        <firebase-document
-                id="firebase"
-                location="{{backendDocument}}"
-                data="{{lecture}}"></firebase-document>
-
+        <lectures-service id="lecturesService" last-response="{{lecture}}"></lectures-service>
         <presentation-player id="presentationPlayer" lecture="{{lecture}}"></presentation-player>
     </template>
     <script>
@@ -24,7 +20,7 @@
                 if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.set('backendDocument', Config.urls.backend + '/' + lectureId);
+                this.$.lecturesService.get(lectureId);
             }
         });
     </script>

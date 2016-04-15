@@ -28,7 +28,6 @@
     "google-signin": "^1.3.2",
     "fullscreen-api": "^1.1.0",
     "youtube-search": "^1.0.0",
-    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12",
     "paper-dialog": "PolymerElements/paper-dialog#^1.0.4"
   },
   "devDependencies": {

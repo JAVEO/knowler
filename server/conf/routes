@@ -1,6 +1,6 @@
 GET     /                           controllers.Application.index
 
-GET     /lectures                   controllers.Lectures.list(search: Option[String])
+GET     /lectures                   controllers.Lectures.list(search: Option[String], category: Option[String], author: Option[String], limit: Int ?= 100)
 POST    /lectures                   controllers.Lectures.create
 GET     /lectures/:id               controllers.Lectures.details(id)
 DELETE  /lectures/:id               controllers.Lectures.delete(id)
