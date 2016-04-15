@@ -74,26 +74,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
   };
 
-  var ref = new Firebase(Config.urls.firebase);
-
   app.userLogged = function(e) {
     var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
     var user = currentUser.getBasicProfile();
-    var accessToken = currentUser.getAuthResponse().access_token;
-    ref.authWithOAuthToken("google", accessToken, function(error, authData) {
-      if (error) {
-        console.log("Login Failed!", error);
-      } else {
-        console.log("Authenticated successfully with payload:", authData.uid);
-        app.$.authMeta.userLoggedIn(user);
-        app.set('isLogged', true);
-      }
-    });
+    console.log("Authenticated successfully with payload:", user);
+    app.$.authMeta.userLoggedIn(user);
+    app.set('isLogged', true);
   };
   app.userLoggedOut = function(e) {
     app.$.authMeta.userLoggedOut();
     app.set('isLogged', false);
-    ref.unauth();
   };
 
 

@@ -100,6 +100,12 @@
                         this.set('categories.' + i + '.showMore', isSelected);
                     }
                 }
+            },
+            refresh: function() {
+                var lists = Polymer.dom(this.root).querySelectorAll("lectures-list-by-category");
+                lists.forEach(function(item) {
+                    item.refresh();
+                });
             }
         });
     </script>

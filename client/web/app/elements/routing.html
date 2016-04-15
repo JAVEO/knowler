@@ -15,10 +15,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // We use Page.js for routing. This is a Micro
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
-    page('/', function () {
+
+    var lecturesRoute = function () {
       app.parentRoute = 'normal';
       app.route = 'lectures';
-    });
+      app.$.lecturesList.refresh();
+    };
+
+    page('/', lecturesRoute);
 
     page('/lecture-search/:searchPhrase', function (data) {
       app.parentRoute = 'normal';
@@ -26,10 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.searchPhrase = data.params.searchPhrase;
     });
 
-    page('/lectures', function () {
-      app.parentRoute = 'normal';
-      app.route = 'lectures';
-    });
+    page('/lectures', lecturesRoute);
 
     page('/lecture/add', function () {
       app.parentRoute = 'normal';

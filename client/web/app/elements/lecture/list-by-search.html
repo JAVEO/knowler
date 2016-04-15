@@ -27,7 +27,7 @@
         }
     </style>
     <template>
-        <eleastic-search id="elasticSearch" on-last-response-changed="lecturesResponse"></eleastic-search>
+        <lectures-service id="lecturesService" on-last-response-changed="lecturesResponse"></lectures-service>
 
         <div class="page-content">
             <div class="layout vertical">
@@ -81,18 +81,16 @@
             },
             search: function() {
                 var searchPhrase = this.searchPhrase;
-                this.$.elasticSearch.query(searchPhrase);
+                this.$.lecturesService.query(searchPhrase);
             },
             viewDetails: function(e) {
-                page('/lecture/' + e.model.item.__firebaseKey__);
+                page('/lecture/' + e.model.item.id);
             },
             _showMoreChanged: function() {
                 this.set('limitTo', this.showMore ? 100 : 6);
             },
             lecturesResponse: function() {
-                var lectures = this.$.elasticSearch.lastResponse.hits.hits.map(function(e) {
-                    return e._source;
-                });
+                var lectures = this.$.lecturesService.lastResponse;
                 this.set('hasResults', !ArrayUtils.isEmpty(lectures));
                 this.set('lectures', lectures);
             }

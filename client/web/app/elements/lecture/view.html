@@ -65,18 +65,9 @@
     </style>
 
     <template>
-        <firebase-document
-            id="firebase"
-            location="{{backendDocument}}"
-            data="{{lecture}}"></firebase-document>
-        <firebase-collection
-            id="firebaseCollection"
-            location="[[config.urls.backend]]"
-            order-by-child="author/id"
-            equal-to="{{lecture.author.id}}"
-            limit-to-first="5"
-            data="{{lectures}}"></firebase-collection>
-        <eleastic-search id="elasticSearch"></eleastic-search>
+        <lectures-service id="lecturesService" last-response="{{lecture}}" on-last-response-changed="handleLectureResponse"></lectures-service>
+        <lectures-service id="lecturesServiceForList" last-response="{{lectures}}"></lectures-service>
+        <lectures-service id="lecturesServiceForDelete" on-last-response-changed="redirectToList"></lectures-service>
         <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
         <iron-meta id="meta"></iron-meta>
 
@@ -173,13 +164,8 @@
                 if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.set('backendDocument', Config.urls.backend + '/' + lectureId);
+                this.$.lecturesService.get(lectureId);
                 this.$.knowlerComments.reset();
-
-                var viewCountRef = new Firebase(this.backendDocument + '/viewCount');
-                viewCountRef.transaction(function(viewCount) {
-                  return viewCount + 1;
-                });
             },
             ready: function(){
                 var self = this;
@@ -197,9 +183,7 @@
                 return DateUtils.timestampToHumanDate(timestamp);
             },
             delete: function() {
-                this.$.elasticSearch.delete(this.lecture.category, this.lectureId);
-                this.$.firebaseCollection.removeByKey(this.lectureId);
-                page('/lectures');
+                this.$.lecturesServiceForDelete.delete(this.lectureId);
             },
             _setIsOwner: function(user, lecture) {
                 if (user === undefined || lecture === undefined) {
@@ -240,7 +224,14 @@
             },
             viewDetails: function(e) {
                 window.scrollTo(0, 0);
-                page('/lecture/' + e.model.item.__firebaseKey__);
+                page('/lecture/' + e.model.item.id);
+            },
+            redirectToList: function() {
+                page('/lectures');
+            },
+            handleLectureResponse: function() {
+                var author = this.$.lecturesService.lastResponse.author.id;
+                this.$.lecturesServiceForList.queryByAuthor(author, 5);
             }
         });
     </script>
