@@ -40,6 +40,15 @@
                 </template>
             </paper-menu>
           </paper-dropdown-menu>
+
+          <paper-dropdown-menu label="Sort" class="custom">
+            <paper-menu class="dropdown-content" selected="{{sortBy}}" attr-for-selected="data-value">
+                <paper-item data-value="latest" class="capitalize">latest</paper-item>
+                <paper-item data-value="oldest" class="capitalize">oldest</paper-item>
+                <paper-item data-value="mostPopular" class="capitalize">most popular</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
+
           <template is="dom-if" if="{{isSigned}}">
             <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
           </template>
@@ -49,7 +58,12 @@
             <template is="dom-repeat" items="[[categories]]">
                 <template is="dom-if" if="{{item.show}}")>
                     <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
-                        <lectures-list-by-category category="{{item.name}}" show-more="{{item.showMore}}" on-category-selected="_categorySelected"></lectures-list-by-category>
+                        <lectures-list-by-category
+                                category="{{item.name}}"
+                                show-more="{{item.showMore}}"
+                                on-category-selected="_categorySelected"
+                                sort-by="{{sortBy}}">
+                        </lectures-list-by-category>
                     </paper-material>
                 </template>
             </template>
@@ -65,6 +79,10 @@
                 config: Object,
                 isSigned: Boolean,
                 selectedCategory: String,
+                sortBy: {
+                    type: String,
+                    observer: 'sortBy2'
+                },
                 categories: Object
             },
             ready: function() {

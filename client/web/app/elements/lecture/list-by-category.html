@@ -60,6 +60,11 @@
                     type: Boolean,
                     observer: '_showMoreChanged'
                 },
+                sortBy: {
+                    value: 'latest',
+                    type: String,
+                    observer: '_sortByChanged'
+                },
                 limitTo: Number,
                 hasResults: Boolean,
                 config: Object,
@@ -87,7 +92,10 @@
                 this.refresh();
             },
             refresh: function() {
-                this.$.lecturesService.queryByCategory(this.category, this.limitTo);
+                this.$.lecturesService.queryByCategory(this.category, this.limitTo, this.sortBy);
+            },
+            _sortByChanged: function() {
+                this.refresh();
             }
         });
     </script>
