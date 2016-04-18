@@ -91,6 +91,11 @@ gulp.task('copy', function () {
     dot: true
   }).pipe(gulp.dest('dist'));
 
+  var envVariables = gulp.src(['app/scripts/main.js'])
+    .pipe(replace('http://localhost:9000', 'https://knowler-api.javeo.eu'))
+    .pipe(replace('http://localhost:3000', 'https://knowler.javeo.eu'))
+    .pipe(gulp.dest('dist/scripts'))
+
   var bower = gulp.src([
     'bower_components/**/*'
   ]).pipe(gulp.dest('dist/bower_components'));
@@ -108,7 +113,7 @@ gulp.task('copy', function () {
     .pipe($.rename('elements.vulcanized.html'))
     .pipe(gulp.dest('dist/elements'));
 
-  return merge(app, bower, elements, vulcanized, swBootstrap, swToolbox)
+  return merge(app, envVariables, bower, elements, vulcanized, swBootstrap, swToolbox)
     .pipe($.size({title: 'copy'}));
 });
 
