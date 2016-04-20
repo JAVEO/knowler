@@ -25,8 +25,8 @@
                 this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();
             },
-            queryByCategory: function(category, limit) {
-                var url = Config.urls.backend + this.queryAll + "?category=" + category + "&limit=" + limit;
+            queryByCategory: function(category, limit, sortBy) {
+                var url = Config.urls.backend + this.queryAll + "?category=" + category + "&limit=" + limit + "&sort=" + sortBy;
                 this.$.ajax.url = url;
                 this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();

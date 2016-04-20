@@ -17,7 +17,7 @@ import scala.concurrent.Future
 class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   extends Controller with MongoController with ReactiveMongoComponents {
 
-  def list(search: Option[String], category: Option[String], author: Option[String], limit: Int) = Action.async {
+  def list(search: Option[String], category: Option[String], author: Option[String], limit: Int, sort: Option[String]) = Action.async {
     val categoryQuery = category.map(c =>
       Json.obj("category" -> c))
 
@@ -34,7 +34,14 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
       .orElse(authorQuery)
       .getOrElse(Json.obj())
 
+    val sortBy = sort.map {
+      case "latest" => Json.obj("createdDate" -> -1)
+      case "oldest" => Json.obj("createdDate" -> 1)
+      case "mostPopular" => Json.obj("viewCount" -> -1)
+    }.getOrElse(Json.obj("createdDate" -> -1))
+
     collection.find(query)
+      .sort(sortBy)
       .cursor[JsObject]()
       .collect[List](limit)
       .map(list => list.map(_.transform(idTransformer).get))
