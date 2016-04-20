@@ -56,7 +56,7 @@
                 </div>
                 <div class="k-col-sm-12 k-col-md-6">
                     <paper-dropdown-menu class="input-custom" horizontal-align="left" label="Category">
-                        <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected" attr-for-selected="dataValue">
+                        <paper-menu class="dropdown-content" selected="{{lecture.category}}" on-iron-select="_categorySelected" attr-for-selected="data-value">
                             <template is="dom-repeat" items="[[config.categories]]">
                                 <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                             </template>
