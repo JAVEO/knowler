@@ -28,11 +28,12 @@
     </style>
     <template>
         <lectures-service id="lecturesService" on-last-response-changed="lecturesResponse"></lectures-service>
+        <iron-meta id="meta"></iron-meta>
 
         <div class="page-content">
             <div class="layout vertical">
                 <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
-                    <h4 class="capitalize mt-0">Search result</h4>
+                    <h4 class="capitalize mt-0">{{listTypeTitle}}</h4>
                     <template is="dom-if" if="{{!hasResults}}">
                         <div class="text-center">
                             <h3 class="blue">No results were found</h3>
@@ -56,6 +57,13 @@
         </div>
     </template>
     <script>
+      (function() {
+        var ListType = {
+            SEARCH: 'search',
+            MY: 'my',
+            FAVORITES: 'favorites'
+        };
+
         Polymer({
             is: 'lectures-list-by-search',
             properties: {
@@ -72,6 +80,15 @@
                 config: Object,
                 lectures: {
                     type: Object
+                },
+                listType: {
+                    type: String,
+                    value: ListType.SEARCH,
+                    observer: 'listTypeChanged'
+                },
+                listTypeTitle: {
+                    type: String,
+                    value: 'Search result',
                 }
             },
             ready: function() {
@@ -80,8 +97,23 @@
                 this.set('limitTo', this.showMore ? 100 : 6);
             },
             search: function() {
-                var searchPhrase = this.searchPhrase;
-                this.$.lecturesService.query(searchPhrase);
+                switch(this.listType) {
+
+                    case ListType.SEARCH:
+                        var searchPhrase = this.searchPhrase;
+                        this.$.lecturesService.query(searchPhrase);
+                        break;
+
+                    case ListType.MY:
+                        var user = this.$.meta.byKey('user');
+                        this.$.lecturesService.queryByAuthor(user.getId(), 18);
+                        break;
+
+                    case ListType.FAVORITES:
+                        var user = this.$.meta.byKey('user');
+                        this.$.lecturesService.queryFavorites(user.getId());
+                        break;
+                }
             },
             viewDetails: function(e) {
                 page('/lecture/' + e.model.item.id);
@@ -93,7 +125,25 @@
                 var lectures = this.$.lecturesService.lastResponse;
                 this.set('hasResults', !ArrayUtils.isEmpty(lectures));
                 this.set('lectures', lectures);
+            },
+            listTypeChanged: function() {
+                switch(this.listType) {
+
+                    case ListType.SEARCH:
+                        this.set('listTypeTitle', 'Search result');
+                        break;
+
+                    case ListType.MY:
+                        this.set('listTypeTitle', 'My lectures');
+                        break;
+
+                    case ListType.FAVORITES:
+                        this.set('listTypeTitle', 'Favorites lectures');
+                        break;
+                }
+                this.search();
             }
         });
+      }());
     </script>
 </dom-module>

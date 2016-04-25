@@ -33,6 +33,7 @@
 
     <template>
         <!-- <google-url-shortener on-google-url-shortener-ready="testa" id="shortener" ></google-url-shortener> -->
+        <lectures-service id="lecturesService"></lectures-service>
 
         <button id="facebookShare" class="share-service-button" on-tap="_fbShare">
             <span class="share-service-icon share-service-icon-facebook yt-sprite"></span>
@@ -58,6 +59,8 @@
                 <input autofocus onFocus="this.select();" value="&lt;iframe width=&quot;800&quot; height=&quot;350&quot; src=&quot;{{embedViewUrl}}&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;" size="120"/>
             </p>
         </paper-dialog>
+
+        <paper-icon-button on-tap="likeLecture" icon="favorite"></paper-icon-button>
     </template>
 
     <script>
@@ -146,6 +149,9 @@
             },
             openDialog: function() {
                 this.$.dialog.open();
+            },
+            likeLecture: function() {
+                this.$.lecturesService.like(this.lectureId);
             }
         });
     </script>
