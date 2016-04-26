@@ -24,10 +24,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     page('/', lecturesRoute);
 
-    page('/lecture-search/:searchPhrase', function (data) {
+    page('/lectures/search/:searchPhrase', function (data) {
       app.parentRoute = 'normal';
       app.route = 'lecture-search';
       app.searchPhrase = data.params.searchPhrase;
+      app.listType = 'search';
+    });
+
+    page('/lectures/my', function (data) {
+      app.parentRoute = 'normal';
+      app.route = 'lecture-search';
+      app.listType = 'my';
+    });
+
+    page('/lectures/favorites', function (data) {
+      app.parentRoute = 'normal';
+      app.route = 'lecture-search';
+      app.listType = 'favorites';
     });
 
     page('/lectures', lecturesRoute);

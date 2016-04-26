@@ -37,6 +37,12 @@
                 this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();
             },
+            queryFavorites: function(user) {
+                var url = Config.urls.backend + this.queryAll + "/favorites?user=" + user;
+                this.$.ajax.url = url;
+                this.$.ajax.method = "GET";
+                this.$.ajax.generateRequest();
+            },
             create: function(data){
                 this.$.ajax.url = Config.urls.backend + this.queryAll;
                 this.$.ajax.body = data;
@@ -60,6 +66,33 @@
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "PUT";
                 this.$.ajax.generateRequest();
+            },
+            register: function(user) {
+                this.$.ajax.url = Config.urls.backend + '/users';
+                this.$.ajax.headers = {
+                    'oauth2-token': this.oauthToken()
+                };
+                this.$.ajax.body = {
+                    _id: user.getId(),
+                    email: user.getEmail(),
+                    name: user.getName()
+                };
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "POST";
+                this.$.ajax.generateRequest();
+            },
+            like: function(lectureId) {
+                this.$.ajax.url = Config.urls.backend + this.queryAll + "/" + lectureId + "/like";
+                this.$.ajax.headers = {
+                    'oauth2-token': this.oauthToken()
+                };
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "PUT";
+                this.$.ajax.generateRequest();
+            },
+            oauthToken: function() {
+                var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
+                return currentUser.getAuthResponse().id_token;
             }
         });
     </script>

@@ -52,11 +52,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <section data-parent-route="normal">
         <auth-meta id="authMeta"></auth-meta>
         <iron-meta id="meta"></iron-meta>
+        <lectures-service id="lecturesService"></lectures-service>
 
         <paper-drawer-panel force-narrow="true">
           <paper-header-panel drawer>
             <paper-toolbar></paper-toolbar>
-            <div> Drawer content... </div>
+              <paper-menu on-iron-select="leftMenuSelected" attr-for-selected="data-value" selected="{{listType}}">
+                <paper-item data-value="home">
+                  <iron-icon icon="language"></iron-icon>Main page
+                </paper-item>
+                <paper-item data-value="favorites">
+                  <iron-icon icon="favorite"></iron-icon>Favorites
+                </paper-item>
+                <paper-item data-value="my">
+                  <iron-icon icon="social:person"></iron-icon>My
+                </paper-item>
+              </paper-menu>
           </paper-header-panel>
           <paper-header-panel condenses keep-condensed-header main>
 
@@ -79,6 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                       on-google-signin-success="userLogged"
                       on-google-signed-out="userLoggedOut">
               </google-signin>
+              <paper-button on-tap="registerUser" raised>Zarejestruj</paper-button>
             </paper-toolbar>
 
 
@@ -96,7 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </section>
 
                 <section data-route="lecture-search">
-                  <lectures-list-by-search id="lecturesSearch" search-phrase="{{searchPhrase}}"></lectures-list-by-search>
+                  <lectures-list-by-search id="lecturesSearch" search-phrase="{{searchPhrase}}" list-type="{{listType}}"></lectures-list-by-search>
                 </section>
 
                 <section data-route="edit-lecture">

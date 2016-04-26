@@ -1,6 +1,7 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
@@ -14,8 +15,14 @@ import reactivemongo.play.json.collection.JSONCollection
 import scala.concurrent.Future
 
 @Singleton
-class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
-  extends Controller with MongoController with ReactiveMongoComponents {
+class Lectures @Inject() (
+  val reactiveMongoApi: ReactiveMongoApi,
+  val ws: WSClient,
+  val configuration: Configuration)
+  extends Controller
+    with MongoController
+    with ReactiveMongoComponents
+    with Security {
 
   def list(search: Option[String], category: Option[String], author: Option[String], limit: Int, sort: Option[String]) = Action.async {
     val categoryQuery = category.map(c =>
@@ -47,6 +54,32 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
       .map(list => list.map(_.transform(idTransformer).get))
       .map(list => Ok(Json.toJson(list)))
   }
+
+  def favorites(user: String) = Action.async {
+    favoritesIds(user)
+      .flatMap(favoritesLectures)
+      .map(list => Ok(Json.toJson(list)))
+  }
+
+  def favoritesLectures(ids: JsArray): Future[List[JsObject]] = {
+    collection.find(Json.obj("_id" -> Json.obj("$in" -> ids)))
+      .cursor[JsObject]()
+      .collect[List]()
+      .map(list => list.map(_.transform(idTransformer).get))
+  }
+
+  def favoritesIds(user: String): Future[JsArray] = {
+    users.find(Json.obj("_id" -> user))
+      .cursor[JsObject]()
+      .collect[List]()
+      .map(userFavorites)
+  }
+
+  def userFavorites(list: List[JsObject]): JsArray =
+    list.headOption
+      .flatMap(_.value.get("favorites"))
+      .map(_.as[JsArray])
+      .getOrElse(Json.arr())
 
   def create = Action.async(parse.json) { implicit request =>
     val id = BSONObjectID.generate
@@ -80,7 +113,7 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
   }
 
   def download(fileId: String) = Action.async {
-    ws.url("https://drive.google.com/uc?id=" + fileId).withFollowRedirects(true).getStream().map {
+    ws.url(googleDriveUrl + fileId).withFollowRedirects(true).getStream().map {
       case (response, body) =>
         if (response.status == OK) {
           response.headers.get(CONTENT_LENGTH) match {
@@ -97,6 +130,13 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
       .collect[List]()
   }
 
+  def like(id: String) = AuthAction.async { request =>
+    users.update(
+        Json.obj("email" -> request.userEmail),
+        Json.obj("$addToSet" -> Json.obj("favorites" -> BSONObjectID(id))))
+        .map(r => Ok(""))
+  }
+
   val idTransformer = __.json.update(
     (__ \ 'id).json.copyFrom( (__ \ '_id \ '$oid).json.pick ))
     .andThen((__ \ '_id).json.prune)
@@ -109,4 +149,12 @@ class Lectures @Inject() (val reactiveMongoApi: ReactiveMongoApi, ws: WSClient)
 
   def collection: JSONCollection =
     db.collection[JSONCollection]("lectures")
+
+  def addUser() = AuthAction.async(parse.json) { request =>
+    users.insert(request.body.as[JsObject])
+      .map(result => Created("ok"))
+  }
+
+  def users: JSONCollection =
+    db.collection[JSONCollection]("users")
 }

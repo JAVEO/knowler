@@ -56,14 +56,10 @@
             is: 'lectures-list-by-category',
             properties: {
                 category: String,
-                showMore: {
-                    type: Boolean,
-                    observer: '_showMoreChanged'
-                },
+                showMore: Boolean,
                 sortBy: {
                     value: 'latest',
-                    type: String,
-                    observer: '_sortByChanged'
+                    type: String
                 },
                 limitTo: Number,
                 hasResults: Boolean,
@@ -73,6 +69,9 @@
                     observer: 'lecturesChanged'
                 }
             },
+            observers: [
+               'refresh(category, limitTo, sortBy)'
+            ],
             ready: function() {
                 this.set('config', Config);
                 this.set('limitTo', this.showMore ? 100 : 6);
@@ -89,13 +88,9 @@
             },
             _showMoreChanged: function() {
                 this.set('limitTo', this.showMore ? 100 : 6);
-                this.refresh();
             },
             refresh: function() {
                 this.$.lecturesService.queryByCategory(this.category, this.limitTo, this.sortBy);
-            },
-            _sortByChanged: function() {
-                this.refresh();
             }
         });
     </script>

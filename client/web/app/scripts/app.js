@@ -65,7 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (StringUtils.isEmpty(searchPhrase)) {
         page('/lectures');
       } else {
-        page('/lecture-search/' + searchPhrase);
+        page('/lectures/search/' + searchPhrase);
       }
   };
   app.searchPhraseChange = function(e) {
@@ -86,5 +86,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.set('isLogged', false);
   };
 
+  app.leftMenuSelected = function(e, data) {
+    var listType = data.item.getAttribute('data-value');
+    switch(this.listType) {
+        case 'home':
+            page('/lectures');
+            break;
+        case 'my':
+            page('/lectures/my');
+            break;
+        case 'favorites':
+            page('/lectures/favorites');
+            break;
+    }
+  };
+
+  app.registerUser= function() {
+    var user = this.$.meta.byKey('user');
+    app.$.lecturesService.register(user);
+  };
 
 })(document);
