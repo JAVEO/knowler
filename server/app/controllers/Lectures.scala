@@ -130,13 +130,6 @@ class Lectures @Inject() (
       .collect[List]()
   }
 
-  def like(id: String) = AuthAction.async { request =>
-    users.update(
-        Json.obj("email" -> request.userEmail),
-        Json.obj("$addToSet" -> Json.obj("favorites" -> BSONObjectID(id))))
-        .map(r => Ok(""))
-  }
-
   val idTransformer = __.json.update(
     (__ \ 'id).json.copyFrom( (__ \ '_id \ '$oid).json.pick ))
     .andThen((__ \ '_id).json.prune)
@@ -149,11 +142,6 @@ class Lectures @Inject() (
 
   def collection: JSONCollection =
     db.collection[JSONCollection]("lectures")
-
-  def addUser() = AuthAction.async(parse.json) { request =>
-    users.insert(request.body.as[JsObject])
-      .map(result => Created("ok"))
-  }
 
   def users: JSONCollection =
     db.collection[JSONCollection]("users")

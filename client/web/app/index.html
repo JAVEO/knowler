@@ -53,10 +53,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <auth-meta id="authMeta"></auth-meta>
         <iron-meta id="meta"></iron-meta>
         <lectures-service id="lecturesService"></lectures-service>
+        <lectures-service id="profileLecturesService" on-last-response-changed="handleLectureResponse"></lectures-service>
 
         <paper-drawer-panel force-narrow="true">
           <paper-header-panel drawer>
-            <paper-toolbar></paper-toolbar>
+            <paper-toolbar class="medium-tall">
+              <img class="img-rounded user-image" src="{{loggedUserImageUrl}}">
+              <span class="bottom title">{{loggedUserName}}</span>
+            </paper-toolbar>
               <paper-menu on-iron-select="leftMenuSelected" attr-for-selected="data-value" selected="{{listType}}">
                 <paper-item data-value="home">
                   <iron-icon icon="language"></iron-icon>Main page
@@ -72,7 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-header-panel condenses keep-condensed-header main>
 
             <paper-toolbar class="primary-toolbar main-toolbar" >
-              <paper-icon-button icon="menu" paper-drawer-toggle class="menu-toggle-button"></paper-icon-button>
+              <paper-icon-button hidden$="{{!isLogged}}" icon="menu" paper-drawer-toggle class="menu-toggle-button"></paper-icon-button>
               <a data-route="home" href="/">
                 <img src="images/logo_knowler_nowe.png" alt="Logo">
               </a>
@@ -90,7 +94,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                       on-google-signin-success="userLogged"
                       on-google-signed-out="userLoggedOut">
               </google-signin>
-              <paper-button on-tap="registerUser" raised>Zarejestruj</paper-button>
+              <template is="dom-if" if="{{canRegister}}">
+                <paper-button on-tap="registerUser" raised>Register</paper-button>
+              </template>
+              <paper-toast id="registrationToast" text="Registration completed"></paper-toast>
             </paper-toolbar>
 
 

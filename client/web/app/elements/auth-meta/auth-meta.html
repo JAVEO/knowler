@@ -1,12 +1,17 @@
 <dom-module id="auth-meta">
     <template>
         <iron-meta id="meta" key="user" value="{{user}}"></iron-meta>
+        <iron-meta key="registeredUser" value="{{registeredUser}}"></iron-meta>
     </template>
     <script>
         Polymer({
             is: 'auth-meta',
             properties: {
                 user: {
+                    type: Object,
+                    notify: true
+                },
+                registeredUser: {
                     type: Object,
                     notify: true
                 }
@@ -18,6 +23,9 @@
             userLoggedOut: function() {
                 this.set('user', undefined);
                 app.fire('iron-signal', {name: 'auth', data: {isSigned: false, user: undefined}});
+            },
+            userProfile: function(user) {
+                this.set('registeredUser', user);
             }
         });
     </script>
