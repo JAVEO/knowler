@@ -78,14 +78,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-toolbar class="primary-toolbar main-toolbar" >
               <paper-icon-button hidden$="{{!isLogged}}" icon="menu" paper-drawer-toggle class="menu-toggle-button"></paper-icon-button>
               <a data-route="home" href="/">
-                <img src="images/logo_knowler_nowe.png" alt="Logo">
+                <img src="images/logo_knowler_nowe.png" alt="Logo" width="95%">
               </a>
               <paper-input class="searchBox"
                            label="Search"
                            no-label-float="true"
                            value="{{searchPhrase}}"
                            on-keydown="searchPhraseChange"
-                           style="width: 100%; min-width: 150px;"></paper-input>
+                           style="width: 70%; min-width: 150px;"></paper-input>
               <paper-button style="white-space: nowrap;" on-tap="searchLectures"><iron-icon icon="search"></iron-icon></paper-button>
               <google-signin
                       style="margin-left: 25px;"

@@ -7,7 +7,7 @@
             margin-bottom: 7px;
         }
         .presentation-card paper-card {
-            background-color: transparent;
+            background-color: white;
             cursor: pointer;
             width: 100%;
         }
@@ -21,6 +21,9 @@
 
         .presentation-card .content {
             padding-top: 5px !important;
+        }
+        .presentation-card paper-card:hover {
+            @apply(--shadow-elevation-8dp);
         }
         .blue {
             color: var(--paper-light-blue-400);;

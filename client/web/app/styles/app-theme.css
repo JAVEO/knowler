@@ -51,6 +51,11 @@
     color: var(--default-primary-color);
   }
 
+  .presentation-list-background {
+    margin: 8px;
+    padding: 16px;
+  }
+
   paper-menu a {
     text-decoration: none;
     color: var(--menu-link-color);
@@ -78,7 +83,8 @@
   }
 
   .additional-toolbar {
-    background: #3F51B5;
+    background: white;
+    color: black;
   }
 
   paper-toolbar.tall .app-name {
@@ -109,6 +115,7 @@
   /* Height of the scroll area */
   .content {
     height: 100%;
+    background-color: #e8e8e8;
   }
 
   /* Breakpoints */
@@ -156,7 +163,7 @@
     }
 
     div.page-content {
-      width: calc(98% - 46px);
+      width: calc(98% - 160px);
       padding-bottom: 68px;
     }
 

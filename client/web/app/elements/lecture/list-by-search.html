@@ -32,7 +32,7 @@
 
         <div class="page-content">
             <div class="layout vertical">
-                <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
+                <div class="presentation-list-background">
                     <h4 class="capitalize mt-0">{{listTypeTitle}}</h4>
                     <template is="dom-if" if="{{!hasResults}}">
                         <div class="text-center">
@@ -52,7 +52,7 @@
                             </div>
                         </template>
                     </div>
-                </paper-material>
+                </div>
             </div>
         </div>
     </template>
