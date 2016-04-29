@@ -32,10 +32,6 @@
         .views-count {
             font-size: 1.25em;
         }
-        .author-image {
-            width: 25px;
-            height: 25px;
-        }
         .card-presentation {
             padding: 0px;
             background: black;
@@ -84,7 +80,7 @@
                 </div>
                 <div class="layout horizontal end">
                     <div class="flex text-grey">
-                        <img class="img-rounded author-image" src="{{authorImageUrl}}">
+                        <img class="img-rounded user-image" src="{{authorImageUrl}}">
                         {{lecture.author.name}}
                     </div>
                     <div class="text-grey">
@@ -192,34 +188,12 @@
                 }
                 var isOwner = user.getEmail() === lecture.author.email;
                 this.set('isOwner', isOwner);
+                this.set('authorImageUrl', user.getImageUrl());
             },
             _authStateChange: function(e, data) {
                 this._setIsOwner(data.user, this.lecture);
             },
             lectureChanged: function(lecture) {
-                var self = this;
-
-                function loadAuthorImage() {
-                    var url = "https://www.googleapis.com/plus/v1/people/" + lecture.author.id + "?fields=image&key=" + Config.google.developerKey;
-                    var defaultImage = "../../images/default-avatar.png";
-                    self.set('authorImageUrl', defaultImage);
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function(response) {
-                        if (xhr.status == 404) {
-                            self.set('authorImageUrl', defaultImage);
-                            return;
-                        }
-                        if (xhr.readyState == XMLHttpRequest.DONE) {
-                            self.set('authorImageUrl', JSON.parse(xhr.responseText).image.url);
-                        }
-                    };
-                    xhr.open("GET", url, true);
-                    xhr.send();
-                }
-
-
-                loadAuthorImage();
                 this._setIsOwner(this.$.meta.byKey('user'), lecture);
             },
             viewDetails: function(e) {

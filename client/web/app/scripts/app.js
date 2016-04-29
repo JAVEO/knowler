@@ -78,8 +78,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
     var user = currentUser.getBasicProfile();
     console.log("Authenticated successfully with payload:", user);
+    app.set('loggedUserImageUrl', user.getImageUrl());
+    app.set('loggedUserName', user.getName());
     app.$.authMeta.userLoggedIn(user);
     app.set('isLogged', true);
+    app.$.profileLecturesService.findUser();
   };
   app.userLoggedOut = function(e) {
     app.$.authMeta.userLoggedOut();
@@ -101,9 +104,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   };
 
-  app.registerUser= function() {
+  app.registerUser = function() {
     var user = this.$.meta.byKey('user');
     app.$.lecturesService.register(user);
+    app.$.registrationToast.open();
   };
 
+  app.handleLectureResponse = function(e, data) {
+    var profile = data.value;
+    if (profile._id !== undefined) {
+        app.$.authMeta.userProfile(profile);
+        app.set('canRegister', false);
+    } else {
+        app.set('canRegister', true);
+    }
+  };
 })(document);

@@ -28,12 +28,17 @@
             text-align: left;
             outline:none;
         }
+        paper-icon-button.pink {
+            color: var(--paper-pink-500);
+            --paper-icon-button-ink-color: var(--paper-indigo-500);
+        }
   }
     </style>
 
     <template>
         <!-- <google-url-shortener on-google-url-shortener-ready="testa" id="shortener" ></google-url-shortener> -->
         <lectures-service id="lecturesService"></lectures-service>
+        <iron-meta id="meta"></iron-meta>
 
         <button id="facebookShare" class="share-service-button" on-tap="_fbShare">
             <span class="share-service-icon share-service-icon-facebook yt-sprite"></span>
@@ -60,7 +65,9 @@
             </p>
         </paper-dialog>
 
-        <paper-icon-button on-tap="likeLecture" icon="favorite"></paper-icon-button>
+        <paper-icon-button on-tap="likeLecture" icon="favorite" class$="{{likeClass}}"></paper-icon-button>
+        <paper-toast id="likeToast" text="I like this" class="text-left"></paper-toast>
+        <paper-toast id="dislikeToast" text="I dislike this" class="text-left"></paper-toast>
     </template>
 
     <script>
@@ -113,7 +120,8 @@
                     type: String,
                     observer: '_lectureIdChanged'
                 },
-                embedViewUrl: String
+                embedViewUrl: String,
+                likeClass: String
             },
             ready: function() {
                 this.set('config', Config);
@@ -139,6 +147,12 @@
                 shortenUrl();
                 this.set('embedViewUrl', window.location.href + '/embed');
 
+                var registeredUser = this.$.meta.byKey('registeredUser');
+                if (registeredUser !== undefined && registeredUser.favorites.indexOf(this.lectureId) > -1) {
+                    this.set('likeClass', 'pink');
+                } else {
+                    this.set('likeClass', '');
+                }
             },
             _fbShare: function() {
                 var self = this;
@@ -151,7 +165,21 @@
                 this.$.dialog.open();
             },
             likeLecture: function() {
-                this.$.lecturesService.like(this.lectureId);
+                var registeredUser = this.$.meta.byKey('registeredUser');
+                if (registeredUser !== undefined) {
+                    var index = registeredUser.favorites.indexOf(this.lectureId);
+                    if (index > -1) {
+                        this.$.lecturesService.dislike(this.lectureId);
+                        this.$.dislikeToast.open();
+                        this.set('likeClass', '');
+                        registeredUser.favorites.splice(index, 1);
+                    } else {
+                        this.$.lecturesService.like(this.lectureId);
+                        this.$.likeToast.open();
+                        this.set('likeClass', 'pink');
+                        registeredUser.favorites.push(this.lectureId);
+                    }
+                }
             }
         });
     </script>

@@ -82,12 +82,29 @@
                 this.$.ajax.generateRequest();
             },
             like: function(lectureId) {
-                this.$.ajax.url = Config.urls.backend + this.queryAll + "/" + lectureId + "/like";
+                this.$.ajax.url = Config.urls.backend + "/users/like/" + lectureId;
                 this.$.ajax.headers = {
                     'oauth2-token': this.oauthToken()
                 };
                 this.$.ajax.contentType = "application/json";
                 this.$.ajax.method = "PUT";
+                this.$.ajax.generateRequest();
+            },
+            dislike: function(lectureId) {
+                this.$.ajax.url = Config.urls.backend + "/users/dislike/" + lectureId;
+                this.$.ajax.headers = {
+                    'oauth2-token': this.oauthToken()
+                };
+                this.$.ajax.contentType = "application/json";
+                this.$.ajax.method = "DELETE";
+                this.$.ajax.generateRequest();
+            },
+            findUser: function() {
+                this.$.ajax.headers = {
+                    'oauth2-token': this.oauthToken()
+                };
+                this.$.ajax.url = Config.urls.backend + "/users/profile";
+                this.$.ajax.method = "GET";
                 this.$.ajax.generateRequest();
             },
             oauthToken: function() {
