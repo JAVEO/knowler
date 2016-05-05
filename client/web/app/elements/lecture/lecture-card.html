@@ -1,0 +1,51 @@
+<dom-module id="lecture-card">
+    <style>
+        .presentation-card {
+            padding-left: 7px;
+            padding-right: 7px;
+            margin-top: 7px;
+            margin-bottom: 7px;
+        }
+        .presentation-card paper-card {
+            background-color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+        .presentation-card .card-content {
+            padding-top: 4px;
+            padding-bottom: 7px;
+        }
+        .presentation-card .title {
+            font-weight: 700;
+        }
+
+        .presentation-card .content {
+            padding-top: 5px !important;
+        }
+        .presentation-card paper-card:hover {
+            @apply(--shadow-elevation-8dp);
+        }
+    </style>
+    <template>
+        <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
+            <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{lecture.videoId}}/mqdefault.jpg">
+                <div class="card-content">
+                    <div class="title">{{lecture.title}}</div>
+                    <div class="description">{{lecture.author.name}}</div>
+                    <div class="description">{{lecture.viewCount}} views</div>
+                </div>
+            </paper-card>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'lecture-card',
+            properties: {
+                lecture: Object
+            },
+            viewDetails: function(e) {
+                page('/lecture/' + this.lecture.id);
+            }
+        });
+    </script>
+</dom-module>

@@ -1,65 +1,48 @@
 <dom-module id="lectures-list-by-category">
     <style>
-        .presentation-card {
-            padding-left: 7px;
-            padding-right: 7px;
-            margin-top: 7px;
-            margin-bottom: 7px;
-        }
-        .presentation-card paper-card {
-            background-color: white;
-            cursor: pointer;
-            width: 100%;
-        }
-        .presentation-card .card-content {
-            padding-top: 4px;
-            padding-bottom: 7px;
-        }
-        .presentation-card .title {
-            font-weight: 700;
-        }
-
-        .presentation-card .content {
-            padding-top: 5px !important;
-        }
-        .presentation-card paper-card:hover {
-            @apply(--shadow-elevation-8dp);
-        }
         .blue {
             color: var(--paper-light-blue-400);;
+        }
+        hr {
+            border-style: solid;
+            border-color: #D9D9D9;
+            border-width: 1px;
         }
     </style>
     <template>
 
         <lectures-service id="lecturesService" last-response="{{lectures}}"></lectures-service>
 
-        <h4 class="capitalize mt-0"><paper-button on-tap="viewCategory">{{category}}</paper-button></h4>
         <template is="dom-if" if="{{hasResults}}">
-            <div class="text-center">
-                <h3 class="blue">No results were found</h3>
+            <h4 class="capitalize mt-0"><paper-button on-tap="viewCategory">{{category}}</paper-button></h4>
+            <div class="row">
+                <template is="dom-repeat" items="{{lectures}}">
+                    <lecture-card lecture="{{item}}"></lecture-card>
+                </template>
             </div>
+            <template is="dom-if" if="{{!showMore}}">
+                <hr>
+            </template>
         </template>
-        <div class="row">
-            <template is="dom-repeat" items="{{lectures}}">
-                <div class="col-md-2 col-sm-6 col-xs-12 presentation-card">
-                    <paper-card on-tap="viewDetails" image="https://i.ytimg.com/vi/{{item.videoId}}/mqdefault.jpg">
-                        <div class="card-content">
-                            <div class="title">{{item.title}}</div>
-                            <div class="description">{{item.author.name}}</div>
-                            <div class="description">{{item.viewCount}} views</div>
-                        </div>
-                    </paper-card>
+        <template is="dom-if" if="{{!hasResults}}">
+            <template is="dom-if" if="{{showMore}}">
+                <h4 class="capitalize mt-0"><paper-button on-tap="viewCategory">{{category}}</paper-button></h4>
+                <div class="text-center">
+                    <img src="../../images/no_result_illu.png">
+                    <h3 class="blue">No results were found</h3>
                 </div>
             </template>
-        </div>
-
+        </template>
     </template>
     <script>
         Polymer({
             is: 'lectures-list-by-category',
             properties: {
                 category: String,
-                showMore: Boolean,
+                showMore: {
+                    type: Boolean,
+                    observer: '_showMoreChanged'
+                },
                 sortBy: {
                     value: 'latest',
                     type: String
@@ -80,14 +63,11 @@
                 this.set('limitTo', this.showMore ? 100 : 6);
                 this.refresh();
             },
-            viewDetails: function(e) {
-                page('/lecture/' + e.model.item.id);
-            },
             viewCategory: function(e) {
                 this.fire('category-selected', this.category);
             },
             lecturesChanged: function() {
-                this.set('hasResults', ArrayUtils.isEmpty(this.lectures));
+                this.set('hasResults', !ArrayUtils.isEmpty(this.lectures));
             },
             _showMoreChanged: function() {
                 this.set('limitTo', this.showMore ? 100 : 6);

@@ -105,6 +105,7 @@
                 }
             },
             refresh: function() {
+                this.set('selectedCategory', 'all');
                 var lists = Polymer.dom(this.root).querySelectorAll("lectures-list-by-category");
                 lists.forEach(function(item) {
                     item.refresh();
