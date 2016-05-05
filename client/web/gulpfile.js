@@ -220,6 +220,7 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
 gulp.task('serve:dist', ['default'], function () {
   browserSync({
     notify: false,
+    ghostMode: false,
     logPrefix: 'PSK',
     snippetOptions: {
       rule: {

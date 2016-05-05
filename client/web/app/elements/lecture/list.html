@@ -3,27 +3,11 @@
         paper-fab.add-lecture {
             z-index: 20;
             position: absolute;
-            bottom: -30px;
+            bottom: 20px;
             right: 30px;
             height: 60px;
             width: 60px;
             --paper-fab-background: #13E4FF;
-        }
-        paper-dropdown-menu.custom {
-            --paper-input-container-label: {
-                color: white;
-            }
-            --paper-input-container-input: {
-                color: white;
-                font-style: normal;
-            }
-            paper-input-container-underline: {
-                display: none;
-            }
-        }
-        .presentation-list-card {
-            margin-top: 0px;
-            margin-bottom: 0px;
         }
     </style>
     <template>
@@ -32,40 +16,44 @@
     <iron-signals on-iron-signal-auth="_authStateChange"></iron-signals>
 
   <paper-header-panel condenses keep-condensed-header>
-    <paper-toolbar class="primary-toolbar additional-toolbar">
-          <paper-dropdown-menu label="Category" class="custom">
+      <paper-toolbar class="primary-toolbar additional-toolbar">
+          <div class="flex"></div>
+          <paper-menu-button>
+              <paper-button class="dropdown-trigger">
+                  <span>Category</span>
+              </paper-button>
             <paper-menu class="dropdown-content" on-iron-select="_categorySelectedFromDropdown" selected="{{selectedCategory}}" attr-for-selected="data-value">
                 <template is="dom-repeat" items="[[config.categories]]">
                     <paper-item data-value="{{item}}" class="capitalize">{{item}}</paper-item>
                 </template>
             </paper-menu>
-          </paper-dropdown-menu>
-
-          <paper-dropdown-menu label="Sort" class="custom">
+          </paper-menu-button>
+          <paper-menu-button>
+              <paper-button class="dropdown-trigger">
+                  <span>Sort</span>
+              </paper-button>
             <paper-menu class="dropdown-content" selected="{{sortBy}}" attr-for-selected="data-value">
                 <paper-item data-value="latest" class="capitalize">latest</paper-item>
                 <paper-item data-value="oldest" class="capitalize">oldest</paper-item>
                 <paper-item data-value="mostPopular" class="capitalize">most popular</paper-item>
             </paper-menu>
-          </paper-dropdown-menu>
-
-          <template is="dom-if" if="{{isSigned}}">
-            <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
-          </template>
-    </paper-toolbar>
+          </paper-menu-button>
+          <div class="flex"></div>
+      </paper-toolbar>
     <div class="page-content">
-        <div class="layout vertical">
+        <div class="layout vertical presentation-list-background">
             <template is="dom-repeat" items="[[categories]]">
                 <template is="dom-if" if="{{item.show}}")>
-                    <paper-material elevation="1" class="card-default presentation-list-card" style="width: 100%;">
-                        <lectures-list-by-category
-                                category="{{item.name}}"
-                                show-more="{{item.showMore}}"
-                                on-category-selected="_categorySelected"
-                                sort-by="{{sortBy}}">
-                        </lectures-list-by-category>
-                    </paper-material>
+                    <lectures-list-by-category
+                            category="{{item.name}}"
+                            show-more="{{item.showMore}}"
+                            on-category-selected="_categorySelected"
+                            sort-by="{{sortBy}}">
+                    </lectures-list-by-category>
                 </template>
+            </template>
+            <template is="dom-if" if="{{isSigned}}">
+                <paper-fab icon="add" title="Add" class="bottom add-lecture" on-tap="addLecture"></paper-fab>
             </template>
       </div>
     </div>
@@ -117,6 +105,7 @@
                 }
             },
             refresh: function() {
+                this.set('selectedCategory', 'all');
                 var lists = Polymer.dom(this.root).querySelectorAll("lectures-list-by-category");
                 lists.forEach(function(item) {
                     item.refresh();
