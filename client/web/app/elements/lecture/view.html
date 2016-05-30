@@ -162,11 +162,13 @@
                     type: String
                 }
             },
+            load: function(lectureId) {
+                this.$.lecturesService.get(lectureId);
+            },
             lectureIdChanged: function(lectureId) {
                 if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.$.lecturesService.get(lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){
