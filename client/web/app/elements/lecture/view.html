@@ -36,6 +36,9 @@
             padding: 0px;
             background: black;
         }
+        paper-card {
+            margin: 20px;
+        }
         paper-card.rate {
             @apply(--layout-horizontal);
         }
@@ -46,6 +49,9 @@
             @apply(--layout-flex);
             float: left;
             cursor: pointer;
+        }
+        .rate-content:hover {
+            @apply(--shadow-elevation-8dp);
         }
         .rate-header {
             @apply(--paper-font-headline);
@@ -156,11 +162,13 @@
                     type: String
                 }
             },
+            load: function(lectureId) {
+                this.$.lecturesService.get(lectureId);
+            },
             lectureIdChanged: function(lectureId) {
                 if (StringUtils.isEmpty(lectureId)) {
                     return;
                 }
-                this.$.lecturesService.get(lectureId);
                 this.$.knowlerComments.reset();
             },
             ready: function(){

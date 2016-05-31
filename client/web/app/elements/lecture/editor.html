@@ -182,6 +182,9 @@
             observers: [
                '_generateNewMappings(lecture.videoId, duration, pagesCount)'
             ],
+            load: function(lectureId) {
+                this.$.lecturesService.get(this.lectureId);
+            },
             lectureIdChanged: function() {
                 var isNew = this.lectureId === undefined; 
                 this.set('isFirstEdit', !isNew);
